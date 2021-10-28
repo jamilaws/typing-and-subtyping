@@ -1,0 +1,14 @@
+<div class="row">
+    <div class="col-sm-4">
+        <app-code-editor [initialCode]="initialCode" (onCodeChange)="onCodeChange($event)"></app-code-editor>
+    </div>
+    <div class="col-sm-8">
+        <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
+        <ng-template #astValidBlock>
+            {{getAstAsSJON()}}
+        </ng-template>
+        <ng-template #astInvalidBlock>
+            Invalid AST :-(
+        </ng-template>
+    </div>
+</div>
