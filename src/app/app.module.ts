@@ -7,6 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { CodeEditorComponent } from './util/code-editor/code-editor.component';
 import { MainViewComponent } from './view/main-view/main-view.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'app-name/assets', // configure base path cotaining monaco-editor directory after build default: './assets'
@@ -24,6 +27,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     BrowserModule,
     FormsModule,
     MonacoEditorModule.forRoot(),
+    BrowserAnimationsModule,
+    MatToolbarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

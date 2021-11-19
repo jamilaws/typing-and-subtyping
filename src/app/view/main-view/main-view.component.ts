@@ -11,7 +11,7 @@ export class MainViewComponent implements OnInit {
   public initialCode: string = 'int main()\n{\nreturn 0;\n}';
 
   private code: string = "";
-  public ast: any = "huh";
+  public ast: any = "";
   public isAstValid: boolean = true;
 
   constructor(private parsingService: ParsingService) { }
@@ -30,13 +30,40 @@ export class MainViewComponent implements OnInit {
     try {
       this.ast = this.parsingService.parse(this.code);
       this.isAstValid = true;
-    } catch(e) {
+    } catch (e) {
       this.isAstValid = false;
     }
+
+    console.log("AST:");
+    console.log(this.ast);
+    
+    
   }
 
-  getAstAsSJON(){
-    return JSON.stringify(this.ast);
+  getAstAsJSON() {
+    return JSON.stringify(this.ast, undefined, 4);
   }
 
 }
+
+// enum NodeType {
+//   "FunctionDeclaration", "VariableDeclaration", "IfStatement", "Type", "StructDefinition"
+// }
+
+// interface AstNode {
+
+//   //pos: { file: string, line: number };
+
+//   type: NodeType;
+//   defType: any; // ?
+//   name: string;
+
+//   arguments?: any[];
+//   body?: 
+
+// }
+
+// class FunctionDeclaration implements AstNode {
+//   type = NodeType.FunctionDeclaration;
+
+// }

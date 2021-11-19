@@ -1,0 +1,13 @@
+.toolbar {
+    background-color: #2469B3;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.logo {
+    height: 60px;
+}
+
+.title {
+    padding-left: 20px;
+}
