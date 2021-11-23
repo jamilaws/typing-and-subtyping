@@ -5,7 +5,7 @@
     <div class="col-sm-6">
         <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
         <ng-template #astValidBlock>
-            {{getAstAsJSON()}}
+            <div echarts [options]="getGraphOption()"></div>
         </ng-template>
         <ng-template #astInvalidBlock>
             Invalid AST :-(

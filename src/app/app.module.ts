@@ -9,6 +9,8 @@ import { CodeEditorComponent } from './util/code-editor/code-editor.component';
 import { MainViewComponent } from './view/main-view/main-view.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgxEchartsModule } from 'ngx-echarts';
+
 
 
 const monacoConfig: NgxMonacoEditorConfig = {
@@ -29,6 +31,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MonacoEditorModule.forRoot(),
     BrowserAnimationsModule,
     MatToolbarModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
