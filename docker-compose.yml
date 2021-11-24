@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  main:
+    container_name: typing-tutor
+    build: .
+    ports:
+      - 4000:80
+    restart: always
