@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { read } from 'fs';
-import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
+import { AbstractSyntaxTree, AstNode } from 'src/app/model/ast/abstract-syntax-tree';
 import { Graph, Node } from 'src/app/model/ast/graph';
-import { ParsingService } from 'src/app/service/parsing.service';
+import { TypeEnvironment } from 'src/app/model/typing/type-environment';
+import { IncompleteAstWrapperException, ParsingService } from 'src/app/service/parsing.service';
 
 interface DisplayGraphNode {
   name: string;
@@ -33,8 +33,9 @@ export class MainViewComponent implements OnInit {
   public isAstValid: boolean = true;
 
   private graphNodes: DisplayGraphNode[] = new Array<DisplayGraphNode>();
-
   private graphEdges: DisplayGraphEdge[] = new Array<DisplayGraphEdge>();
+
+  public typeErrorMessage: string = null;
 
   constructor(private parsingService: ParsingService) { }
 
@@ -46,18 +47,15 @@ export class MainViewComponent implements OnInit {
   onCodeChange(code: string) {
     this.code = code;
     this.updateAst();
+    this.performTypeCheck();
   }
 
-  updateAst(): void {
+  private updateAst(): void {
     try {
       this.ast = this.parsingService.parse(this.code);
       this.isAstValid = true;
       try {
-        const astGraph: Graph<string> = this.ast.getGraph();
-
-        console.log(astGraph);
-        
-
+        const astGraph: Graph<AstNode> = this.ast.getGraph();
         this.updateDisplayedGraph(this.ast.getRoots().map(r => r.getGraphNode()), astGraph);
       } catch (e) {
         alert("Valid AST but building graph failed.");
@@ -65,15 +63,67 @@ export class MainViewComponent implements OnInit {
         
       }
     } catch (e) {
+      if(e instanceof IncompleteAstWrapperException){
+        alert(e.message);
+        console.log(e.rawParsedJson);
+      }
       this.isAstValid = false;
-      //console.log(e);
+      console.log(e);
     }
+  }
 
+  private performTypeCheck(): void {
+    try {
+      const typeEnv = new TypeEnvironment();
+      this.ast.checkType(typeEnv);
+      this.typeErrorMessage = null;
+    } catch (e) {
+      this.typeErrorMessage = (<Error> e).message;
+    }
+  }
+
+  private updateDisplayedGraph(roots: Node<AstNode>[], graph: Graph<AstNode>){
+    let graphNodeToDisplayGraphNode = new Map<Node<AstNode>, DisplayGraphNode>();
+    // Init displayed nodes
+    this.graphNodes = graph.getNodes().map((n, i) => { 
+      const dNode = { name: n.getData().getGraphNodeLabel(), x: i * 10, y: i * 10 }; // Set coordinates later
+      graphNodeToDisplayGraphNode.set(n, dNode);
+      return dNode;
+    });
+    // Init displayer edges
+    this.graphEdges = graph.getEdges().map(e => {
+      let s = this.graphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getFrom()));
+      let t = this.graphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getTo()));
+      return {source: s, target: t};
+    });
+    // Traverse displayed graph via breadth first search to set coorinates
+    let levelIndex: number = 1;
+    let currentLevel: DisplayGraphNode[] = roots.map(n => graphNodeToDisplayGraphNode.get(n));
+    while(currentLevel.length > 0){
+
+      currentLevel.forEach((n, col) => {
+        n.x = col + 1;
+        n.y = levelIndex;
+        n.name = `${n.name} (${n.x};${n.y})`
+      })
+
+      // Update currentLevel with next one
+      currentLevel = this.graphEdges.filter(e => currentLevel.includes(this.graphNodes[e.source])).map(e => this.graphNodes[e.target]);
+      levelIndex++;
+    }
+    
+    // Scale coordinates
+    this.graphNodes.forEach(n => {
+      n.x *= 100;
+      n.y *= 100;
+    })
 
   }
 
-  getAstAsJSON() {
-    return JSON.stringify(this.ast, undefined, 4);
+  selectNode(index: string): void {
+    const node = this.ast.getGraph().getNodes()[Number.parseInt(index)];
+    alert(node.getData().getGraphNodeLabel());
+    // TODO: Get type of node
   }
 
   getGraphOption(): EChartsOption {
@@ -114,47 +164,6 @@ export class MainViewComponent implements OnInit {
         }
       ]
     };
-  }
-
-  private updateDisplayedGraph(roots: Node<string>[], graph: Graph<string>){
-    let graphNodeToDisplayGraphNode = new Map<Node<string>, DisplayGraphNode>();
-    // Init displayed nodes
-    this.graphNodes = graph.getNodes().map((n, i) => { 
-      const dNode = { name: n.getData(), x: i * 10, y: i * 10 }; // Set coordinates later
-      graphNodeToDisplayGraphNode.set(n, dNode);
-      return dNode;
-    });
-    // Init displayer edges
-    this.graphEdges = graph.getEdges().map(e => {
-      let s = this.graphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getFrom()));
-      let t = this.graphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getTo()));
-      return {source: s, target: t};
-    });
-    // Traverse displayed graph via breadth first search to set coorinates
-    let levelIndex: number = 1;
-    let currentLevel: DisplayGraphNode[] = roots.map(n => graphNodeToDisplayGraphNode.get(n));
-    while(currentLevel.length > 0){
-
-      currentLevel.forEach((n, col) => {
-        n.x = col + 1;
-        n.y = levelIndex;
-        n.name = `${n.name} (${n.x};${n.y})`
-      })
-
-      // Update currentLevel with next one
-      currentLevel = this.graphEdges.filter(e => currentLevel.includes(this.graphNodes[e.source])).map(e => this.graphNodes[e.target]);
-      levelIndex++;
-    }
-
-    console.log(this.graphNodes);
-    console.log(this.graphEdges);
-    
-    // Scale coordinates
-    this.graphNodes.forEach(n => {
-      n.x *= 100;
-      n.y *= 100;
-    })
-
   }
 
 }

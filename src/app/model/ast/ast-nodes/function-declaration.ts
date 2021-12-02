@@ -5,7 +5,12 @@ import { AbstractType } from "./type/abstract-type";
 import { PointerType } from "./type/pointer-type";
 import { Type } from "./type/type";
 
-export class FunctionDeclaration extends AstNode {
+import { TypeEnvironment } from "../../typing/type-environment";
+import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { Declaration } from "../../typing/symbol-table";
+import { FunctionType } from "../../typing/types/type-constructors/function-type";
+
+export class FunctionDeclaration extends AstNode implements Declaration {
     protected type: NodeType = NodeType.FunctionDeclaration;
     
     public defType: AbstractType; // TODO: Check if ok; (returning struct types?)
@@ -13,8 +18,8 @@ export class FunctionDeclaration extends AstNode {
     public args: Definition[]; // TODO Check if ok
     public body: AstNode[];
 
-    constructor(defType: Type | PointerType, name: string, args: Definition[], body: AstNode[]) {
-        super();
+    constructor(codeLine: number, defType: Type | PointerType, name: string, args: Definition[], body: AstNode[]) {
+        super(codeLine);
 
         this.defType = defType;
         this.name = name;
@@ -22,7 +27,7 @@ export class FunctionDeclaration extends AstNode {
         this.body = body;
     }
 
-    public getGraph(): Graph<string> {
+    public getGraph(): Graph<AstNode> {
         let defTypeGraph = this.defType.getGraph();
         let argGraphs = this.args.map(a => a.getGraph());
         let bodyGraphs = this.body.map(a => a.getGraph());
@@ -46,5 +51,31 @@ export class FunctionDeclaration extends AstNode {
     // @Override
     public getGraphNodeLabel(): string {
         return this.type + " " + this.name;
+    }
+
+    public checkType(t: TypeEnvironment): AbstractType_ {
+        // Add function declaration to symbol table
+        t.getSymbolTable().insert(this.name, this);
+        
+        t.getSymbolTable().enterNewScope();
+
+        this.body.forEach(e => e.checkType(t));
+        // TODO: Return type?
+        
+        t.getSymbolTable().leaveScope();
+        
+        return null;
+    }
+
+    /*
+     * Declaration Implementation
+     */
+
+    getDeclarationIdentifier(): string {
+        return this.name;
+    }
+
+    getDeclarationType(): AbstractType_ {
+        return new FunctionType(null, null); // TODO: Implement properly
     }
 }

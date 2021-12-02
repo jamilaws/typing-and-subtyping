@@ -1,8 +1,12 @@
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <app-code-editor [initialCode]="initialCode" (onCodeChange)="onCodeChange($event)"></app-code-editor>
+        <div class="node-selector">
+            <input #nodeIndex type="number">
+            <button (click)="selectNode(nodeIndex.value)">Get Type!</button>
+        </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
         <ng-template #astValidBlock>
             <div echarts [options]="getGraphOption()"></div>
@@ -10,5 +14,12 @@
         <ng-template #astInvalidBlock>
             Invalid AST :-(
         </ng-template>
+    </div>
+    <div class="col-sm-4" style="background-color: lightgray;">
+        <div *ngIf="type">
+            {{type}}
+            <!-- <div *ngFor="let t of types">t</div> -->
+        </div>
+        <div *ngIf="typeErrorMessage">{{typeErrorMessage}}</div>
     </div>
 </div>

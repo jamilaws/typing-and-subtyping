@@ -1,3 +1,7 @@
+import { TypeCheckable } from "../typing/interfaces/type-checkable";
+import { TypeEnvironment } from "../typing/type-environment";
+import { AbstractType } from "../typing/types/abstract-type";
+import { FunctionDeclaration } from "./ast-nodes/function-declaration";
 import { Graph, Node } from "./graph";
 
 export enum NodeType {
@@ -14,17 +18,21 @@ export enum NodeType {
     VariableDeclaration = "VariableDeclaration",
     StructDefinition = "StructDefinition",
     IfStatement = "IfStatement",
+    BinaryExpression = "BinaryExpression",
+    StructAccess = "StructAccess", // TODO: Document somewhere (not included in parsed raw type)
+    ExpressionStatement = "ExpressionStatement",
 }
 
-export abstract class AstNode {
+export abstract class AstNode implements TypeCheckable {
 
     protected abstract type: NodeType;
-    //protected pos: { file: string, line: number };
+    protected codeLine: number; //{ file: string, line: number };
 
     // Will be initialized as soon as requested
-    private graphNode: Node<string> = null;
+    private graphNode: Node<AstNode> = null;
 
-    constructor() {
+    constructor(codeLine: number) {
+        this.codeLine = codeLine;
     }
 
     /**
@@ -32,14 +40,14 @@ export abstract class AstNode {
      * @param level index of layer from root; needed for node position calculation
      * @param levelCount number of nodes in the same layer
      */
-    public abstract getGraph(): Graph<string>;
+    public abstract getGraph(): Graph<AstNode>;
 
     /**
      * Return graph node holding type as string
      * @returns Node
      */
-    public getGraphNode(): Node<string> {
-        if(!this.graphNode) this.graphNode = new Node(this.getGraphNodeLabel());
+    public getGraphNode(): Node<AstNode> {
+        if(!this.graphNode) this.graphNode = new Node(this);
         return this.graphNode;
     }
 
@@ -50,10 +58,11 @@ export abstract class AstNode {
     public getGraphNodeLabel(): string {
         return this.type;
     }
-  
+
+    public abstract checkType(t: TypeEnvironment): AbstractType;
 }
 
-export class AbstractSyntaxTree {
+export class AbstractSyntaxTree implements TypeCheckable {
     private roots: AstNode[];
 
     constructor(roots: AstNode[]) {
@@ -64,7 +73,12 @@ export class AbstractSyntaxTree {
         return this.roots;
     }
 
-    public getGraph(): Graph<string> {
+    public getGraph(): Graph<AstNode> {
         return this.roots.map(e => e.getGraph()).reduce((acc, curr) => acc.merge(curr), new Graph([], []));
+    }
+
+    public checkType(t: TypeEnvironment): AbstractType {
+        this.roots.forEach(e => e.checkType(t));
+        return null;
     }
 }

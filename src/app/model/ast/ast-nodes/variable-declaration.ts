@@ -4,21 +4,25 @@ import { AbstractType } from "./type/abstract-type";
 import { PointerType } from "./type/pointer-type";
 import { Type } from "./type/type";
 
-export class VariableDeclaration extends AstNode {
+import { TypeEnvironment } from "../../typing/type-environment";
+import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { Declaration } from "../../typing/symbol-table";
+
+export class VariableDeclaration extends AstNode implements Declaration {
     protected type: NodeType = NodeType.VariableDeclaration;
 
     public defType: AbstractType;
     public name: string;
     public value: AstNode;
 
-    constructor(defType: Type | PointerType, name: string, value: AstNode){
-        super();
+    constructor(codeLine: number, defType: Type | PointerType, name: string, value: AstNode){
+        super(codeLine);
         this.defType = defType;
         this.name = name;
         this.value = value;
     }
 
-    public getGraph(): Graph<string> {
+    public getGraph(): Graph<AstNode> {
         const defTypeGraph = this.defType.getGraph();
         const valueGraph = this.value.getGraph();
 
@@ -32,4 +36,21 @@ export class VariableDeclaration extends AstNode {
     public getGraphNodeLabel(): string {
         return this.type + " " + this.name;
     }
+    
+    public checkType(t: TypeEnvironment): AbstractType_ {
+        throw new Error("Not implemented yet.");
+    }
+
+    /*
+     * Declaration Implementation
+     */
+
+    getDeclarationIdentifier(): string {
+        throw new Error("Method not implemented.");
+    }
+
+    getDeclarationType(): AbstractType_ {
+        throw new Error("Method not implemented.");
+    }
+
 }

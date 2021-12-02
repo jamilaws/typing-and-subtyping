@@ -1,6 +1,9 @@
 import { AstNode, NodeType } from "../abstract-syntax-tree";
 import { Edge, Graph } from "../graph";
 
+import { TypeEnvironment } from "../../typing/type-environment";
+import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+
 // TODO IMPLEMENT!!!
 export class IfStatement extends AstNode {
     protected type: NodeType = NodeType.IfStatement;
@@ -9,14 +12,14 @@ export class IfStatement extends AstNode {
     public ifBlock:     AstNode[];
     public elseBlock:   AstNode[];
 
-    constructor(condition: AstNode, ifBlock: AstNode[], elseBlock: AstNode[]){
-        super();
+    constructor(codeLine: number, condition: AstNode, ifBlock: AstNode[], elseBlock: AstNode[]){
+        super(codeLine);
         this.condition = condition;
         this.ifBlock = ifBlock;
         this.elseBlock = elseBlock;
     }
 
-    public getGraph(): Graph<string> {
+    public getGraph(): Graph<AstNode> {
         let conditionGraph = this.condition.getGraph();
         let ifBlockGraphs = this.ifBlock.map(x => x.getGraph());
         let elseBlockGraphs = this.elseBlock.map(x => x.getGraph());
@@ -33,4 +36,9 @@ export class IfStatement extends AstNode {
         .merge(ifBlockGraphs.reduce((acc, curr) => acc.merge(curr), new Graph([], [])))
         .merge(elseBlockGraphs.reduce((acc, curr) => acc.merge(curr), new Graph([], [])));
     }
+
+    public checkType(t: TypeEnvironment): AbstractType_ {
+        throw new Error("Not implemented yet.");
+    }
+
 }
