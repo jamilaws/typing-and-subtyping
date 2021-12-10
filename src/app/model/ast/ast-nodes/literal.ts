@@ -5,13 +5,18 @@ import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 
 export class Literal extends AstNode {
-    protected type: NodeType = NodeType.Literal;
+    protected nodeType: NodeType = NodeType.Literal;
 
     value: string; // e.g. 1, "Hello World", true, ...
 
-    constructor(codeLine: number, value: string){
+    private type: AbstractType_ = null;
+
+    constructor(codeLine: number, value: string) {
         super(codeLine);
         this.value = value;
+
+        console.log(value);
+        
     }
 
     public getGraph(): Graph<AstNode> {
@@ -20,10 +25,15 @@ export class Literal extends AstNode {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.type + " " + this.value;
+        return this.nodeType + " " + this.value;
     }
     
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        return t.getTypeOfConstant(this.value);
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        this.type = t.getTypeOfConstant(this.value);
+        return this.type;
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 }

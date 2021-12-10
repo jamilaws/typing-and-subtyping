@@ -4,7 +4,7 @@ export class PointerType extends AbstractType {
 
     private baseType: AbstractType;
 
-    constructor(baseType: AbstractType){
+    constructor(baseType: AbstractType) {
         super();
         this.baseType = baseType;
     }

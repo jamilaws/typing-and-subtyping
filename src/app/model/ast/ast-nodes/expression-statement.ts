@@ -7,9 +7,10 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 
 // e.g. function parameter, struct member
 export class ExpressionStatement extends AstNode {
-    protected type: NodeType = NodeType.ExpressionStatement;
-
+    protected nodeType: NodeType = NodeType.ExpressionStatement;
     public expression: AbstractType;
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, expression: AbstractType){
         super(codeLine);
@@ -22,8 +23,12 @@ export class ExpressionStatement extends AstNode {
         return new Graph([newNode], [new Edge(newNode, this.expression.getGraphNode())]).merge(graph); 
     }
 
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        throw this.expression.checkType(t);
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        return this.type = this.expression.performTypeCheck(t);
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
     
 }

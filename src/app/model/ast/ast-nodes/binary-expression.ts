@@ -14,11 +14,13 @@ export enum BinaryOperator {
 }
 
 export class BinaryExpression extends AstNode {
-    protected type: NodeType = NodeType.BinaryExpression;
+    protected nodeType: NodeType = NodeType.BinaryExpression;
 
     public operator: BinaryOperator;
     public left: AstNode;
     public right: AstNode;
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, operator: BinaryOperator, left: AstNode, right: AstNode) {
         super(codeLine);
@@ -44,21 +46,24 @@ export class BinaryExpression extends AstNode {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.type + " " + this.operator;
+        return this.nodeType + " " + this.operator;
     }
 
-    public checkType(t: TypeEnvironment): AbstractType_ {
-
-        const t_1 = this.left.checkType(t);
-        const t_2 = this.right.checkType(t);
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        const t_1 = this.left.performTypeCheck(t);
+        const t_2 = this.right.performTypeCheck(t);
 
         if(this.operator === BinaryOperator["="]){
             // TODO: Check 't_2 can be converted into t_1'
-            return t_1;
+            return this.type = t_1;
         } else {
             // TODO: Check 't_2' === 't_1'
-            return t_1;
+            return this.type = t_1;
         }
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
 }

@@ -5,13 +5,19 @@ import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 
 export class Identifier extends AstNode {
-    protected type: NodeType = NodeType.Identifier;
+    protected nodeType: NodeType = NodeType.Identifier;
 
     public value: string; // e.g. main, ...
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: string){
         super(codeLine);
         this.value = value;
+    }
+
+    public getName(): string {
+        return this.value;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -21,13 +27,17 @@ export class Identifier extends AstNode {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.type + " " + this.value;
+        return this.nodeType + " " + this.value;
     }
     
-    public checkType(t: TypeEnvironment): AbstractType_ {
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const type = t.getTypeOfIdentifier(this.value);
         if (!type) throw new Error("Found undeclared identifier: " + this.value);
-        return type;
+        return this.type = type;
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
 }

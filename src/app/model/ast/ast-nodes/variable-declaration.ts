@@ -7,15 +7,18 @@ import { Type } from "./type/type";
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 import { Declaration } from "../../typing/symbol-table";
+import { NoTypePlaceholder } from "../../typing/types/common/no-type-placeholder";
 
 export class VariableDeclaration extends AstNode implements Declaration {
-    protected type: NodeType = NodeType.VariableDeclaration;
+    protected nodeType: NodeType = NodeType.VariableDeclaration;
 
     public defType: AbstractType;
     public name: string;
     public value: AstNode;
 
-    constructor(codeLine: number, defType: Type | PointerType, name: string, value: AstNode){
+    private type: AbstractType_ = null;
+
+    constructor(codeLine: number, defType: AbstractType, name: string, value: AstNode){
         super(codeLine);
         this.defType = defType;
         this.name = name;
@@ -34,11 +37,22 @@ export class VariableDeclaration extends AstNode implements Declaration {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.type + " " + this.name;
+        return this.nodeType + " " + this.name;
     }
     
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        throw new Error("Not implemented yet.");
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+
+        const typeType = this.defType.performTypeCheck(t);
+        const valueType = this.value.performTypeCheck(t);
+
+        // TODO: Check if typeType and valueType are compatible! TypeError otherwise.
+
+        t.declare(this);
+        return this.type = new NoTypePlaceholder();
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
     /*
@@ -46,11 +60,11 @@ export class VariableDeclaration extends AstNode implements Declaration {
      */
 
     getDeclarationIdentifier(): string {
-        throw new Error("Method not implemented.");
+        return this.name;
     }
 
     getDeclarationType(): AbstractType_ {
-        throw new Error("Method not implemented.");
+        return this.defType.getType();
     }
 
 }

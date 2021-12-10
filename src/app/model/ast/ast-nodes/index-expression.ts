@@ -6,12 +6,15 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 import { IntType } from "../../typing/types/base-types/int-type";
 import { PointerType } from "../../typing/types/type-constructors/pointer-type";
 import { ArrayType } from "../../typing/types/type-constructors/array-type";
+import { TypeError } from "../../typing/type-error";
 
 export class IndexExpression extends AstNode {
-    protected type: NodeType = NodeType.IndexExpression;
+    protected nodeType: NodeType = NodeType.IndexExpression;
 
     public value: AstNode;
     public index: AstNode; 
+   
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: AstNode, index: AstNode){
         super(codeLine);
@@ -30,19 +33,23 @@ export class IndexExpression extends AstNode {
         return new Graph([newNode], edges).merge(valueGraph).merge(indexGraph);
     }
  
-    public checkType(t: TypeEnvironment): AbstractType_ {
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
 
-        let valueType = this.value.checkType(t);
-        let indexType = this.index.checkType(t);
+        let valueType = this.value.performTypeCheck(t);
+        let indexType = this.index.performTypeCheck(t);
 
         if(!(valueType instanceof PointerType) && !(valueType instanceof ArrayType)) {
-            throw new Error("Index syntax can only be applied on either pointer or array type.");
+            throw new TypeError("Index syntax can only be applied on either pointer or array type.");
         }
         if(!(indexType instanceof IntType)) {
-            throw new Error("Array accessor index must be of type int");
+            throw new TypeError("Array accessor index must be of type int");
         }
 
-        return (<ArrayType | PointerType> valueType).getBaseType();
+        return this.type = (<ArrayType | PointerType> valueType).getBaseType();
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
 }

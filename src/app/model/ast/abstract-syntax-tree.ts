@@ -1,7 +1,7 @@
 import { TypeCheckable } from "../typing/interfaces/type-checkable";
 import { TypeEnvironment } from "../typing/type-environment";
 import { AbstractType } from "../typing/types/abstract-type";
-import { FunctionDeclaration } from "./ast-nodes/function-declaration";
+import { NoTypePlaceholder } from "../typing/types/common/no-type-placeholder";
 import { Graph, Node } from "./graph";
 
 export enum NodeType {
@@ -9,6 +9,7 @@ export enum NodeType {
     ReturnStatement = "ReturnStatement",
     Type = "Type",
     PointerType = "PointerType",
+    StructType = "StructType",
     IndexExpression = "IndexExpression", // Array get
     CallExpression = "CallExpression", // TODO: Rename to 'FunctionCall' ? 
     Literal = "Literal",
@@ -21,11 +22,12 @@ export enum NodeType {
     BinaryExpression = "BinaryExpression",
     StructAccess = "StructAccess", // TODO: Document somewhere (not included in parsed raw type)
     ExpressionStatement = "ExpressionStatement",
+    PrefixExpression = "PrefixExpression",
 }
 
 export abstract class AstNode implements TypeCheckable {
 
-    protected abstract type: NodeType;
+    protected abstract nodeType: NodeType;
     protected codeLine: number; //{ file: string, line: number };
 
     // Will be initialized as soon as requested
@@ -56,10 +58,11 @@ export abstract class AstNode implements TypeCheckable {
      * @returns 
      */
     public getGraphNodeLabel(): string {
-        return this.type;
+        return this.nodeType;
     }
 
-    public abstract checkType(t: TypeEnvironment): AbstractType;
+    public abstract performTypeCheck(t: TypeEnvironment): AbstractType;
+    public abstract getType(): AbstractType;
 }
 
 export class AbstractSyntaxTree implements TypeCheckable {
@@ -77,8 +80,12 @@ export class AbstractSyntaxTree implements TypeCheckable {
         return this.roots.map(e => e.getGraph()).reduce((acc, curr) => acc.merge(curr), new Graph([], []));
     }
 
-    public checkType(t: TypeEnvironment): AbstractType {
-        this.roots.forEach(e => e.checkType(t));
-        return null;
+    public performTypeCheck(t: TypeEnvironment): AbstractType {
+        this.roots.forEach(e => e.performTypeCheck(t));
+        return new NoTypePlaceholder();
+    }
+
+    public getType(): AbstractType {
+        throw new Error("Method not implemented.");
     }
 }

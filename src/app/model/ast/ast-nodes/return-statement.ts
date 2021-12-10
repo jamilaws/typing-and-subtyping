@@ -5,9 +5,11 @@ import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 
 export class ReturnStatement extends AstNode {
-    protected type: NodeType = NodeType.ReturnStatement;
+    protected nodeType: NodeType = NodeType.ReturnStatement;
 
     public value: AstNode;
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: AstNode) {
         super(codeLine);
@@ -23,8 +25,12 @@ export class ReturnStatement extends AstNode {
         return new Graph([newNode], [newEdge]).merge(valueGraph);
     }
     
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        throw new Error("Not implemented yet.");
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        return this.type = this.value.performTypeCheck(t);
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
 }

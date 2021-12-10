@@ -15,4 +15,12 @@ export class StructType extends AbstractType {
     public toString(): string {
         return "struct { " + this.members.map(m => m.toString()).concat(", ") + " }";
     }
+
+    public getName(): string {
+        return this.name;
+    }
+
+    public getMembers(): Definition[] {
+        return this.members;
+    }
 }

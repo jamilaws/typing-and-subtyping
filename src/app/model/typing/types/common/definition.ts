@@ -1,6 +1,10 @@
-import { AbstractType } from "../../../ast/ast-nodes/type/abstract-type";
+import { AbstractType } from "../abstract-type";
 
+/**
+ * Class representing function parameters, struct definition members or ...  TODO?
+ */
 export class Definition {
+
     private name: string;
     private type: AbstractType;
 

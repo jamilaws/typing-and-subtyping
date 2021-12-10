@@ -11,12 +11,14 @@ import { Declaration } from "../../typing/symbol-table";
 import { FunctionType } from "../../typing/types/type-constructors/function-type";
 
 export class FunctionDeclaration extends AstNode implements Declaration {
-    protected type: NodeType = NodeType.FunctionDeclaration;
+    protected nodeType: NodeType = NodeType.FunctionDeclaration;
     
     public defType: AbstractType; // TODO: Check if ok; (returning struct types?)
     public name: string;
     public args: Definition[]; // TODO Check if ok
     public body: AstNode[];
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, defType: Type | PointerType, name: string, args: Definition[], body: AstNode[]) {
         super(codeLine);
@@ -50,21 +52,26 @@ export class FunctionDeclaration extends AstNode implements Declaration {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.type + " " + this.name;
+        return this.nodeType + " " + this.name;
     }
 
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        // Add function declaration to symbol table
-        t.getSymbolTable().insert(this.name, this);
-        
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        t.declare(this);
+
         t.getSymbolTable().enterNewScope();
 
-        this.body.forEach(e => e.checkType(t));
-        // TODO: Return type?
-        
+        const parameterTypes: AbstractType_[] = this.args.map(a => a.performTypeCheck(t));
+        const returnType: AbstractType_ = this.defType.performTypeCheck(t);
+
+        this.body.forEach(e => e.performTypeCheck(t));
+
         t.getSymbolTable().leaveScope();
         
-        return null;
+        return this.type = new FunctionType(parameterTypes, returnType);
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
     /*
@@ -76,6 +83,6 @@ export class FunctionDeclaration extends AstNode implements Declaration {
     }
 
     getDeclarationType(): AbstractType_ {
-        return new FunctionType(null, null); // TODO: Implement properly
+        return this.type;
     }
 }

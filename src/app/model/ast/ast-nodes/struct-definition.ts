@@ -4,12 +4,17 @@ import { Definition } from "./definition";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { Declaration } from "../../typing/symbol-table";
+import { StructType } from "../../typing/types/type-constructors/struct-type";
+import { Definition as Definition_ } from "../../typing/types/common/definition";
 
-export class StructDefinition extends AstNode {
-    protected type: NodeType = NodeType.StructDefinition;
+export class StructDefinition extends AstNode implements Declaration {
+    protected nodeType: NodeType = NodeType.StructDefinition;
 
     name: string;
     member: Definition[];
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, name: string, member: Definition[]){
         super(codeLine);
@@ -29,10 +34,28 @@ export class StructDefinition extends AstNode {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.type + " " + this.name;
+        return this.nodeType + " " + this.name;
     }
     
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        throw new Error("Not implemented yet.");
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        t.declare(this);
+        const members = this.member.map(m => new Definition_(m.name, m.defType.performTypeCheck(t)));
+        return this.type = new StructType(this.name, members);
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
+    }
+
+    /*
+     * Declaration Implementation
+     */
+
+    getDeclarationIdentifier(): string {
+        return this.name;
+    }
+
+    getDeclarationType(): AbstractType_ {
+        return this.getType();
     }
 }

@@ -1,4 +1,4 @@
-import { SymbolTable } from "./symbol-table";
+import { Declaration, SymbolTable } from "./symbol-table";
 import { AbstractType } from "./types/abstract-type";
 import { CharType } from "./types/base-types/char-type";
 import { FloatType } from "./types/base-types/float-type";
@@ -19,6 +19,10 @@ export class TypeEnvironment {
 
     constructor() {
         this.symbolTable = new SymbolTable();
+    }
+
+    public declare(declaration: Declaration): void {
+        this.symbolTable.insert(declaration.getDeclarationIdentifier(), declaration);
     }
 
     /**
@@ -61,7 +65,7 @@ export class TypeEnvironment {
      * @returns {AbstractType}
      */
     public getTypeOfIdentifier(identifier: string): AbstractType {
-        return this.symbolTable.lookup(identifier);
+        return this.symbolTable.lookup(identifier).getDeclarationType();
     }
 
     /**

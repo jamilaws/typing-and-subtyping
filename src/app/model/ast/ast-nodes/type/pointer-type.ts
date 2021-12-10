@@ -7,12 +7,13 @@ import { Type } from "./type";
 import { PointerType as PointerType_ } from "src/app/model/typing/types/type-constructors/pointer-type";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 
-// e.g. char*, int[], ...
+// char*, int[]
 export class PointerType extends AbstractType {
 
-    protected type: NodeType = NodeType.PointerType;
-
+    protected nodeType: NodeType = NodeType.PointerType;
     public target: Type;
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, target: Type) {
         super(codeLine);
@@ -28,8 +29,12 @@ export class PointerType extends AbstractType {
         return new Graph([newNode], [newEdge]).merge(graph);
     }
 
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        const targetType: AbstractType_ = this.target.checkType(t);
-        return new PointerType_(targetType);
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        const targetType: AbstractType_ = this.target.performTypeCheck(t);
+        return this.type = new PointerType_(targetType);;
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 }

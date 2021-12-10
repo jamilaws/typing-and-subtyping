@@ -3,14 +3,19 @@ import { Edge, Graph } from "../graph";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { IntType } from "../../typing/types/base-types/int-type";
+import { TypeError } from "../../typing/type-error";
+import { NoTypePlaceholder } from "../../typing/types/common/no-type-placeholder";
 
 // TODO IMPLEMENT!!!
 export class IfStatement extends AstNode {
-    protected type: NodeType = NodeType.IfStatement;
+    protected nodeType: NodeType = NodeType.IfStatement;
 
     public condition:   AstNode;
     public ifBlock:     AstNode[];
     public elseBlock:   AstNode[];
+
+    private type: AbstractType_ = null;
 
     constructor(codeLine: number, condition: AstNode, ifBlock: AstNode[], elseBlock: AstNode[]){
         super(codeLine);
@@ -37,8 +42,23 @@ export class IfStatement extends AstNode {
         .merge(elseBlockGraphs.reduce((acc, curr) => acc.merge(curr), new Graph([], [])));
     }
 
-    public checkType(t: TypeEnvironment): AbstractType_ {
-        throw new Error("Not implemented yet.");
+    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        const conditionType = this.condition.performTypeCheck(t);
+        if (!(conditionType instanceof IntType)) throw new TypeError("Condition of if-statement must be of type 'int'");
+
+        t.getSymbolTable().enterNewScope();
+        this.ifBlock.forEach(e => e.performTypeCheck(t));
+        t.getSymbolTable().leaveScope();
+
+        t.getSymbolTable().enterNewScope();
+        this.elseBlock.forEach(e => e.performTypeCheck(t));
+        t.getSymbolTable().leaveScope();
+
+        return this.type = new NoTypePlaceholder();
+    }
+
+    public getType(): AbstractType_ {
+        return this.type;
     }
 
 }

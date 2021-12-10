@@ -5,6 +5,8 @@ import { Graph, Node } from 'src/app/model/ast/graph';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
 import { IncompleteAstWrapperException, ParsingService } from 'src/app/service/parsing.service';
 
+const TYPE_STRING_PLACEHOLDER: string = "Please select an AST-Node.";
+
 interface DisplayGraphNode {
   name: string;
   x:    number; // [0; 100] left->right
@@ -35,17 +37,21 @@ export class MainViewComponent implements OnInit {
   private graphNodes: DisplayGraphNode[] = new Array<DisplayGraphNode>();
   private graphEdges: DisplayGraphEdge[] = new Array<DisplayGraphEdge>();
 
-  public typeErrorMessage: string = null;
+  public typeString: string = TYPE_STRING_PLACEHOLDER;
 
   constructor(private parsingService: ParsingService) { }
 
   ngOnInit(): void {
     this.code = this.initialCode;
     this.updateAst();
+    this.performTypeCheck();
   }
 
   onCodeChange(code: string) {
     this.code = code;
+
+    this.typeString = TYPE_STRING_PLACEHOLDER;
+
     this.updateAst();
     this.performTypeCheck();
   }
@@ -60,25 +66,28 @@ export class MainViewComponent implements OnInit {
       } catch (e) {
         alert("Valid AST but building graph failed.");
         console.log(e);
-        
       }
     } catch (e) {
       if(e instanceof IncompleteAstWrapperException){
-        alert(e.message);
+        alert(e.message + " (see console)");
+        console.log("IncompleteAstWrapperException on parsing:");
         console.log(e.rawParsedJson);
       }
       this.isAstValid = false;
+      // Uncomment if error of underlying parser is needed.
       console.log(e);
     }
   }
 
   private performTypeCheck(): void {
+    if(!this.isAstValid) {
+      return;
+    }
     try {
       const typeEnv = new TypeEnvironment();
-      this.ast.checkType(typeEnv);
-      this.typeErrorMessage = null;
+      this.ast.performTypeCheck(typeEnv);
     } catch (e) {
-      this.typeErrorMessage = (<Error> e).message;
+      this.typeString = (<Error> e).message;
     }
   }
 
@@ -104,7 +113,6 @@ export class MainViewComponent implements OnInit {
       currentLevel.forEach((n, col) => {
         n.x = col + 1;
         n.y = levelIndex;
-        n.name = `${n.name} (${n.x};${n.y})`
       })
 
       // Update currentLevel with next one
@@ -118,12 +126,17 @@ export class MainViewComponent implements OnInit {
       n.y *= 100;
     })
 
+    // Add node index to name
+    this.graphNodes.forEach((n, index) => {
+      n.name = n.name + ` [${index}]`;
+    });
+
   }
 
   selectNode(index: string): void {
-    const node = this.ast.getGraph().getNodes()[Number.parseInt(index)];
-    alert(node.getData().getGraphNodeLabel());
+    const node = this.ast.getGraph().getNodes()[Number.parseInt(index)].getData();
     // TODO: Get type of node
+    this.typeString = node.getType().toString();
   }
 
   getGraphOption(): EChartsOption {

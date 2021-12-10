@@ -12,7 +12,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgxEchartsModule } from 'ngx-echarts';
 
 
-
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'app-name/assets', // configure base path cotaining monaco-editor directory after build default: './assets'
   defaultOptions: { scrollBeyondLastLine: false }, // pass default options to be used

@@ -16,6 +16,10 @@ import { VariableDeclaration } from '../model/ast/ast-nodes/variable-declaration
 import { BinaryExpression, BinaryOperator } from '../model/ast/ast-nodes/binary-expression';
 import { StructAccessExpression } from '../model/ast/ast-nodes/struct-access-expression';
 import { ExpressionStatement } from '../model/ast/ast-nodes/expression-statement';
+import { PrefixExpression } from '../model/ast/ast-nodes/prefix-expression';
+import { StructType } from '../model/ast/ast-nodes/type/struct-type';
+import { AbstractType } from '../model/ast/ast-nodes/type/abstract-type';
+
 const parse = require('../../../cparse/cparse');
 
 export class IncompleteAstWrapperException extends Error {
@@ -35,16 +39,14 @@ export class IncompleteAstWrapperException extends Error {
 })
 export class ParsingService {
 
-  constructor() {
-
-  }
+  constructor() {}
 
   public parse(code: string): AbstractSyntaxTree {
     const parsedRaw: any[] = parse(code);
     const roots = parsedRaw.map(x => this.rawToAstNode(x));
 
-    console.log("Parsed raw:");
-    console.log(parsedRaw);
+    // console.log("Parsed raw:");
+    // console.log(parsedRaw);
 
     return new AbstractSyntaxTree(roots);
   }
@@ -101,6 +103,9 @@ export class ParsingService {
       case NodeType.ExpressionStatement:
         out = this.rawToAstNode_ExpressionStatement(x);
         break;
+      case NodeType.PrefixExpression:
+        out = this.rawToAstNode_PrefixExpression(x);
+        break;
       default: throw new IncompleteAstWrapperException(type, x);
     }
 
@@ -139,7 +144,7 @@ export class ParsingService {
 
   private rawToAstNode_Identifier(x: any): Identifier {
     const value = x["value"];
-    return new Identifier(x["pos"]["line"], value);
+    return new Identifier(x["pos"] ? x["pos"]["line"] : -1, value);
   }
 
   private rawToAstNode_IfStatement(x: any): IfStatement {
@@ -176,13 +181,18 @@ export class ParsingService {
     return new StructDefinition(x["pos"]["line"], name, member);
   }
   
-  private rawToAstNode_Type(x: any): Type {
+  private rawToAstNode_Type(x: any): Type | StructType {
     const name = x["name"];
+    console.log(x);
+    
+    if(x["modifier"].find((e: any) => e === "struct")) {
+      return new StructType(x["pos"]["line"], name);
+    }
     return new Type(x["pos"]["line"], name);
   }
   
   private rawToAstNode_VariableDeclaration(x: any): VariableDeclaration {
-    const defType = <Type | PointerType> this.rawToAstNode(x["defType"]);
+    const defType = <AbstractType> this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
     const value = this.rawToAstNode(x["value"]);
     return new VariableDeclaration(x["pos"]["line"], defType, name, value);
@@ -198,5 +208,12 @@ export class ParsingService {
   private rawToAstNode_ExpressionStatement(x: any): ExpressionStatement {
     const expression = this.rawToAstNode(x["expression"]);
     return new ExpressionStatement(x["pos"]["line"], expression);
+  }
+  
+  private rawToAstNode_PrefixExpression(x: any): PrefixExpression {
+    const value = this.rawToAstNode(x["value"]);
+    console.log(value);
+    
+    return new PrefixExpression(x["pos"]["line"], value, x["operator"]);
   }
 }
