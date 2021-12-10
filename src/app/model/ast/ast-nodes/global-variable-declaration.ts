@@ -29,7 +29,7 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
 
         const newNode = this.getGraphNode();
         const edges = [new Edge(newNode, this.defType.getGraphNode()), new Edge(newNode, this.value.getGraphNode())];
-        
+
         return new Graph([newNode], edges).merge(defTypeGraph).merge(valueGraph);
     }
 
@@ -43,7 +43,8 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
         const typeType = this.defType.performTypeCheck(t);
         const valueType = this.value.performTypeCheck(t);
 
-        // TODO: Check if typeType and valueType are compatible! TypeError otherwise.
+        // TODO: Check subtyping!
+        if (!typeType.equals(valueType)) throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
 
         t.declare(this);
         return this.type = new NoTypePlaceholder();

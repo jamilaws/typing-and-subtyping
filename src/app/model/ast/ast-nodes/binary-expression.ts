@@ -3,6 +3,7 @@ import { Edge, Graph } from "../graph";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { TypeError } from "../../typing/type-error";
 
 export enum BinaryOperator {
     '+',
@@ -53,11 +54,16 @@ export class BinaryExpression extends AstNode {
         const t_1 = this.left.performTypeCheck(t);
         const t_2 = this.right.performTypeCheck(t);
 
+        console.log("t1: " + t_1.toString());
+        console.log("t1: " + t_2.toString());
+        
+
         if(this.operator === BinaryOperator["="]){
             // TODO: Check 't_2 can be converted into t_1'
+            if(!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         } else {
-            // TODO: Check 't_2' === 't_1'
+            if(!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         }
     }

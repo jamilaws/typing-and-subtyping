@@ -183,7 +183,6 @@ export class ParsingService {
   
   private rawToAstNode_Type(x: any): Type | StructType {
     const name = x["name"];
-    console.log(x);
     
     if(x["modifier"].find((e: any) => e === "struct")) {
       return new StructType(x["pos"]["line"], name);

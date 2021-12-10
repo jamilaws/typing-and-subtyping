@@ -42,15 +42,11 @@ export class CallExpression extends AstNode {
         const functionDeclaration = <FunctionType> t.getTypeOfIdentifier(identifier);
 
         if(functionDeclaration instanceof FunctionType){
-            
-            /*
-             * Check if parameters are compatible
-             */
 
             const declarationParamTypes = functionDeclaration.getParameters();
             const callParamTypes = this.args.map(arg => arg.performTypeCheck(t));
 
-
+            // TODO: Check subtyping!
             if(declarationParamTypes.length !== callParamTypes.length) throw new TypeError(`Expected ${declarationParamTypes.length} parameters, but got ${callParamTypes.length}`);
             if(!declarationParamTypes.every((value, index) => value.equals(callParamTypes[index]))){
                 throw new TypeError(`Function parameter missmatch. Cannot apply [${callParamTypes}] to [${declarationParamTypes}]`);

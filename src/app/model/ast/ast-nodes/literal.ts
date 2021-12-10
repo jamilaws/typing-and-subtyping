@@ -4,6 +4,9 @@ import { Graph } from "../graph";
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 
+/**
+ * TODO: Handle literals for type struct
+ */
 export class Literal extends AstNode {
     protected nodeType: NodeType = NodeType.Literal;
 
@@ -13,10 +16,7 @@ export class Literal extends AstNode {
 
     constructor(codeLine: number, value: string) {
         super(codeLine);
-        this.value = value;
-
-        console.log(value);
-        
+        this.value = value;        
     }
 
     public getGraph(): Graph<AstNode> {
