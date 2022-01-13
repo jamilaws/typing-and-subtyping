@@ -79,6 +79,6 @@ export class PrefixExpression extends AstNode {
                 break;
             default: throw new Error("Invalid prefix operator found: " + this.operator);
         }
-        return new TypingTree(label, this.getCode(), this.getType().toString());
+        return new TypingTree(label, this.getCode(), this.getType().toString(), [this.value.getTypingTree()]);
     }
 }

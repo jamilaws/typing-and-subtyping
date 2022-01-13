@@ -38,6 +38,10 @@ export abstract class AstNode implements TypeCheckable {
         this.codeLine = codeLine;
     }
 
+    public getCodeLine(): number {
+        return this.codeLine;
+    }
+
     public abstract getCode(): string;
 
     /**
