@@ -3,6 +3,8 @@ import { Edge, Graph } from "../graph";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class ReturnStatement extends AstNode {
     protected nodeType: NodeType = NodeType.ReturnStatement;
@@ -14,6 +16,10 @@ export class ReturnStatement extends AstNode {
     constructor(codeLine: number, value: AstNode) {
         super(codeLine);
         this.value = value;
+    }
+
+    public getCode(): string {
+        throw new Error("Not implemented yet.");
     }
 
     public getGraph(): Graph<AstNode> {
@@ -31,6 +37,10 @@ export class ReturnStatement extends AstNode {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 
 }

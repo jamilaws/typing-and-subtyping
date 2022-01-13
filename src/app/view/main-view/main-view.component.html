@@ -1,23 +1,36 @@
-<div class="row">
-    <div class="col-sm-4">
-        <app-code-editor [initialCode]="initialCode" (onCodeChange)="onCodeChange($event)"></app-code-editor>
-        <div class="node-selector">
-            <input #nodeIndex type="number">
-            <button (click)="selectNode(nodeIndex.value)">Get Type!</button>
+<div class="wrapper">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="code-editor-wrapper">
+                        <app-code-editor class="code-editor" [initialCode]="initialCode" (onCodeChange)="onCodeChange($event)"></app-code-editor>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="ast-wrapper">
+                        <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
+                        <ng-template #astValidBlock>
+                            <div echarts [options]="getGraphOption()"></div>
+                        </ng-template>
+                        <ng-template #astInvalidBlock>
+                            Invalid AST :-(
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-sm-4">
-        <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
-        <ng-template #astValidBlock>
-            <div echarts [options]="getGraphOption()"></div>
-        </ng-template>
-        <ng-template #astInvalidBlock>
-            Invalid AST :-(
-        </ng-template>
-    </div>
-    <div class="col-sm-4" style="background-color: lightgray;">
-        <div>
-            {{typeString}}
+        <div class="col-sm-8">
+            <div class="node-selector" style="width: 100%; text-align: center; margin-top: 10px;">
+                <input #nodeIndex type="number">
+                <button (click)="onSelectNode(nodeIndex.value)">Get Type!</button>
+            </div>
+            <div *ngIf="typeErrorString">
+                {{typeErrorString}}
+            </div>
+            <div *ngIf="!typeErrorString" class="typing-tree-wrapper">
+                <app-typing-tree [typingTree]="typingTree"></app-typing-tree>
+            </div>
         </div>
     </div>
 </div>

@@ -10,6 +10,7 @@ import { MainViewComponent } from './view/main-view/main-view.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { TypingTreeComponent } from './util/typing-tree/typing-tree.component';
 
 
 const monacoConfig: NgxMonacoEditorConfig = {
@@ -22,7 +23,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
   declarations: [
     AppComponent,
     CodeEditorComponent,
-    MainViewComponent
+    MainViewComponent,
+    TypingTreeComponent
   ],
   imports: [
     BrowserModule,

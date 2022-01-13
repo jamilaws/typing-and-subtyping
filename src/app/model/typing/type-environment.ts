@@ -46,9 +46,12 @@ export class TypeEnvironment {
         /*
         char
         */
+
         if(constant.length === 1){
+            // e.g. "c"
             return new CharType();
         } else if (constant.length > 1) {
+            // e.g. "Hello world"
             return new PointerType(new CharType());
         }
 

@@ -1,0 +1,24 @@
+<div *ngIf="typingTree; then showBlock else doNotShowBlock"></div>
+<ng-template #showBlock>
+    <div class="wrapper">
+        <div class="labelWrapper">
+            {{typingTree.label}}
+        </div>
+        <div class="bodyWrapper">
+            <!-- Recursive rendering of children until leafs -->
+            <div class="childrenWrapper">
+                <app-typing-tree class="childWrapper" [typingTree]="child"
+                    *ngFor="let child of typingTree.children; let i = index"
+                    [ngClass]="{'notLastChild': i !== typingTree.children.length-1}">
+                </app-typing-tree>
+            </div>
+            <div class="divider"></div>
+            <div class="text">
+                {{typingTree.text}}
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #doNotShowBlock>
+    <!-- Intentionally left blank -->
+</ng-template>

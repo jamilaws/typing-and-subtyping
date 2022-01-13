@@ -9,6 +9,8 @@ import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 import { Declaration } from "../../typing/symbol-table";
 import { FunctionType } from "../../typing/types/type-constructors/function-type";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class FunctionDeclaration extends AstNode implements Declaration {
     protected nodeType: NodeType = NodeType.FunctionDeclaration;
@@ -27,6 +29,10 @@ export class FunctionDeclaration extends AstNode implements Declaration {
         this.name = name;
         this.args = args;
         this.body = body;
+    }
+
+    public getCode(): string {
+        throw new Error("Not implemented yet.");
     }
 
     public getGraph(): Graph<AstNode> {
@@ -72,6 +78,10 @@ export class FunctionDeclaration extends AstNode implements Declaration {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 
     /*

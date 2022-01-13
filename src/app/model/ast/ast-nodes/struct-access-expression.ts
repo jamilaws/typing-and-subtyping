@@ -6,6 +6,8 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 import { Identifier } from "./identifier";
 import { StructType } from "../../typing/types/type-constructors/struct-type";
 import { TypeError } from "../../typing/type-error";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 /**
  * TODO: Handle in binary expression instead!
@@ -22,6 +24,10 @@ export class StructAccessExpression extends AstNode {
         super(codeLine);
         this.struct = struct;
         this.member = member;
+    }
+
+    public getCode(): string {
+        return this.struct.getCode() + "." + this.member.getCode();
     }
 
     public getGraph(): Graph<AstNode> {
@@ -53,6 +59,10 @@ export class StructAccessExpression extends AstNode {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 
 }

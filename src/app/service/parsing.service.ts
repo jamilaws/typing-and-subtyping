@@ -27,7 +27,7 @@ export class IncompleteAstWrapperException extends Error {
   public rawAstNodeType: string;
   public rawParsedJson: string;
 
-  constructor(rawAstNodeType: string, rawParsedJson: string = null){
+  constructor(rawAstNodeType: string, rawParsedJson: string = null) {
     super("Ast wrapper implementation incomplete. Support for type " + rawAstNodeType + " not implemented yet.");
     this.rawAstNodeType = rawAstNodeType;
     this.rawParsedJson = rawParsedJson;
@@ -39,14 +39,15 @@ export class IncompleteAstWrapperException extends Error {
 })
 export class ParsingService {
 
-  constructor() {}
+  constructor() { }
 
   public parse(code: string): AbstractSyntaxTree {
     const parsedRaw: any[] = parse(code);
-    const roots = parsedRaw.map(x => this.rawToAstNode(x));
 
-    // console.log("Parsed raw:");
-    // console.log(parsedRaw);
+    console.log("Parsed raw:");
+    console.log(parsedRaw);
+
+    const roots = parsedRaw.map(x => this.rawToAstNode(x));
 
     return new AbstractSyntaxTree(roots);
   }
@@ -116,27 +117,34 @@ export class ParsingService {
   // TODO: Move to classes instead??
   private rawToAstNode_CallExpression(x: any): CallExpression {
     const base: Identifier = <Identifier>this.rawToAstNode(x["base"]);
-    const args: AstNode[] = x["arguments"].map((x: any) => <AstNode>this.rawToAstNode(x));
+
+    var args: AstNode[];
+    if (x["arguments"].length === 1 && x["arguments"][0] === undefined) {
+      // Note: the underlying parser implementation handles a call without any arguments with an array containing 'undefined' once
+      args = [];
+    } else {
+      args = x["arguments"].map((x: any) => <AstNode>this.rawToAstNode(x));
+    }
     return new CallExpression(x["pos"]["line"], base, args);
   }
 
   private rawToAstNode_Definition(x: any): Definition {
-    const defType = <Type | PointerType> this.rawToAstNode(x["defType"]);
+    const defType = <Type | PointerType>this.rawToAstNode(x["defType"]);
     const name: string = x["name"]
     return new Definition(x["pos"]["line"], defType, name);
   }
 
   private rawToAstNode_FunctionDeclaration(x: any): FunctionDeclaration {
-    const defType = <Type | PointerType> this.rawToAstNode(x["defType"]);
+    const defType = <Type | PointerType>this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
-    const args = <Definition[]> x["arguments"].map((x: any) => this.rawToAstNode(x));
+    const args = <Definition[]>x["arguments"].map((x: any) => this.rawToAstNode(x));
     const body = x["body"].map((x: any) => this.rawToAstNode(x));
 
     return new FunctionDeclaration(x["pos"]["line"], defType, name, args, body);
   }
 
   private rawToAstNode_GlobalVariableDeclaration(x: any): GlobalVariableDeclaration {
-    const defType = <Type | PointerType> this.rawToAstNode(x["defType"]);
+    const defType = <Type | PointerType>this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
     const value = this.rawToAstNode(x["value"]);
     return new GlobalVariableDeclaration(x["pos"]["line"], defType, name, value);
@@ -149,7 +157,7 @@ export class ParsingService {
 
   private rawToAstNode_IfStatement(x: any): IfStatement {
     const condition = this.rawToAstNode(x["condition"]);
-    const ifBlock   = x["body"].map((x: any) => this.rawToAstNode(x));
+    const ifBlock = x["body"].map((x: any) => this.rawToAstNode(x));
     const elseBlock = x["else"].map((x: any) => this.rawToAstNode(x));
     return new IfStatement(x["pos"]["line"], condition, ifBlock, elseBlock);
   }
@@ -166,53 +174,53 @@ export class ParsingService {
   }
 
   private rawToAstNode_PointerType(x: any): PointerType {
-    const target = <Type> this.rawToAstNode(x["target"]);
+    const target = <Type>this.rawToAstNode(x["target"]);
     return new PointerType(x["pos"]["line"], target);
   }
-    
+
   private rawToAstNode_ReturnStatement(x: any): ReturnStatement {
     const value = this.rawToAstNode(x["value"]);
     return new ReturnStatement(x["pos"]["line"], value);
   }
-    
+
   private rawToAstNode_StructDefinition(x: any): StructDefinition {
     const name = x["name"];
     const member = x["member"].map((x: any) => this.rawToAstNode(x));
     return new StructDefinition(x["pos"]["line"], name, member);
   }
-  
+
   private rawToAstNode_Type(x: any): Type | StructType {
     const name = x["name"];
-    
-    if(x["modifier"].find((e: any) => e === "struct")) {
+
+    if (x["modifier"].find((e: any) => e === "struct")) {
       return new StructType(x["pos"]["line"], name);
     }
     return new Type(x["pos"]["line"], name);
   }
-  
+
   private rawToAstNode_VariableDeclaration(x: any): VariableDeclaration {
-    const defType = <AbstractType> this.rawToAstNode(x["defType"]);
+    const defType = <AbstractType>this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
     const value = this.rawToAstNode(x["value"]);
     return new VariableDeclaration(x["pos"]["line"], defType, name, value);
   }
-  
+
   private rawToAstNode_BinaryExpression(x: any): BinaryExpression | StructAccessExpression {
-    const operator = <BinaryOperator> x["operator"];
+    const operator = <BinaryOperator>x["operator"];
     const left = this.rawToAstNode(x["left"]);
     const right = this.rawToAstNode(x["right"]);
-    return x["operator"] === "." ? new StructAccessExpression(x["pos"]["line"], <Identifier> left, <Identifier> right) : new BinaryExpression(x["pos"]["line"], operator, left, right);
+    return x["operator"] === "." ? new StructAccessExpression(x["pos"]["line"], <Identifier>left, <Identifier>right) : new BinaryExpression(x["pos"]["line"], operator, left, right);
   }
-  
+
   private rawToAstNode_ExpressionStatement(x: any): ExpressionStatement {
     const expression = this.rawToAstNode(x["expression"]);
     return new ExpressionStatement(x["pos"]["line"], expression);
   }
-  
+
   private rawToAstNode_PrefixExpression(x: any): PrefixExpression {
     const value = this.rawToAstNode(x["value"]);
     console.log(value);
-    
+
     return new PrefixExpression(x["pos"]["line"], value, x["operator"]);
   }
 }

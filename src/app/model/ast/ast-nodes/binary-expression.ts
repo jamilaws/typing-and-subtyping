@@ -4,6 +4,8 @@ import { Edge, Graph } from "../graph";
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 import { TypeError } from "../../typing/type-error";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export enum BinaryOperator {
     '+',
@@ -28,6 +30,10 @@ export class BinaryExpression extends AstNode {
         this.operator = operator;
         this.left = left;
         this.right = right;
+    }
+
+    public getCode(): string {
+        return `${this.left.getCode()} ${this.operator} ${this.right.getCode()}`;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -70,6 +76,12 @@ export class BinaryExpression extends AstNode {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        const left  = this.left.getTypingTree();
+        const right = this.right.getTypingTree();
+        return new TypingTree(TypingTreeNodeLabel.OP, this.getCode(), this.type.toString(), [left, right]);
     }
 
 }

@@ -2,6 +2,7 @@ import { TypeCheckable } from "../typing/interfaces/type-checkable";
 import { TypeEnvironment } from "../typing/type-environment";
 import { AbstractType } from "../typing/types/abstract-type";
 import { NoTypePlaceholder } from "../typing/types/common/no-type-placeholder";
+import { TypingTree } from "../typing/typing-tree/typing-tree";
 import { Graph, Node } from "./graph";
 
 export enum NodeType {
@@ -11,7 +12,7 @@ export enum NodeType {
     PointerType = "PointerType",
     StructType = "StructType",
     IndexExpression = "IndexExpression", // Array get
-    CallExpression = "CallExpression", // TODO: Rename to 'FunctionCall' ? 
+    CallExpression = "CallExpression", // TODO: Rename to 'FunctionApplication' ? 
     Literal = "Literal",
     Identifier = "Identifier",
     Definition = "Definition", // TODO: Rename to 'Parameter' ? 
@@ -36,6 +37,8 @@ export abstract class AstNode implements TypeCheckable {
     constructor(codeLine: number) {
         this.codeLine = codeLine;
     }
+
+    public abstract getCode(): string;
 
     /**
      * 
@@ -63,10 +66,13 @@ export abstract class AstNode implements TypeCheckable {
 
     public abstract performTypeCheck(t: TypeEnvironment): AbstractType;
     public abstract getType(): AbstractType;
+    public abstract getTypingTree(): TypingTree;
 }
 
 export class AbstractSyntaxTree implements TypeCheckable {
     private roots: AstNode[];
+
+    private type: AbstractType;
 
     constructor(roots: AstNode[]) {
         this.roots = roots;
@@ -82,10 +88,15 @@ export class AbstractSyntaxTree implements TypeCheckable {
 
     public performTypeCheck(t: TypeEnvironment): AbstractType {
         this.roots.forEach(e => e.performTypeCheck(t));
-        return new NoTypePlaceholder();
+        return this.type = new NoTypePlaceholder();
     }
 
     public getType(): AbstractType {
-        throw new Error("Method not implemented.");
+        return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        // TODO: Do not throw an error. Think of sensible implementation instead.
+        throw new Error("Method getTypingTree() of AbstractSyntaxTree object has been called, what is not expected. Call the method on an AstNode instance instead.");
     }
 }

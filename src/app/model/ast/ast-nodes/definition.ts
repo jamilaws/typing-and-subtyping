@@ -5,6 +5,8 @@ import { AbstractType } from "./type/abstract-type";
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 import { Declaration } from "../../typing/symbol-table";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 // e.g. function parameter, struct member
 export class Definition extends AstNode implements Declaration {
@@ -19,6 +21,10 @@ export class Definition extends AstNode implements Declaration {
         super(codeLine);
         this.defType = defType;
         this.name = name;
+    }
+
+    public getCode(): string {
+        return `${this.defType.getCode()} ${this.name}`;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -40,6 +46,10 @@ export class Definition extends AstNode implements Declaration {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 
     /*

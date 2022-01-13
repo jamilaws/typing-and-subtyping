@@ -58,7 +58,7 @@ export class SymbolTable {
 
     public lookup(identifier: string): Declaration {
         const foundStack = this.declarationStacks.get(identifier);
-        if(!foundStack) throw new Error("Use of identifier without declaration: " + identifier);
+        if(!foundStack) throw new Error(`Invalid use of undeclared identifier '${identifier}'`);
         return foundStack.getTopElement();
     }
 

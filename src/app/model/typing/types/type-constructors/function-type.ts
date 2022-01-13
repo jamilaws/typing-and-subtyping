@@ -13,7 +13,7 @@ export class FunctionType extends AbstractType {
     }
 
     public toString(): string {        
-        return "(" + this.parameterTypes.map(p => p.toString()).join(", ") + ") => " + this.returnType.toString(); 
+        return `${this.returnType.toString()}(${this.parameterTypes.map(p => p.toString()).join(", ")})`;
     }
 
     public getParameters(): AbstractType[] {

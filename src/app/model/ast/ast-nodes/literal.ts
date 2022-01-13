@@ -3,6 +3,8 @@ import { Graph } from "../graph";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 /**
  * TODO: Handle literals for type struct
@@ -10,13 +12,17 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 export class Literal extends AstNode {
     protected nodeType: NodeType = NodeType.Literal;
 
-    value: string; // e.g. 1, "Hello World", true, ...
+    value: string; // e.g. 1, "Hello World", ...
 
     private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: string) {
         super(codeLine);
         this.value = value;        
+    }
+
+    public getCode(): string {
+        return this.value;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -35,5 +41,9 @@ export class Literal extends AstNode {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.CONST, this.getCode(), this.getType().toString());
     }
 }

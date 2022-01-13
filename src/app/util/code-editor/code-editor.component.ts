@@ -9,7 +9,7 @@ import { DiffEditorModel } from 'ngx-monaco-editor';
 export class CodeEditorComponent implements OnInit {
 
   @Input('initialCode')   initialCode: string = "";
-  @Input('editorOptions') editorOptions = {theme: 'vs-dark', language: 'c'};
+  @Input('editorOptions') editorOptions = {theme: 'vs-light', language: 'c'};
   @Output('onCodeChange') onCodeChange = new EventEmitter<string>();
   
   _code: string= '';

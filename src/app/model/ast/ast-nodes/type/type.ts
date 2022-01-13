@@ -8,6 +8,8 @@ import { CharType } from "src/app/model/typing/types/base-types/char-type";
 import { FloatType } from "src/app/model/typing/types/base-types/float-type";
 import { IntType } from "src/app/model/typing/types/base-types/int-type";
 import { VoidType } from "src/app/model/typing/types/base-types/void-type";
+import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
 
 // Rafactor: rename enum and move to typing subsystem
 export enum TypeName {
@@ -22,6 +24,10 @@ export class Type extends AbstractType {
     constructor(codeLine: number, name: TypeName) {
         super(codeLine);
         this.name = name;
+    }
+
+    public getCode(): string {
+        return this.name;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -55,5 +61,9 @@ export class Type extends AbstractType {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 }

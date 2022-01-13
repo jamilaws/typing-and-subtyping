@@ -1,3 +1,8 @@
+.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
 .toolbar {
     background-color: #2469B3;
     color: white;

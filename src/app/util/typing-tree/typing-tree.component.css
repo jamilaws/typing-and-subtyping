@@ -1,0 +1,45 @@
+.wrapper{
+    display: flex;
+}
+
+
+.labelWrapper {
+    margin-top: auto;
+    transform: translate(0px, -12px);
+    font-size: 15px;
+}
+
+.bodyWrapper {
+    margin-left: 5px;
+    margin-top: auto;
+    width: 100%;
+    color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+.childrenWrapper{
+    display: flex;
+}
+
+.childWrapper {
+    width: 100%;
+    text-align: center;
+
+    /* align all children to the bottom  */
+    margin-top: auto;
+}
+
+.notLastChild {
+    /* space between children */
+    margin-right: 15px;
+}
+
+.divider {
+    width: 100%;
+    border-top: solid 1px black;
+}
+
+.text {
+    text-align: center;
+}

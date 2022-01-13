@@ -7,6 +7,8 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 import { Declaration } from "../../typing/symbol-table";
 import { StructType } from "../../typing/types/type-constructors/struct-type";
 import { Definition as Definition_ } from "../../typing/types/common/definition";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class StructDefinition extends AstNode implements Declaration {
     protected nodeType: NodeType = NodeType.StructDefinition;
@@ -21,6 +23,10 @@ export class StructDefinition extends AstNode implements Declaration {
         this.name = name;
         this.member = member;
         
+    }
+
+    public getCode(): string {
+        throw new Error("Not implemented yet.");
     }
 
     public getGraph(): Graph<AstNode> {
@@ -45,6 +51,10 @@ export class StructDefinition extends AstNode implements Declaration {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 
     /*

@@ -6,6 +6,8 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 import { IntType } from "../../typing/types/base-types/int-type";
 import { TypeError } from "../../typing/type-error";
 import { NoTypePlaceholder } from "../../typing/types/common/no-type-placeholder";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 // TODO IMPLEMENT!!!
 export class IfStatement extends AstNode {
@@ -22,6 +24,10 @@ export class IfStatement extends AstNode {
         this.condition = condition;
         this.ifBlock = ifBlock;
         this.elseBlock = elseBlock;
+    }
+
+    public getCode(): string {
+        throw new Error("Not implemented yet.");
     }
 
     public getGraph(): Graph<AstNode> {
@@ -59,6 +65,10 @@ export class IfStatement extends AstNode {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 
 }

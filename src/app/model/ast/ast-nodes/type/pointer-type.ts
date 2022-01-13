@@ -6,6 +6,8 @@ import { Type } from "./type";
 
 import { PointerType as PointerType_ } from "src/app/model/typing/types/type-constructors/pointer-type";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
 
 // char*, int[]
 export class PointerType extends AbstractType {
@@ -18,6 +20,10 @@ export class PointerType extends AbstractType {
     constructor(codeLine: number, target: Type) {
         super(codeLine);
         this.target = target;
+    }
+
+    public getCode(): string {
+        return this.target.getCode() + "*";
     }
 
     public getGraph(): Graph<AstNode> {
@@ -36,5 +42,9 @@ export class PointerType extends AbstractType {
 
     public getType(): AbstractType_ {
         return this.type;
+    }
+
+    public getTypingTree(): TypingTree {
+        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
     }
 }

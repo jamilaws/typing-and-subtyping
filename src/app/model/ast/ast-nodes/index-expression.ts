@@ -7,6 +7,8 @@ import { IntType } from "../../typing/types/base-types/int-type";
 import { PointerType } from "../../typing/types/type-constructors/pointer-type";
 import { ArrayType } from "../../typing/types/type-constructors/array-type";
 import { TypeError } from "../../typing/type-error";
+import { TypingTree } from "../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class IndexExpression extends AstNode {
     protected nodeType: NodeType = NodeType.IndexExpression;
@@ -20,6 +22,10 @@ export class IndexExpression extends AstNode {
         super(codeLine);
         this.value = value;
         this.index = index;
+    }
+
+    public getCode(): string {
+        return `${this.value.getCode()}[${this.index.getCode()}]`;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -51,5 +57,18 @@ export class IndexExpression extends AstNode {
     public getType(): AbstractType_ {
         return this.type;
     }
+
+    public getTypingTree(): TypingTree {
+
+        let arrayTree = this.value.getTypingTree();
+        let indexTree = this.index.getTypingTree();
+
+        return new TypingTree(TypingTreeNodeLabel.ARRAY, this.getCode(), this.getType().toString(), [arrayTree, indexTree]);
+    }
+
+    // Move abstract method into AstNode?
+    //public getCode(): string {
+    //    return `${this.value.getCode()}[${this.index.getCode()}]`;
+    //}
 
 }
