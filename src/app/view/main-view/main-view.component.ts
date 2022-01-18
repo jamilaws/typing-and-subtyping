@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { AbstractSyntaxTree, AstNode } from 'src/app/model/ast/abstract-syntax-tree';
 import { Graph, Node } from 'src/app/model/ast/graph';
+import { SymbolTable, SymbolTableUiData } from 'src/app/model/typing/symbol-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
 import { TypingTree } from 'src/app/model/typing/typing-tree/typing-tree';
 import { IncompleteAstWrapperException, ParsingService } from 'src/app/service/parsing.service';
@@ -32,9 +33,11 @@ interface DisplayGraphEdge {
 })
 export class MainViewComponent implements OnInit {
 
+  symbolTable: SymbolTableUiData[] = null;
+
   _graphOptions: EChartsOption;
   private displayedNodeToAstNode: Map<DisplayGraphNode, AstNode> = new Map();
-  
+
   public initialCode: string = 'int main()\n{\n\treturn 0;\n}';
   private currentCodeEditorLine = -1;
 
@@ -75,7 +78,7 @@ export class MainViewComponent implements OnInit {
   AST event handlers
   */
 
-  onClickAST(event: any){
+  onClickAST(event: any) {
     const index = event.data.astNodeIndex;
     const node = this.ast.getGraph().getNodes()[index].getData();
 
@@ -125,8 +128,9 @@ export class MainViewComponent implements OnInit {
       const typeEnv = new TypeEnvironment();
       this.ast.performTypeCheck(typeEnv);
       this.typeErrorString = null;
-      console.log(typeEnv);
-      
+
+      this.symbolTable = typeEnv.getSymbolTable().toUiData();
+
     } catch (e) {
       this.typeErrorString = (<Error>e).message;
     }
@@ -136,7 +140,7 @@ export class MainViewComponent implements OnInit {
     let graphNodeToDisplayGraphNode = new Map<Node<AstNode>, DisplayGraphNode>();
     // Init displayed nodes
     this.graphNodes = graph.getNodes().map((n, i) => {
-      const dNode = { 
+      const dNode = {
         name: n.getData().getGraphNodeLabel(),
         x: i * 10,
         y: i * 10,
@@ -146,8 +150,8 @@ export class MainViewComponent implements OnInit {
       graphNodeToDisplayGraphNode.set(n, dNode);
 
       console.log(n.getData().getCodeLine() + " : " + this.currentCodeEditorLine);
-      
-      if(n.getData().getCodeLine() === this.currentCodeEditorLine){
+
+      if (n.getData().getCodeLine() === this.currentCodeEditorLine) {
         dNode.highlighted = true;
       }
 

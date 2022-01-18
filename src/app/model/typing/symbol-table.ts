@@ -1,11 +1,20 @@
 import { AbstractType } from "./types/abstract-type";
 
+export interface SymbolTableUiData {
+    identifier: string;
+    declarations: {
+        type: string;
+        line: number;
+    }[];
+}
+
 /**
  * Interface for all of those ast nodes which represent any kind of declaration
  */
 export interface Declaration {
     getDeclarationIdentifier(): string;
     getDeclarationType(): AbstractType;
+    getCodeLine(): number;
 }
 
 /**
@@ -29,6 +38,10 @@ export class Stack<T> {
 
     public getTopElement(): T {
         return this.array[this.array.length - 1];
+    }
+
+    public toArray(): T[] {
+        return this.array;
     }
 }
 
@@ -68,5 +81,22 @@ export class SymbolTable {
 
     public leaveScope(): void {
         // TODO: Persistent tree approach --> snapshots
+    }
+
+    public toUiData(): SymbolTableUiData[] {
+        let keys    =  Array.from(this.declarationStacks.keys());
+        let values  =  Array.from(this.declarationStacks.values());
+
+        return keys.map((key, index) => {
+            return {
+                identifier: key,
+                declarations: values[index].toArray().map(d => {
+                    return {
+                        type: d.getDeclarationType().toString(),
+                        line: d.getCodeLine()
+                    };
+                })
+            };
+        });
     }
 }

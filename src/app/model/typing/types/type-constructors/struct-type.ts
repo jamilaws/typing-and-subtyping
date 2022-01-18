@@ -13,7 +13,7 @@ export class StructType extends AbstractType {
     }
 
     public toString(): string {
-        return "struct { " + this.members.map(m => m.toString()).concat(", ") + " }";
+        return "struct { " + this.members.map(m => m.toString()).join(", ") + " }";
     }
 
     public getName(): string {

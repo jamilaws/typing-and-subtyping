@@ -1,23 +1,73 @@
 .wrapper {
 }
 
+.leftSide {
+    border-right: solid 1px lightgray;
+}
+
+.titleLeftPart {
+    padding: 10px;
+    color: #2469B3;
+}
 
 .code-editor-wrapper {
     height: 100%;
     border-bottom: solid 1px lightgray;
-    border-right: solid 1px lightgray;
 }
 
 .code-editor {
 }
 
 .ast-wrapper {
-    height: 60vh;
+    height: 40vh;
     padding-top: 20px;
-    border-right: solid 1px lightgray;
+    border-bottom: solid 1px lightgrey;
+
+}
+
+.symbolTableWrapper {
+    height: 25vh;
 }
 
 .typing-tree-wrapper {
     margin-top: 30px;
     margin-right: 10px;
+}
+
+.symbolTableWrapper {
+    width: 100%;
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.symbolTableHeader {
+    width: 100px;
+    padding: 10px;
+
+    /* border: solid 1px lightgrey; */
+}
+
+.symbolTableHeader, .symbolTableField {
+    text-align: left;
+}
+
+.declarationsRow {
+    border-radius: 4px;
+
+    width: 100%;
+    padding: 5px;
+    margin-right: 5px;
+    border: solid 1px lightgrey;
+    display: flex;
+    flex-direction: row;
+}
+
+.symbolTableField {
+    padding: 4px;
+    font-size: 12px;
+    border-radius: 4px;
+    /* width: 80px; */
+    margin: 1px;
+    background-color: #2469B3;
+    color: white;
 }
