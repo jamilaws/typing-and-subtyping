@@ -15,12 +15,12 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 export class StructAccessExpression extends AstNode {
     protected nodeType: NodeType = NodeType.StructAccess;
 
-    public struct: Identifier;
+    public struct: AstNode;
     public member: Identifier;
 
     private type: AbstractType_ = null;
 
-    constructor(codeLine: number, struct: Identifier, member: Identifier) {
+    constructor(codeLine: number, struct: AstNode, member: Identifier) {
         super(codeLine);
         this.struct = struct;
         this.member = member;
@@ -46,14 +46,14 @@ export class StructAccessExpression extends AstNode {
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
-        const struct = t.getTypeOfIdentifier(this.struct.value);
-        if(struct instanceof StructType) {
-            const member = struct.getMembers().find(m => m.getName() === this.member.getName());
-            if(!member) throw new TypeError(`Struct '${this.struct.getName()}' does not include member '${this.member.getName()}'`);
+        const structType = this.struct.performTypeCheck(t);
+        if(structType instanceof StructType) {
+            const member = structType.getMembers().find(m => m.getName() === this.member.getName());
+            if(!member) throw new TypeError(`Struct '${structType.getName()}' does not include member '${this.member.getName()}'`);
             
             return this.type = member.getType(); 
         } else {
-            throw new TypeError("Cannot use '.' operator on type " + struct.toString());
+            throw new TypeError("Cannot use '.' operator on type " + structType.toString());
         }
     }
 

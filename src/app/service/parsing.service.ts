@@ -16,7 +16,7 @@ import { VariableDeclaration } from '../model/ast/ast-nodes/variable-declaration
 import { BinaryExpression, BinaryOperator } from '../model/ast/ast-nodes/binary-expression';
 import { StructAccessExpression } from '../model/ast/ast-nodes/struct-access-expression';
 import { ExpressionStatement } from '../model/ast/ast-nodes/expression-statement';
-import { PrefixExpression } from '../model/ast/ast-nodes/prefix-expression';
+import { PrefixExpression, PrefixOperator } from '../model/ast/ast-nodes/prefix-expression';
 import { StructType } from '../model/ast/ast-nodes/type/struct-type';
 import { AbstractType } from '../model/ast/ast-nodes/type/abstract-type';
 import { InitializerList } from '../model/ast/ast-nodes/initializer-list';
@@ -215,10 +215,27 @@ export class ParsingService {
   }
 
   private rawToAstNode_BinaryExpression(x: any): BinaryExpression | StructAccessExpression {
+    const line: number = x["pos"]["line"];
     const operator = <BinaryOperator>x["operator"];
     const left = this.rawToAstNode(x["left"]);
     const right = this.rawToAstNode(x["right"]);
-    return x["operator"] === "." ? new StructAccessExpression(x["pos"]["line"], <Identifier>left, <Identifier>right) : new BinaryExpression(x["pos"]["line"], operator, left, right);
+
+    /*
+    Note:
+    
+    Some BinaryOperators get special treatment, e.g. 'a->b' will be translated to '(*a).b'
+    Default it simple BinaryExpression node.
+    
+    */
+    switch(operator){
+      case BinaryOperator.DOT:
+        return new StructAccessExpression(line, <Identifier>left, <Identifier>right);
+      case BinaryOperator.ARROW:
+        const derefNode = new PrefixExpression(line, left, PrefixOperator.DEREF);
+        return new StructAccessExpression(line, derefNode, <Identifier> right);
+      default:
+        return new BinaryExpression(line, operator, left, right)
+    };
   }
 
   private rawToAstNode_ExpressionStatement(x: any): ExpressionStatement {
