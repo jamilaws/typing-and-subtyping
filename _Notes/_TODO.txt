@@ -1,0 +1,9 @@
+* SUBTYPING
+* Implement Literals (especially in typeEnvironment) properly, e.g. handle arrays, structs etc..
+* Add special handling for binary expression ->
+* Array init with {...} ?
+* init empty array with fixed size? e.g. int a[11];
+* Recursion not working because of typeEnvironment..
+* Duplicate identifier in scope error!
+* Variable declaration without assignment (check value in parser)?
+* Add abstraction to variable-declarations (own folder, then e.g. same impl of performTypeCheck)

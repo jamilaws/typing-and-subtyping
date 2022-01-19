@@ -1,0 +1,23 @@
+Naive Vorstellung / Erwartungen:
+
+- "Greenfield" Projekt
+- Möglichst abgekapseltes Thema bzw. Algorithmus
+	* möglichst "direkter" Einstieg in das Eigentliche Thema (ohne unverhältnismäßig Erarbeitungsaufwand des Kontextes / der gesamten Vorlesung)
+	* "Greifbares" --> will wissen, wie konzepte eingesetzt werden
+- Fokus der BA auf Implementierung des Tools, statt Verfassen der Arbeit
+
+
+Fragen:
+
+- Material
+- Vorschläge für konkretes Thema
+- Wann wäre Beginn möglich (15.10. / 15.11.)
+
+
+
+Input:
+
+- Vergleichbares Tool: https://www2.in.tum.de/lrtutor/
+- Referent BA: (siehe mail)
+- Material: https://ttt.in.tum.de/videos/Compilerconstruction/ --> Video 42 bis 48 
+- Academic writing: https://pingpong.chalmers.se/public/pp/public_courses/course08583/published/1510227352918/resourceId/4156227/content/Zobel%20-%20Writing%20for%20computer%20science%203rd%20edition.pdf
