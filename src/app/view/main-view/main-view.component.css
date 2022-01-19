@@ -25,13 +25,13 @@
 
 }
 
-.symbolTableWrapper {
-    height: 25vh;
+.typing-tree-wrapper {
+    margin-top: 40px;
+    margin-right: 10px;
 }
 
-.typing-tree-wrapper {
-    margin-top: 30px;
-    margin-right: 10px;
+.symbolTableWrapper {
+    height: 15vh;
 }
 
 .symbolTableWrapper {

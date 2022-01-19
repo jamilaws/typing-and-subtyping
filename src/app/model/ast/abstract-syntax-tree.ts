@@ -24,6 +24,7 @@ export enum NodeType {
     StructAccess = "StructAccess", // TODO: Document somewhere (not included in parsed raw type)
     ExpressionStatement = "ExpressionStatement",
     PrefixExpression = "PrefixExpression",
+    InitializerList = "InitializerList"
 }
 
 export abstract class AstNode implements TypeCheckable {

@@ -19,6 +19,7 @@ import { ExpressionStatement } from '../model/ast/ast-nodes/expression-statement
 import { PrefixExpression } from '../model/ast/ast-nodes/prefix-expression';
 import { StructType } from '../model/ast/ast-nodes/type/struct-type';
 import { AbstractType } from '../model/ast/ast-nodes/type/abstract-type';
+import { InitializerList } from '../model/ast/ast-nodes/initializer-list';
 
 const parse = require('../../../cparse/cparse');
 
@@ -168,9 +169,17 @@ export class ParsingService {
     return new IndexExpression(x["pos"]["line"], value, index);
   }
 
-  private rawToAstNode_Literal(x: any): Literal {
+  private rawToAstNode_Literal(x: any): Literal | InitializerList{
     const value = x["value"];
-    return new Literal(x["pos"]["line"], value);
+
+    if(Array.isArray(value)){
+      // e.g. {1, 2, 3}
+      //const children: AstNode[] = this.rawToAstNode(value);
+      return new InitializerList(x["pos"]["line"], value.map(v => this.rawToAstNode(v))); 
+    } else {
+      // e.g. "Hello world"
+      return new Literal(x["pos"]["line"], value);
+    }
   }
 
   private rawToAstNode_PointerType(x: any): PointerType {
