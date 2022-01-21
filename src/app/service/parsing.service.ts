@@ -19,9 +19,10 @@ import { ExpressionStatement } from '../model/ast/ast-nodes/expression-statement
 import { PrefixExpression, PrefixOperator } from '../model/ast/ast-nodes/prefix-expression';
 import { StructType } from '../model/ast/ast-nodes/type/struct-type';
 import { AbstractType } from '../model/ast/ast-nodes/type/abstract-type';
-import { InitializerList } from '../model/ast/ast-nodes/initializer-list';
+import { InitializerListArray } from '../model/ast/ast-nodes/initializer-list-array';
+import { InitializerListStruct, StructMemberValue } from '../model/ast/ast-nodes/initializer-list-struct';
 
-const parse = require('../../../cparse/cparse');
+const parse = require('../../assets/js/cparse/cparse.js');
 
 export class IncompleteAstWrapperException extends Error {
 
@@ -169,16 +170,35 @@ export class ParsingService {
     return new IndexExpression(x["pos"]["line"], value, index);
   }
 
-  private rawToAstNode_Literal(x: any): Literal | InitializerList{
-    const value = x["value"];
+  private rawToAstNode_Literal(x: any): Literal | InitializerListArray | InitializerListStruct {
+    let value = x["value"];
 
-    if(Array.isArray(value)){
+    const line: number = x["pos"]["line"];
+
+    if (Array.isArray(value)) {
       // e.g. {1, 2, 3}
       //const children: AstNode[] = this.rawToAstNode(value);
-      return new InitializerList(x["pos"]["line"], value.map(v => this.rawToAstNode(v))); 
+
+      if (value.length === 1 && value[0] === undefined) {
+        // Note: the underlying parser implementation an empty InitializerList with an array containing 'undefined' once
+        value = [];
+
+      }
+
+      if (this.conformsToInitializerListStruct(value)) {
+        const children = this.extractInitializerListStructChildren(value).map(({member, value}) => {          
+          //return new StructMemberValue(line, <Identifier>this.rawToAstNode(member), this.rawToAstNode(value))
+          return new StructMemberValue(line, member["value"], this.rawToAstNode(value))
+        });
+        return new InitializerListStruct(line, children);
+
+      } else {
+        const children: AstNode[] = value.map((x: any) => <AstNode>this.rawToAstNode(x));
+        return new InitializerListArray(line, children);
+      }
     } else {
       // e.g. "Hello world"
-      return new Literal(x["pos"]["line"], value);
+      return new Literal(line, value);
     }
   }
 
@@ -227,12 +247,12 @@ export class ParsingService {
     Default it simple BinaryExpression node.
     
     */
-    switch(operator){
+    switch (operator) {
       case BinaryOperator.DOT:
         return new StructAccessExpression(line, <Identifier>left, <Identifier>right);
       case BinaryOperator.ARROW:
         const derefNode = new PrefixExpression(line, left, PrefixOperator.DEREF);
-        return new StructAccessExpression(line, derefNode, <Identifier> right);
+        return new StructAccessExpression(line, derefNode, <Identifier>right);
       default:
         return new BinaryExpression(line, operator, left, right)
     };
@@ -245,8 +265,35 @@ export class ParsingService {
 
   private rawToAstNode_PrefixExpression(x: any): PrefixExpression {
     const value = this.rawToAstNode(x["value"]);
-    console.log(value);
-
     return new PrefixExpression(x["pos"]["line"], value, x["operator"]);
+  }
+
+  // Helper
+
+  private conformsToInitializerListStruct(values: any[]): boolean {
+    if (!values || values.length === 0) return false;
+
+    let constraints: boolean[] = new Array();
+    try {
+      constraints.push(values[0]["type"] === "BinaryExpression");
+      constraints.push(values[0]["operator"] === "=");
+      constraints.push(values[0]["left"]["type"] === "BinaryExpression");
+      constraints.push(values[0]["left"]["operator"] === ".");
+      constraints.push(values[0]["left"]["left"] === undefined);
+    } catch(e) {
+      return false;
+    }
+
+    return constraints.every(c => c);
+  }
+
+  private extractInitializerListStructChildren(values: any[]): any[] {
+    return values.map(element => {
+
+      const member = element["left"]["right"];
+      const value = element["right"];
+
+      return {member, value};
+    });
   }
 }

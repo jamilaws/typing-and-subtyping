@@ -7,3 +7,6 @@
 * Duplicate identifier in scope error!
 * Variable declaration without assignment (check value in parser)?
 * Add abstraction to variable-declarations (own folder, then e.g. same impl of performTypeCheck)
+* Implement 'FunctionDefinition' (not only ...Declaration)
+* Somehow also render TypingTree when error occurs
+* compare function return type and actual return --> throw error if needed

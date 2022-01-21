@@ -135,6 +135,9 @@ length: 3
 		
 		--> Implement both in "AggregateInitialization"-AstNode (git commit before: "Implement SymbolTable UI")
 		--> http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf (137)
+
+	- Session 19.01.2022
+		--> Special treatment of BinaryExpression: tranlate "a->b" to "(*a).b"
  
 
 __________
@@ -143,3 +146,10 @@ Additional notes / Ideas:
 - Prerequisites Angular (Directives, ...) --> Refer back later in work; TypeScript get set
 - UndoRedoStack (Ref. BA)
 - Use Template Methode pattern, if e.g. performTypeCheck and getTypingTree will be merged (also additional steps if e.g. typing tree history idea will be implemented; typeEnvironment modifications?)
+- Another major refactoring: allow variable declarations without initialization (underlying parser does not support; dynamic vs static typing; )
+- Idea to extend work: Implement config with "Enable Dynamic/static typecheck"
+- Decorators: Basic concept, decorators in typescript (maybe python as comparison), example in code: storeError (or different)
+	--> Go into detail for extending type-error integration into typing tree
+		* decorators (see above)
+		* subclass of Typing-Tree --> ErrorTypingTree
+		* ...

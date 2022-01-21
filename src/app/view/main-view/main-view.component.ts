@@ -4,11 +4,15 @@ import { AbstractSyntaxTree, AstNode } from 'src/app/model/ast/abstract-syntax-t
 import { Graph, Node } from 'src/app/model/ast/graph';
 import { SymbolTable, SymbolTableUiData } from 'src/app/model/typing/symbol-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
+import { TypeError } from 'src/app/model/typing/type-error';
 import { TypingTree } from 'src/app/model/typing/typing-tree/typing-tree';
 import { IncompleteAstWrapperException, ParsingService } from 'src/app/service/parsing.service';
 import { Position } from 'src/app/util/code-editor/code-editor.component';
 
 const TYPE_STRING_PLACEHOLDER: string = "Please select an AST-Node.";
+
+const GRAPH_SCALE_FACTOR_X: number = 1;
+const GRAPH_SCALE_FACTOR_Y: number = 0.5;
 
 interface DisplayGraphNode {
   name: string;
@@ -133,6 +137,15 @@ export class MainViewComponent implements OnInit {
 
     } catch (e) {
       this.typeErrorString = (<Error>e).message;
+
+      // if(e instanceof TypeError) {
+      //   // Custom TypeError
+      //   this.typeErrorString = (<Error>e).message;
+      // } else {
+      //   // Unexpected Error
+      //   alert("Unexpected Error while performTypeCheck");
+      //   throw e;
+      // }
     }
   }
 
@@ -148,8 +161,6 @@ export class MainViewComponent implements OnInit {
         astNodeIndex: 0
       }; // Set coordinates later
       graphNodeToDisplayGraphNode.set(n, dNode);
-
-      console.log(n.getData().getCodeLine() + " : " + this.currentCodeEditorLine);
 
       if (n.getData().getCodeLine() === this.currentCodeEditorLine) {
         dNode.highlighted = true;
@@ -183,8 +194,8 @@ export class MainViewComponent implements OnInit {
 
     // Scale coordinates
     this.graphNodes.forEach(n => {
-      n.x *= 100;
-      n.y *= 100;
+      n.x *= 100 * GRAPH_SCALE_FACTOR_X;
+      n.y *= 100 * GRAPH_SCALE_FACTOR_Y;
     })
 
     // Handle node index

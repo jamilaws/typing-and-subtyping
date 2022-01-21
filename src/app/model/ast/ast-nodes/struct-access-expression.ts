@@ -62,7 +62,8 @@ export class StructAccessExpression extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        // TODO: !!!
+        return new TypingTree(TypingTreeNodeLabel.APP, this.getCode(), this.getType().toString(), [this.struct.getTypingTree()]);
     }
 
 }

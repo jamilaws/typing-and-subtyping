@@ -7,6 +7,8 @@ import { PointerType } from "../../typing/types/type-constructors/pointer-type";
 import { TypeError } from "../../typing/type-error";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
+import { storeError } from "../decorators/store-error";
+import { ErrorTypingTree } from "../../typing/typing-tree/error-typing-tree";
 
 export enum PrefixOperator {
     REF = "&",
@@ -46,8 +48,11 @@ export class PrefixExpression extends AstNode {
         return this.nodeType + " " + this.operator;
     }
 
+    @storeError()
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const childType = this.value.performTypeCheck(t);
+
+        if(!childType) throw new TypeError("Invalid use of deref operator on type null");
 
         switch (this.operator) {
             case PrefixOperator.REF:
@@ -71,6 +76,7 @@ export class PrefixExpression extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
+        
         var label: TypingTreeNodeLabel;
         switch (this.operator) {
             case PrefixOperator.REF: label = TypingTreeNodeLabel.REF;
@@ -79,6 +85,10 @@ export class PrefixExpression extends AstNode {
                 break;
             default: throw new Error("Invalid prefix operator found: " + this.operator);
         }
+
+        // TODO: Extra decorator for this!
+        if(this.typeError) return new ErrorTypingTree(label, this.getCode());
+
         return new TypingTree(label, this.getCode(), this.getType().toString(), [this.value.getTypingTree()]);
     }
 }

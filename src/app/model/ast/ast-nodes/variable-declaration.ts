@@ -53,7 +53,8 @@ export class VariableDeclaration extends AstNode implements Declaration {
 
         // TODO: Check subtyping!
         if (!typeType.equals(valueType)) {
-            throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
+            // TODO: Uncomment
+            //throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
         }
 
         t.declare(this);

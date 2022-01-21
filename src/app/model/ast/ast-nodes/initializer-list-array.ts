@@ -8,10 +8,10 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 import { PointerType } from "../../typing/types/type-constructors/pointer-type";
 
 /**
- * e.g. {1, 2, 3}; {.name = "Foo", .age = 3}
+ * e.g. {1, 2, 3}
  */
-export class InitializerList extends AstNode {
-    protected nodeType: NodeType = NodeType.InitializerList;
+export class InitializerListArray extends AstNode {
+    protected nodeType: NodeType = NodeType.InitializerListArray;
 
     private children: AstNode[];
 
@@ -19,11 +19,12 @@ export class InitializerList extends AstNode {
 
     constructor(codeLine: number, children: AstNode[]) {
         super(codeLine);
-        this.children = children;        
+        this.children = children;
+        if(children.length === 0) throw new Error("Empty InitializerList not implemented yet.");     
     }
 
     public getCode(): string {
-        return "[" + this.children.map(c => c.getCode()).join(", ") + "]"; 
+        return "{" + this.children.map(c => c.getCode()).join(", ") + "}"; 
     }
 
     public getGraph(): Graph<AstNode> {

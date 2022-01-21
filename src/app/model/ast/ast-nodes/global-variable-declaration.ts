@@ -50,7 +50,10 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
         const valueType = this.value.performTypeCheck(t);
 
         // TODO: Check subtyping!
-        if (!typeType.equals(valueType)) throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
+        if (!typeType.equals(valueType)) {
+            // TODO: Uncomment
+            //new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
+        }
 
         t.declare(this);
         return this.type = new NoTypePlaceholder();

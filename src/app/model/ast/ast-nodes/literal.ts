@@ -18,11 +18,7 @@ export class Literal extends AstNode {
 
     constructor(codeLine: number, value: string) {
         super(codeLine);
-        this.value = value;
-        console.log("DEBUG");
-        console.log(this);
-        
-                
+        this.value = value;                
     }
 
     public getCode(): string {

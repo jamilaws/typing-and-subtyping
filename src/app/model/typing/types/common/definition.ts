@@ -1,3 +1,4 @@
+import { storeError } from "src/app/model/ast/decorators/store-error";
 import { AbstractType } from "../abstract-type";
 
 /**

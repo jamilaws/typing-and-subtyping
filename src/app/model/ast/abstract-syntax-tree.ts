@@ -24,7 +24,9 @@ export enum NodeType {
     StructAccess = "StructAccess", // TODO: Document somewhere (not included in parsed raw type)
     ExpressionStatement = "ExpressionStatement",
     PrefixExpression = "PrefixExpression",
-    InitializerList = "InitializerList"
+    InitializerListArray = "InitializerListArray",
+    InitializerListStruct = "InitializerListStruct",
+    StructMemberValue = "StructMemberValue",
 }
 
 export abstract class AstNode implements TypeCheckable {
@@ -35,14 +37,16 @@ export abstract class AstNode implements TypeCheckable {
     // Will be initialized as soon as requested
     private graphNode: Node<AstNode> = null;
 
+    // Will be set correctly by storeError decorator if AstNode.performTypeCheck decorated.
+    protected typeError: Error = null;
+    public getTypeError(): Error { return this.typeError; }
+    public setTypeError(error: Error): void { this.typeError = error }
+
     constructor(codeLine: number) {
         this.codeLine = codeLine;
     }
 
-    public getCodeLine(): number {
-        return this.codeLine;
-    }
-
+    public getCodeLine(): number { return this.codeLine; }
     public abstract getCode(): string;
 
     /**

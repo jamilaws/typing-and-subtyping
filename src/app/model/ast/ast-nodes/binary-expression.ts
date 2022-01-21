@@ -41,7 +41,7 @@ export class BinaryExpression extends AstNode {
     public getGraph(): Graph<AstNode> {
         let leftGraph = this.left.getGraph();
         let rightGraph = this.right.getGraph();
-        
+
         const newNode = this.getGraphNode();
         const newEdges = [
             new Edge(newNode, this.left.getGraphNode()),
@@ -49,8 +49,8 @@ export class BinaryExpression extends AstNode {
         ];
 
         return new Graph([newNode], newEdges)
-        .merge(leftGraph)
-        .merge(rightGraph);
+            .merge(leftGraph)
+            .merge(rightGraph);
     }
 
     // @Override
@@ -64,14 +64,14 @@ export class BinaryExpression extends AstNode {
 
         console.log("t1: " + t_1.toString());
         console.log("t1: " + t_2.toString());
-        
 
-        if(this.operator === BinaryOperator.EQ){
-            // TODO: Check 't_2 can be converted into t_1'
-            if(!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
+
+        if (this.operator === BinaryOperator.EQ) {
+            // TODO: Suptyping! - Check 't_2 can be converted into t_1'
+            if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         } else {
-            if(!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
+            if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         }
     }
@@ -81,7 +81,7 @@ export class BinaryExpression extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        const left  = this.left.getTypingTree();
+        const left = this.left.getTypingTree();
         const right = this.right.getTypingTree();
         return new TypingTree(TypingTreeNodeLabel.OP, this.getCode(), this.type.toString(), [left, right]);
     }
