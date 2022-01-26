@@ -13,21 +13,23 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
  * TODO: Handle in binary expression instead!
  */
 export class StructAccessExpression extends AstNode {
-    protected nodeType: NodeType = NodeType.StructAccess;
 
     public struct: AstNode;
     public member: Identifier;
 
-    private type: AbstractType_ = null;
-
     constructor(codeLine: number, struct: AstNode, member: Identifier) {
         super(codeLine);
+        
         this.struct = struct;
         this.member = member;
     }
 
     public getCode(): string {
         return this.struct.getCode() + "." + this.member.getCode();
+    }
+
+    public getGraphNodeLabel(): string {
+        return ".";
     }
 
     public getGraph(): Graph<AstNode> {

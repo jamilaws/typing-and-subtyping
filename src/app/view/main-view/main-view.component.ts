@@ -11,8 +11,10 @@ import { Position } from 'src/app/util/code-editor/code-editor.component';
 
 const TYPE_STRING_PLACEHOLDER: string = "Please select an AST-Node.";
 
+const NODE_SIZE: number = 20;
+
 const GRAPH_SCALE_FACTOR_X: number = 1;
-const GRAPH_SCALE_FACTOR_Y: number = 0.5;
+const GRAPH_SCALE_FACTOR_Y: number = 0.8;
 
 interface DisplayGraphNode {
   name: string;
@@ -220,7 +222,7 @@ export class MainViewComponent implements OnInit {
         {
           type: "graph",
           layout: 'none',
-          symbolSize: 30,
+          symbolSize: NODE_SIZE,
           roam: true, // Graph position movable
           lineStyle: {
             curveness: 0.1

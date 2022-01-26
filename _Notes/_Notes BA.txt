@@ -152,4 +152,7 @@ Additional notes / Ideas:
 	--> Go into detail for extending type-error integration into typing tree
 		* decorators (see above)
 		* subclass of Typing-Tree --> ErrorTypingTree
-		* ...
+		* event better: Use decorators for whole history feature
+		* ("Aspect oriented programming")
+- Refactoring
+	* devide AbstractAstNode into two subtypes: ExpressionNode (with type = NotVisitedPlaceholder) and SyntaxNode (with type = NoTypePlaceholder; think of better name)

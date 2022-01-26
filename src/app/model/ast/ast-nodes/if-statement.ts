@@ -11,13 +11,10 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 // TODO IMPLEMENT!!!
 export class IfStatement extends AstNode {
-    protected nodeType: NodeType = NodeType.IfStatement;
 
     public condition:   AstNode;
     public ifBlock:     AstNode[];
     public elseBlock:   AstNode[];
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, condition: AstNode, ifBlock: AstNode[], elseBlock: AstNode[]){
         super(codeLine);
@@ -28,6 +25,10 @@ export class IfStatement extends AstNode {
 
     public getCode(): string {
         throw new Error("Not implemented yet.");
+    }
+
+    public getGraphNodeLabel(): string {
+        return "If-Statement";
     }
 
     public getGraph(): Graph<AstNode> {

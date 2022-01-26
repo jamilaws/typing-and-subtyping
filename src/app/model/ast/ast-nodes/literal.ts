@@ -10,11 +10,8 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
  * TODO: Handle literals for type struct
  */
 export class Literal extends AstNode {
-    protected nodeType: NodeType = NodeType.Literal;
 
     value: string; // e.g. 1, "Hello World", ...
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: string) {
         super(codeLine);
@@ -25,13 +22,12 @@ export class Literal extends AstNode {
         return this.value;
     }
 
-    public getGraph(): Graph<AstNode> {
-        return new Graph([this.getGraphNode()], []);
+    public getGraphNodeLabel(): string {
+        return this.value;
     }
 
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.value;
+    public getGraph(): Graph<AstNode> {
+        return new Graph([this.getGraphNode()], []);
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

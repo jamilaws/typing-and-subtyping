@@ -16,10 +16,7 @@ export enum TypeName {
     char = "char", float = "float", int = "int", void = "void" // TODO ...
 }
 export class Type extends AbstractType {
-    protected nodeType: NodeType = NodeType.Type;
     public name: TypeName; //TODO: clearify 'modifier', e.g. if you add 'struct ' as prefix in function arg
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, name: TypeName) {
         super(codeLine);
@@ -36,7 +33,7 @@ export class Type extends AbstractType {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.name;
+        return this.name;
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

@@ -13,7 +13,7 @@ export class TypingTreeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.typingTree);
+    //console.log(this.typingTree);
   }
 
 }

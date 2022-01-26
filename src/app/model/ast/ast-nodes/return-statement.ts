@@ -7,11 +7,8 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class ReturnStatement extends AstNode {
-    protected nodeType: NodeType = NodeType.ReturnStatement;
 
     public value: AstNode;
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: AstNode) {
         super(codeLine);
@@ -20,6 +17,10 @@ export class ReturnStatement extends AstNode {
 
     public getCode(): string {
         throw new Error("Not implemented yet.");
+    }
+
+    public getGraphNodeLabel(): string {
+        return "return";
     }
 
     public getGraph(): Graph<AstNode> {

@@ -11,21 +11,23 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class IndexExpression extends AstNode {
-    protected nodeType: NodeType = NodeType.IndexExpression;
 
     public value: AstNode;
     public index: AstNode; 
    
-    private type: AbstractType_ = null;
-
     constructor(codeLine: number, value: AstNode, index: AstNode){
         super(codeLine);
+        
         this.value = value;
         this.index = index;
     }
 
     public getCode(): string {
         return `${this.value.getCode()}[${this.index.getCode()}]`;
+    }
+
+    public getGraphNodeLabel(): string {
+        return "[]";
     }
 
     public getGraph(): Graph<AstNode> {

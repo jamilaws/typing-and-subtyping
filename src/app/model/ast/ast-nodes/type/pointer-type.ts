@@ -12,10 +12,7 @@ import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tre
 // char*, int[]
 export class PointerType extends AbstractType {
 
-    protected nodeType: NodeType = NodeType.PointerType;
     public target: Type;
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, target: Type) {
         super(codeLine);
@@ -24,6 +21,10 @@ export class PointerType extends AbstractType {
 
     public getCode(): string {
         return this.target.getCode() + "*";
+    }
+
+    public getGraphNodeLabel(): string {
+        return "*";
     }
 
     public getGraph(): Graph<AstNode> {

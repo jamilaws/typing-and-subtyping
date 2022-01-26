@@ -15,8 +15,6 @@ export class Definition extends AstNode implements Declaration {
     public defType: AbstractType;
     public name: string;
 
-    private type: AbstractType_ = null;
-
     constructor(codeLine: number, defType: AbstractType, name: string){
         super(codeLine);
         this.defType = defType;
@@ -27,16 +25,15 @@ export class Definition extends AstNode implements Declaration {
         return `${this.defType.getCode()} ${this.name}`;
     }
 
+    public getGraphNodeLabel(): string {
+        return this.name;
+    }
+
     public getGraph(): Graph<AstNode> {
         let graph = this.defType.getGraph();
         let newNode = this.getGraphNode();
         let addition = new Graph([newNode], [new Edge(newNode, this.defType.getGraphNode())]); 
         return graph.merge(addition);
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.name;
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

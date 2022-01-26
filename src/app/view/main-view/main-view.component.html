@@ -1,55 +1,48 @@
 <div class="wrapper">
-    <div class="row">
-        <div class="col-sm-5">
-            <div class="leftSide">
-                <div class="row">
-                <div class="col-sm-12">
-                    <div class="code-editor-wrapper">
-                        <span class="titleLeftPart">C-Code</span>
-                        <app-code-editor class="code-editor" [initialCode]="initialCode"
-                            (onCodeChange)="onCodeChange($event)"
-                            (onPositionChange)="onCodeEditorPositionChange($event)"></app-code-editor>
-                    </div>
+    <div class="upperPart">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="code-editor-wrapper">
+                    <span class="title" style="padding-left: 10px;">C-Code</span>
+                    <app-code-editor class="code-editor" [initialCode]="initialCode" (onCodeChange)="onCodeChange($event)"
+                        (onPositionChange)="onCodeEditorPositionChange($event)"></app-code-editor>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <span class="titleLeftPart">Abstract Syntax Tree</span>
-                    <div class="ast-wrapper">
-                        <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
-                        <ng-template #astValidBlock>
-                            <div echarts [options]="_graphOptions" (chartClick)="onClickAST($event)"></div>
-                        </ng-template>
-                        <ng-template #astInvalidBlock>
-                            Invalid AST :-(
-                        </ng-template>
-                    </div>
+            <div class="col-sm-4">
+                <div class="ast-wrapper">
+                    <span class="title">Abstract Syntax Tree</span>
+                    <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
+                    <ng-template #astValidBlock>
+                        <div echarts [options]="_graphOptions" (chartClick)="onClickAST($event)"></div>
+                    </ng-template>
+                    <ng-template #astInvalidBlock>
+                        Invalid AST :-(
+                    </ng-template>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <span class="titleLeftPart">Symbol Table</span>
-                    <div class="symbolTableWrapper">
-                        <div class="row" *ngFor="let tableRow of symbolTable">
-                            <div class="col-sm-2">
-                                <div class="symbolTableHeader">
-                                    {{tableRow.identifier}}
-                                </div>
+            <div class="col-sm-4">
+                <div class="symbolTableWrapper">
+                    <span class="title">Symbol Table</span>
+                    <div class="row" *ngFor="let tableRow of symbolTable">
+                        <div class="col-sm-2">
+                            <div class="symbolTableHeader">
+                                {{tableRow.identifier}}
                             </div>
-                            <div class="col-sm-10">
-                                <div class="declarationsRow">
-                                    <td class="symbolTableField" *ngFor="let declaration of tableRow.declarations">
-                                        {{declaration.line + ": " + declaration.type}}
-                                    </td>
-                                </div>
+                        </div>
+                        <div class="col-sm-10">
+                            <div class="declarationsRow">
+                                <td class="symbolTableField" *ngFor="let declaration of tableRow.declarations">
+                                    {{declaration.line + ": " + declaration.type}}
+                                </td>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
-        <div class="col-sm-7">
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
             <div *ngIf="typeErrorString">
                 {{typeErrorString}}
             </div>

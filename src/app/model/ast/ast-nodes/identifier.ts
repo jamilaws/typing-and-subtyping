@@ -7,11 +7,8 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class Identifier extends AstNode {
-    protected nodeType: NodeType = NodeType.Identifier;
 
     public value: string; // e.g. main, ...
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: string){
         super(codeLine);
@@ -26,14 +23,13 @@ export class Identifier extends AstNode {
         return this.value;
     }
 
+    public getGraphNodeLabel(): string {
+        return this.value;
+    }
+
     public getGraph(): Graph<AstNode> {
         const newNode = this.getGraphNode();
         return new Graph([newNode], []);
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.value;
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

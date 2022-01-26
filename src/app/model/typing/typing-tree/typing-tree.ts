@@ -18,4 +18,12 @@ export class TypingTree {
         this.text = TypingTree.nodeTextPrefix + expressionText + " : " + typeText;
         this.children = children;
     }
+
+    public getRelativeSizeOfChild(index: number): number {
+        return this.children[index].getSize() / this.getSize() * 100;
+    }
+
+    public getSize(): number {
+        return Math.max(1, this.children.reduce((acc, curr) => acc + curr.getSize(), 0));
+    }
 }

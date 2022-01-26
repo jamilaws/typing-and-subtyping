@@ -10,10 +10,7 @@ import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tre
 
 export class StructType extends AbstractType {
 
-    protected nodeType: NodeType = NodeType.StructType;
     public name: string;
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, name: string) {
         super(codeLine);
@@ -30,7 +27,7 @@ export class StructType extends AbstractType {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.name;
+        return `struct ${this.name}`;
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

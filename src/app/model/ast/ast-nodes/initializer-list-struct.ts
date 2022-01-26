@@ -59,11 +59,8 @@ export class StructMemberValue extends AstNode{
  * e.g. {.name = "Foo", .age = 3}
  */
 export class InitializerListStruct extends AstNode {
-    protected nodeType: NodeType = NodeType.InitializerListStruct;
 
     private children: StructMemberValue[];
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, children: StructMemberValue[]) {
         super(codeLine);
@@ -75,6 +72,10 @@ export class InitializerListStruct extends AstNode {
         return "{" + this.children.map(c => c.getCode()).join(", ") + "}"; 
     }
 
+    public getGraphNodeLabel(): string {
+        return "{}";
+    }
+
     public getGraph(): Graph<AstNode> {
         const childGraphs = this.children.map(m => m.getGraph());
 
@@ -82,11 +83,6 @@ export class InitializerListStruct extends AstNode {
         const newEdges = this.children.map(m => { return new Edge(newNode, m.getGraphNode()); });
 
         return new Graph([newNode], newEdges).merge(childGraphs.reduce((acc, curr) => acc.merge(curr), new Graph([], [])));
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return "{}";
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

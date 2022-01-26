@@ -10,13 +10,11 @@ import { Definition as Definition_ } from "../../typing/types/common/definition"
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
+// TODO: Why does this implement Declaration?!
 export class StructDefinition extends AstNode implements Declaration {
-    protected nodeType: NodeType = NodeType.StructDefinition;
 
     name: string;
     member: Definition[];
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, name: string, member: Definition[]){
         super(codeLine);
@@ -29,6 +27,10 @@ export class StructDefinition extends AstNode implements Declaration {
         throw new Error("Not implemented yet.");
     }
 
+    public getGraphNodeLabel(): string {
+        return "Definition: struct " + this.name;
+    }
+
     public getGraph(): Graph<AstNode> {
         const memberGraphs = this.member.map(m => m.getGraph());
 
@@ -36,11 +38,6 @@ export class StructDefinition extends AstNode implements Declaration {
         const newEdges = this.member.map(m => { return new Edge(newNode, m.getGraphNode()); });
 
         return new Graph([newNode], newEdges).merge(memberGraphs.reduce((acc, curr) => acc.merge(curr), new Graph([], [])));
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.name;
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

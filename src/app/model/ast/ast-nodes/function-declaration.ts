@@ -13,14 +13,11 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class FunctionDeclaration extends AstNode implements Declaration {
-    protected nodeType: NodeType = NodeType.FunctionDeclaration;
     
     public defType: AbstractType; // TODO: Check if ok; (returning struct types?)
     public name: string;
     public args: Definition[]; // TODO Check if ok
     public body: AstNode[];
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, defType: Type | PointerType, name: string, args: Definition[], body: AstNode[]) {
         super(codeLine);
@@ -33,6 +30,10 @@ export class FunctionDeclaration extends AstNode implements Declaration {
 
     public getCode(): string {
         throw new Error("Not implemented yet.");
+    }
+
+    public getGraphNodeLabel(): string {
+        return "Declaration: " + this.name;
     }
 
     public getGraph(): Graph<AstNode> {
@@ -54,11 +55,6 @@ export class FunctionDeclaration extends AstNode implements Declaration {
         newEdges.forEach(e => newGraph.addEdge(e));
 
         return newGraph;
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.name;
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

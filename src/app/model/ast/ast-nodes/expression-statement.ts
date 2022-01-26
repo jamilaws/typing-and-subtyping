@@ -12,10 +12,7 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 // e.g. function parameter, struct member
 export class ExpressionStatement extends AstNode {
-    protected nodeType: NodeType = NodeType.ExpressionStatement;
     public expression: AbstractType;
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, expression: AbstractType){
         super(codeLine);
@@ -24,6 +21,10 @@ export class ExpressionStatement extends AstNode {
 
     public getCode(): string {
         return this.expression.getCode();
+    }
+
+    public getGraphNodeLabel(): string {
+        return "Expression"; // TODO?
     }
 
     public getGraph(): Graph<AstNode> {

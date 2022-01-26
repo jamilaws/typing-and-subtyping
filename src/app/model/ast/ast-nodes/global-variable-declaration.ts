@@ -10,13 +10,10 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class GlobalVariableDeclaration extends AstNode implements Declaration {
-    protected nodeType: NodeType = NodeType.GlobalVariableDeclaration;
 
     public defType: AbstractType; // TODO: Check if ok
     public name: string;
     public value: AstNode;
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, defType: AbstractType, name: string, value: AstNode) {
         super(codeLine);
@@ -29,6 +26,10 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
         throw new Error("Not implemented yet.");
     }
 
+    public getGraphNodeLabel(): string {
+        return "Declaration: " + this.name;
+    }
+
     public getGraph(): Graph<AstNode> {
         const defTypeGraph = this.defType.getGraph();
         const valueGraph = this.value.getGraph();
@@ -37,11 +38,6 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
         const edges = [new Edge(newNode, this.defType.getGraphNode()), new Edge(newNode, this.value.getGraphNode())];
 
         return new Graph([newNode], edges).merge(defTypeGraph).merge(valueGraph);
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.name;
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

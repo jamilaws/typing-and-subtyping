@@ -19,6 +19,8 @@ export const storeError = () => {
             // alert("Fun called!");
             // console.log("CALLED:");
             // console.log(args);
+
+            let obj: AstNode = <AstNode> this;
             
             let result: AbstractType = null;
             try {
@@ -27,11 +29,14 @@ export const storeError = () => {
                 // set error by placeholder error instead of leaving null ?
                 // TODO: Check for TypeError
                 if(e instanceof TypeError) {
-                    alert("TypeError");
-                    target.setTypeError(e);
+                    //alert("TypeError");
+                    obj.setTypeError(e);
                 } else if(e instanceof Error){
-                    alert("Error");
-                    target.setTypeError(e);
+                    //alert("Error");
+                    obj.setTypeError(e);
+                    console.log(e);
+                    
+                    throw e
                 } else {
                     alert("UNEXPECTED");
                     throw e;

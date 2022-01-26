@@ -19,16 +19,14 @@ export enum BinaryOperator {
 }
 
 export class BinaryExpression extends AstNode {
-    protected nodeType: NodeType = NodeType.BinaryExpression;
 
     public operator: BinaryOperator;
     public left: AstNode;
     public right: AstNode;
 
-    private type: AbstractType_ = null;
-
     constructor(codeLine: number, operator: BinaryOperator, left: AstNode, right: AstNode) {
         super(codeLine);
+
         this.operator = operator;
         this.left = left;
         this.right = right;
@@ -55,7 +53,7 @@ export class BinaryExpression extends AstNode {
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.operator;
+        return this.operator;
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {

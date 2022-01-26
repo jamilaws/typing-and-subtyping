@@ -7,8 +7,9 @@
         <div class="bodyWrapper">
             <!-- Recursive rendering of children until leafs -->
             <div class="childrenWrapper">
-                <app-typing-tree class="childWrapper" [typingTree]="child"
+                <app-typing-tree class="child" [typingTree]="child"
                     *ngFor="let child of typingTree.children; let i = index"
+                    [ngStyle]="{'width': typingTree.getRelativeSizeOfChild(i) + '%'}"
                     [ngClass]="{'notLastChild': i !== typingTree.children.length-1}">
                 </app-typing-tree>
             </div>

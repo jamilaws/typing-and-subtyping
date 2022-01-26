@@ -11,11 +11,8 @@ import { PointerType } from "../../typing/types/type-constructors/pointer-type";
  * e.g. {1, 2, 3}
  */
 export class InitializerListArray extends AstNode {
-    protected nodeType: NodeType = NodeType.InitializerListArray;
 
     private children: AstNode[];
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, children: AstNode[]) {
         super(codeLine);

@@ -2,6 +2,7 @@ import { TypeCheckable } from "../typing/interfaces/type-checkable";
 import { TypeEnvironment } from "../typing/type-environment";
 import { AbstractType } from "../typing/types/abstract-type";
 import { NoTypePlaceholder } from "../typing/types/common/no-type-placeholder";
+import { NotVisitedPlaceholderType } from "../typing/types/placeholder-types/not-visited-placeholder-type";
 import { TypingTree } from "../typing/typing-tree/typing-tree";
 import { Graph, Node } from "./graph";
 
@@ -31,16 +32,17 @@ export enum NodeType {
 
 export abstract class AstNode implements TypeCheckable {
 
-    protected abstract nodeType: NodeType;
     protected codeLine: number; //{ file: string, line: number };
 
     // Will be initialized as soon as requested
     private graphNode: Node<AstNode> = null;
 
+
+    protected type: AbstractType = new NotVisitedPlaceholderType(); // TODO: Distinction in NotVisited and NoType!
     // Will be set correctly by storeError decorator if AstNode.performTypeCheck decorated.
     protected typeError: Error = null;
     public getTypeError(): Error { return this.typeError; }
-    public setTypeError(error: Error): void { this.typeError = error }
+    public setTypeError(error: Error): void { this.typeError = error; }
 
     constructor(codeLine: number) {
         this.codeLine = codeLine;
@@ -65,14 +67,11 @@ export abstract class AstNode implements TypeCheckable {
         return this.graphNode;
     }
 
+   
     /**
-     * Default node label; Override this if needed.
-     * @returns 
+     * returns the label displayed on corresponding graph node
      */
-    public getGraphNodeLabel(): string {
-        return this.nodeType;
-    }
-
+    public abstract getGraphNodeLabel(): string;
     public abstract performTypeCheck(t: TypeEnvironment): AbstractType;
     public abstract getType(): AbstractType;
     public abstract getTypingTree(): TypingTree;

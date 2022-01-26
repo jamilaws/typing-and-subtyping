@@ -17,12 +17,9 @@ export enum PrefixOperator {
 }
 
 export class PrefixExpression extends AstNode {
-    protected nodeType: NodeType = NodeType.PrefixExpression;
 
     value: AstNode;
     operator: PrefixOperator;
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, value: AstNode, operator: PrefixOperator) {
         super(codeLine);
@@ -34,6 +31,10 @@ export class PrefixExpression extends AstNode {
         return this.operator + this.value.getCode();
     }
 
+    public getGraphNodeLabel(): string {
+        return this.operator;
+    }
+
     public getGraph(): Graph<AstNode> {
         const subgraph = this.value.getGraph();
 
@@ -41,11 +42,6 @@ export class PrefixExpression extends AstNode {
         const newEdge = new Edge(newNode, this.value.getGraphNode());
 
         return new Graph([newNode], [newEdge]).merge(subgraph);
-    }
-
-    // @Override
-    public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.operator;
     }
 
     @storeError()
@@ -87,8 +83,10 @@ export class PrefixExpression extends AstNode {
         }
 
         // TODO: Extra decorator for this!
-        if(this.typeError) return new ErrorTypingTree(label, this.getCode());
-
+        if(this.getTypeError()) {
+            return new ErrorTypingTree(label, this.getCode());
+        }
+        
         return new TypingTree(label, this.getCode(), this.getType().toString(), [this.value.getTypingTree()]);
     }
 }

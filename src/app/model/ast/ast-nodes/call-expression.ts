@@ -10,14 +10,11 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 export class CallExpression extends AstNode {
-    protected nodeType: NodeType = NodeType.CallExpression;
 
     // IMPORTANT!!!
     // TODO: Base does not necessarily be of type Identifier! Could be some more complex expression!
     public base: Identifier;
     public args: AstNode[]; // TODO: Change to concrete subclass, Definition?
-
-    private type: AbstractType_ = null;
 
     constructor(codeLine: number, base: Identifier, args: AstNode[]) {
         super(codeLine);
@@ -27,6 +24,10 @@ export class CallExpression extends AstNode {
 
     public getCode(): string {
         return `${this.base.getCode()}(${this.args.map(arg => arg.getCode()).join(", ")})`;
+    }
+
+    public getGraphNodeLabel(): string {
+        return "...(...)";
     }
 
     public getGraph(): Graph<AstNode> {

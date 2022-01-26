@@ -6,7 +6,7 @@
 .labelWrapper {
     margin-top: auto;
     transform: translate(0px, -12px);
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .bodyWrapper {
@@ -19,11 +19,13 @@
 }
 
 .childrenWrapper{
+    margin-right: 5px;
     display: flex;
 }
 
-.childWrapper {
-    width: 100%;
+
+.child {
+    /* width: 100%; */
     text-align: center;
 
     /* align all children to the bottom  */
@@ -42,4 +44,5 @@
 
 .text {
     text-align: center;
+    font-size: 12px;
 }

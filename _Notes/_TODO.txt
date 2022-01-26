@@ -10,3 +10,4 @@
 * Implement 'FunctionDefinition' (not only ...Declaration)
 * Somehow also render TypingTree when error occurs
 * compare function return type and actual return --> throw error if needed
+* Why does StructDefinition implement Declaration?!
