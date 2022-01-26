@@ -13,3 +13,4 @@
 * Somehow also render TypingTree when error occurs
 * compare function return type and actual return --> throw error if needed
 * Why does StructDefinition implement Declaration?!
+* Clearify: Is it really required to split code into "ast" and "typing" --> Introduce subclass "TypeExpression"

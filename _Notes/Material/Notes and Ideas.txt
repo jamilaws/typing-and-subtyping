@@ -156,3 +156,5 @@ Additional notes / Ideas:
 		* ("Aspect oriented programming")
 - Refactoring
 	* devide AbstractAstNode into two subtypes: ExpressionNode (with type = NotVisitedPlaceholder) and SyntaxNode (with type = NoTypePlaceholder; think of better name)
+
+- Subtyping: Prove, that algorithm will terminate --> into BA (Strukturelle Induktion?) (--> see screenshots/subtyping/impl)

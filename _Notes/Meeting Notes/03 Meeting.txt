@@ -1,5 +1,6 @@
 Questions:
 
 - Video 47: "Choosing which rule to apply on an ast node is determined by the type of the child nodes" --> What exactly does this mean?
-- "Structural Subtyping" relevant? (Video 47; "does not hold in C")
+- "Structural Subtyping" ... "does not hold in C" --> why needed then?
+- Currently: separation of code into "ast" and "typing" module --> would it be better to use abstraction TypExpression on respective ast nodes?
 - Idea Replayable History
