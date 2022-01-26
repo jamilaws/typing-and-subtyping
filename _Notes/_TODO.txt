@@ -1,4 +1,6 @@
 * SUBTYPING
+	- typedef int A; typedef A s; --> Extend AST wrapper
+
 * Implement Literals (especially in typeEnvironment) properly, e.g. handle arrays, structs etc..
 * Add special handling for binary expression ->
 * Array init with {...} ?

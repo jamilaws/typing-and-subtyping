@@ -62,7 +62,7 @@ Video 46: Beispiel Type Checking
 -----------------------------------------------------------------------------
 Video 47: 
 
-- Summary Type Checking: Choosing which rule to apply at an AST node ist determined by the type of the child nodes
+- Summary Type Checking: Choosing which rule to apply at an AST node is determined by the type of the child nodes
 - Type equality - recursive check with rules:
 	(* struct A {...} and struct B {...} are condidered to be different)
 	* typedef int C --> types int and C are equal
@@ -94,8 +94,5 @@ Video 48: Subtyping
 __________________________________________________________
 Questions:
 
-- Can I assume a C subset as language to work with? If yes, do I have any grammar for this language?
-- How to map program to its AST?
-- Subtypes included? (probably yes) Structural subtyping
 - Subtype checking: why is rule for function params reversed?
 - further literature for work?

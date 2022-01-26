@@ -1,0 +1,5 @@
+Questions:
+
+- Video 47: "Choosing which rule to apply on an ast node is determined by the type of the child nodes" --> What exactly does this mean?
+- "Structural Subtyping" relevant? (Video 47; "does not hold in C")
+- Idea Replayable History
