@@ -1,5 +1,5 @@
 import { AbstractType } from "../../typing/types/abstract-type";
-import { AstNode } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 
 //export const storeError = (argPassed: any) => {
 export const storeError = () => {

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { AbstractSyntaxTree, AstNode } from 'src/app/model/ast/abstract-syntax-tree';
+import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
+import { AstNode } from 'src/app/model/ast/ast-node';
 import { Graph, Node } from 'src/app/model/ast/graph';
 import { SymbolTable, SymbolTableUiData } from 'src/app/model/typing/symbol-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';

@@ -1,5 +1,5 @@
 import { TypeEnvironment } from "src/app/model/typing/type-environment";
-import { AstNode, NodeType } from "../../abstract-syntax-tree";
+import { AstNode } from "../../ast-node";
 import { Graph } from "../../graph";
 import { AbstractTypeExpression } from "./abstract-type-expression";
 

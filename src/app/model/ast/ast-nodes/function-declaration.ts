@@ -1,9 +1,7 @@
-import { AstNode, NodeType } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 import { Edge, Graph } from "../graph";
 import { Definition } from "./definition";
 import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
-import { PointerTypeExpression } from "./type-expressions/pointer-type-expression";
-import { TypeExpression } from "./type-expressions/type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";

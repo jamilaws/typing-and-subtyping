@@ -1,4 +1,4 @@
-import { AstNode, NodeType } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 import { Graph, Node } from "../graph";
 
 import { TypeEnvironment } from "../../typing/type-environment";

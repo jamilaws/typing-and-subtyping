@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractSyntaxTree, AstNode, NodeType } from '../model/ast/abstract-syntax-tree';
+import { AbstractSyntaxTree } from '../model/ast/abstract-syntax-tree';
 import { CallExpression } from '../model/ast/ast-nodes/call-expression';
 import { Definition } from '../model/ast/ast-nodes/definition';
 import { FunctionDeclaration } from '../model/ast/ast-nodes/function-declaration';
@@ -21,6 +21,7 @@ import { StructTypeExpression } from '../model/ast/ast-nodes/type-expressions/st
 import { AbstractTypeExpression } from '../model/ast/ast-nodes/type-expressions/abstract-type-expression';
 import { InitializerListArray } from '../model/ast/ast-nodes/initializer-list-array';
 import { InitializerListStruct, StructMemberValue } from '../model/ast/ast-nodes/initializer-list-struct';
+import { AstNode, NodeType } from '../model/ast/ast-node';
 
 const parse = require('../../assets/js/cparse/cparse.js');
 

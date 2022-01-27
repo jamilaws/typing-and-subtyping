@@ -1,4 +1,4 @@
-import { AstNode, NodeType } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 import { Edge, Graph } from "../graph";
 import { Definition } from "./definition";
 

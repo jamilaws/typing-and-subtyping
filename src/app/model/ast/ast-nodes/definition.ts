@@ -1,4 +1,4 @@
-import { AstNode, NodeType } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 import { Edge, Graph } from "../graph";
 import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
@@ -10,7 +10,6 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 // e.g. function parameter, struct member
 export class Definition extends AstNode implements Declaration {
-    protected nodeType: NodeType = NodeType.Definition;
 
     public defType: AbstractTypeExpression;
     public name: string;

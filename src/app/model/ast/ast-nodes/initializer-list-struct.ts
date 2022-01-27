@@ -1,4 +1,4 @@
-import { AstNode, NodeType } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 import { Edge, Graph, Node } from "../graph";
 
 import { TypeEnvironment } from "../../typing/type-environment";
@@ -11,7 +11,6 @@ import { StructType } from "../../typing/types/type-constructors/struct-type";
 import { Definition } from "../../typing/types/common/definition";
 
 export class StructMemberValue extends AstNode{
-    protected nodeType: NodeType = NodeType.StructMemberValue;
 
     member: string; // TODO: Use Identifier instead?
     value: AstNode;
@@ -28,7 +27,7 @@ export class StructMemberValue extends AstNode{
 
     // @Override
     public getGraphNodeLabel(): string {
-        return this.nodeType + " " + this.member;
+        return "." + this.member + " = ";
     }
 
     public getGraph(): Graph<AstNode> {

@@ -1,4 +1,4 @@
-import { AstNode } from "../abstract-syntax-tree";
+import { AstNode } from "../ast-node";
 import { Edge, Graph } from "../graph";
 import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
