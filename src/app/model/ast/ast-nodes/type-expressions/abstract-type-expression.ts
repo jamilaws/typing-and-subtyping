@@ -1,5 +1,5 @@
 import { AstNode, NodeType } from "../../abstract-syntax-tree";
 
-export abstract class AbstractType extends AstNode {
+export abstract class AbstractTypeExpression extends AstNode {
     // Intentionally left blank
 }

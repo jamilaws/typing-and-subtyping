@@ -8,17 +8,17 @@ import { Identifier } from '../model/ast/ast-nodes/identifier';
 import { IfStatement } from '../model/ast/ast-nodes/if-statement';
 import { IndexExpression } from '../model/ast/ast-nodes/index-expression';
 import { Literal } from '../model/ast/ast-nodes/literal';
-import { PointerType } from '../model/ast/ast-nodes/type/pointer-type';
+import { PointerTypeExpression } from '../model/ast/ast-nodes/type-expressions/pointer-type-expression';
 import { ReturnStatement } from '../model/ast/ast-nodes/return-statement';
 import { StructDefinition } from '../model/ast/ast-nodes/struct-definition';
-import { Type } from '../model/ast/ast-nodes/type/type';
+import { TypeExpression } from '../model/ast/ast-nodes/type-expressions/type-expression';
 import { VariableDeclaration } from '../model/ast/ast-nodes/variable-declaration';
 import { BinaryExpression, BinaryOperator } from '../model/ast/ast-nodes/binary-expression';
 import { StructAccessExpression } from '../model/ast/ast-nodes/struct-access-expression';
 import { ExpressionStatement } from '../model/ast/ast-nodes/expression-statement';
 import { PrefixExpression, PrefixOperator } from '../model/ast/ast-nodes/prefix-expression';
-import { StructType } from '../model/ast/ast-nodes/type/struct-type';
-import { AbstractType } from '../model/ast/ast-nodes/type/abstract-type';
+import { StructTypeExpression } from '../model/ast/ast-nodes/type-expressions/struct-type-expression';
+import { AbstractTypeExpression } from '../model/ast/ast-nodes/type-expressions/abstract-type-expression';
 import { InitializerListArray } from '../model/ast/ast-nodes/initializer-list-array';
 import { InitializerListStruct, StructMemberValue } from '../model/ast/ast-nodes/initializer-list-struct';
 
@@ -131,13 +131,13 @@ export class ParsingService {
   }
 
   private rawToAstNode_Definition(x: any): Definition {
-    const defType = <Type | PointerType>this.rawToAstNode(x["defType"]);
+    const defType = <TypeExpression | PointerTypeExpression>this.rawToAstNode(x["defType"]);
     const name: string = x["name"]
     return new Definition(x["pos"]["line"], defType, name);
   }
 
   private rawToAstNode_FunctionDeclaration(x: any): FunctionDeclaration {
-    const defType = <Type | PointerType>this.rawToAstNode(x["defType"]);
+    const defType = <TypeExpression | PointerTypeExpression>this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
     const args = <Definition[]>x["arguments"].map((x: any) => this.rawToAstNode(x));
     const body = x["body"].map((x: any) => this.rawToAstNode(x));
@@ -146,7 +146,7 @@ export class ParsingService {
   }
 
   private rawToAstNode_GlobalVariableDeclaration(x: any): GlobalVariableDeclaration {
-    const defType = <Type | PointerType>this.rawToAstNode(x["defType"]);
+    const defType = <TypeExpression | PointerTypeExpression>this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
     const value = this.rawToAstNode(x["value"]);
     return new GlobalVariableDeclaration(x["pos"]["line"], defType, name, value);
@@ -202,9 +202,9 @@ export class ParsingService {
     }
   }
 
-  private rawToAstNode_PointerType(x: any): PointerType {
-    const target = <Type>this.rawToAstNode(x["target"]);
-    return new PointerType(x["pos"]["line"], target);
+  private rawToAstNode_PointerType(x: any): PointerTypeExpression {
+    const target = <TypeExpression>this.rawToAstNode(x["target"]);
+    return new PointerTypeExpression(x["pos"]["line"], target);
   }
 
   private rawToAstNode_ReturnStatement(x: any): ReturnStatement {
@@ -218,17 +218,17 @@ export class ParsingService {
     return new StructDefinition(x["pos"]["line"], name, member);
   }
 
-  private rawToAstNode_Type(x: any): Type | StructType {
+  private rawToAstNode_Type(x: any): TypeExpression | StructTypeExpression {
     const name = x["name"];
 
     if (x["modifier"].find((e: any) => e === "struct")) {
-      return new StructType(x["pos"]["line"], name);
+      return new StructTypeExpression(x["pos"]["line"], name);
     }
-    return new Type(x["pos"]["line"], name);
+    return new TypeExpression(x["pos"]["line"], name);
   }
 
   private rawToAstNode_VariableDeclaration(x: any): VariableDeclaration {
-    const defType = <AbstractType>this.rawToAstNode(x["defType"]);
+    const defType = <AbstractTypeExpression>this.rawToAstNode(x["defType"]);
     const name: string = x["name"];
     const value = this.rawToAstNode(x["value"]);
     return new VariableDeclaration(x["pos"]["line"], defType, name, value);

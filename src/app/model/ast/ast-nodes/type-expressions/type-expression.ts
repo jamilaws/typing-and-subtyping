@@ -1,7 +1,7 @@
 import { TypeEnvironment } from "src/app/model/typing/type-environment";
 import { AstNode, NodeType } from "../../abstract-syntax-tree";
 import { Graph, Node } from "../../graph";
-import { AbstractType } from "./abstract-type";
+import { AbstractTypeExpression } from "./abstract-type-expression";
 
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 import { CharType } from "src/app/model/typing/types/base-types/char-type";
@@ -15,7 +15,7 @@ import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tre
 export enum TypeName {
     char = "char", float = "float", int = "int", void = "void" // TODO ...
 }
-export class Type extends AbstractType {
+export class TypeExpression extends AbstractTypeExpression {
     public name: TypeName; //TODO: clearify 'modifier', e.g. if you add 'struct ' as prefix in function arg
 
     constructor(codeLine: number, name: TypeName) {

@@ -9,6 +9,10 @@ export class PointerType extends AbstractType {
         this.baseType = baseType;
     }
 
+    public isSubtypeOf(other: AbstractType): boolean {
+        throw new Error("Not implemented.");
+    }
+
     public toString(): string {
         return this.baseType.toString() + "*";
     }

@@ -1,9 +1,9 @@
 import { AstNode, NodeType } from "../abstract-syntax-tree";
 import { Edge, Graph } from "../graph";
-import { AbstractType } from "./type/abstract-type";
+import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";
-import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { Declaration } from "../../typing/symbol-table";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
@@ -12,10 +12,10 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 export class Definition extends AstNode implements Declaration {
     protected nodeType: NodeType = NodeType.Definition;
 
-    public defType: AbstractType;
+    public defType: AbstractTypeExpression;
     public name: string;
 
-    constructor(codeLine: number, defType: AbstractType, name: string){
+    constructor(codeLine: number, defType: AbstractTypeExpression, name: string){
         super(codeLine);
         this.defType = defType;
         this.name = name;
@@ -36,12 +36,12 @@ export class Definition extends AstNode implements Declaration {
         return graph.merge(addition);
     }
 
-    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+    public performTypeCheck(t: TypeEnvironment): AbstractType {
         t.declare(this);
         return this.type = this.defType.performTypeCheck(t);
     }
 
-    public getType(): AbstractType_ {
+    public getType(): AbstractType {
         return this.type;
     }
 
@@ -57,7 +57,7 @@ export class Definition extends AstNode implements Declaration {
         return this.name;
     }
 
-    getDeclarationType(): AbstractType_ {
+    getDeclarationType(): AbstractType {
         return this.defType.getType();
     }
 }

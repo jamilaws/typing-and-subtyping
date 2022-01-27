@@ -1,9 +1,9 @@
 import { AstNode, NodeType } from "../abstract-syntax-tree";
 import { Edge, Graph } from "../graph";
 import { Definition } from "./definition";
-import { AbstractType } from "./type/abstract-type";
-import { PointerType } from "./type/pointer-type";
-import { Type } from "./type/type";
+import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
+import { PointerTypeExpression } from "./type-expressions/pointer-type-expression";
+import { TypeExpression } from "./type-expressions/type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
@@ -14,12 +14,12 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 export class FunctionDeclaration extends AstNode implements Declaration {
     
-    public defType: AbstractType; // TODO: Check if ok; (returning struct types?)
+    public defType: AbstractTypeExpression; // TODO: Check if ok; (returning struct types?)
     public name: string;
     public args: Definition[]; // TODO Check if ok
     public body: AstNode[];
 
-    constructor(codeLine: number, defType: Type | PointerType, name: string, args: Definition[], body: AstNode[]) {
+    constructor(codeLine: number, defType: AbstractTypeExpression, name: string, args: Definition[], body: AstNode[]) {
         super(codeLine);
 
         this.defType = defType;

@@ -12,6 +12,10 @@ export class StructType extends AbstractType {
         this.members = members;
     }
 
+    public isSubtypeOf(other: AbstractType): boolean {
+        throw new Error("Not implemented.");
+    }
+
     public toString(): string {
         return "struct { " + this.members.map(m => m.toString()).join(", ") + " }";
     }

@@ -1,11 +1,9 @@
-import { AstNode, NodeType } from "../abstract-syntax-tree";
+import { AstNode } from "../abstract-syntax-tree";
 import { Edge, Graph } from "../graph";
-import { AbstractType } from "./type/abstract-type";
-import { PointerType } from "./type/pointer-type";
-import { Type } from "./type/type";
+import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";
-import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { Declaration } from "../../typing/symbol-table";
 import { NoTypePlaceholder } from "../../typing/types/common/no-type-placeholder";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
@@ -13,11 +11,11 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 export class VariableDeclaration extends AstNode implements Declaration {
 
-    public defType: AbstractType;
+    public defType: AbstractTypeExpression;
     public name: string;
     public value: AstNode;
 
-    constructor(codeLine: number, defType: AbstractType, name: string, value: AstNode){
+    constructor(codeLine: number, defType: AbstractTypeExpression, name: string, value: AstNode){
         super(codeLine);
         
         this.defType = defType;
@@ -43,7 +41,7 @@ export class VariableDeclaration extends AstNode implements Declaration {
         return new Graph([newNode], edges).merge(defTypeGraph).merge(valueGraph);
     }
 
-    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+    public performTypeCheck(t: TypeEnvironment): AbstractType {
 
         const typeType = this.defType.performTypeCheck(t);
         const valueType = this.value.performTypeCheck(t);
@@ -58,7 +56,7 @@ export class VariableDeclaration extends AstNode implements Declaration {
         return this.type = new NoTypePlaceholder();
     }
 
-    public getType(): AbstractType_ {
+    public getType(): AbstractType {
         return this.type;
     }
 
@@ -74,7 +72,7 @@ export class VariableDeclaration extends AstNode implements Declaration {
         return this.name;
     }
 
-    getDeclarationType(): AbstractType_ {
+    getDeclarationType(): AbstractType {
         return this.defType.getType();
     }
 

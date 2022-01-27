@@ -16,4 +16,8 @@ export class ArrayType extends AbstractType {
     public getBaseType(): AbstractType {
         return this.baseType;
     }
+
+    public isSubtypeOf(other: AbstractType): boolean {
+        throw new Error("Not implemented.");
+    }
 }

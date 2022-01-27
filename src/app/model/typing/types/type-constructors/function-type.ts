@@ -12,6 +12,10 @@ export class FunctionType extends AbstractType {
         this.returnType = returnType;
     }
 
+    public isSubtypeOf(other: AbstractType): boolean {
+        throw new Error("Not implemented.");
+    }
+
     public toString(): string {        
         return `${this.returnType.toString()}(${this.parameterTypes.map(p => p.toString()).join(", ")})`;
     }

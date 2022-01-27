@@ -1,6 +1,6 @@
 import { AstNode, NodeType } from "../abstract-syntax-tree";
 import { Edge, Graph } from "../graph";
-import { AbstractType } from "./type/abstract-type";
+import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
@@ -12,9 +12,9 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 // e.g. function parameter, struct member
 export class ExpressionStatement extends AstNode {
-    public expression: AbstractType;
+    public expression: AbstractTypeExpression;
 
-    constructor(codeLine: number, expression: AbstractType){
+    constructor(codeLine: number, expression: AbstractTypeExpression){
         super(codeLine);
         this.expression = expression;
     }

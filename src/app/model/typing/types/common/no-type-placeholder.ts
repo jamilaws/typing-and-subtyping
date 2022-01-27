@@ -8,4 +8,8 @@ export class NoTypePlaceholder extends AbstractType {
     public toString(): string {
         return "No Type.";
     }
+
+    public isSubtypeOf(other: AbstractType): boolean {
+        throw new Error("Not implemented.");
+    }
 }

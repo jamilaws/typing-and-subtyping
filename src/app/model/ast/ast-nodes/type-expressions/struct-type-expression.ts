@@ -1,14 +1,14 @@
 import { TypeEnvironment } from "src/app/model/typing/type-environment";
 import { AstNode, NodeType } from "../../abstract-syntax-tree";
 import { Graph } from "../../graph";
-import { AbstractType } from "./abstract-type";
+import { AbstractTypeExpression } from "./abstract-type-expression";
 
-import { StructType as StructType_ } from "src/app/model/typing/types/type-constructors/struct-type";
-import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { StructType } from "src/app/model/typing/types/type-constructors/struct-type";
+import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
 
-export class StructType extends AbstractType {
+export class StructTypeExpression extends AbstractTypeExpression {
 
     public name: string;
 
@@ -30,11 +30,11 @@ export class StructType extends AbstractType {
         return `struct ${this.name}`;
     }
 
-    public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+    public performTypeCheck(t: TypeEnvironment): AbstractType {
         return this.type = t.getTypeOfIdentifier(this.name);
     }
 
-    public getType(): AbstractType_ {
+    public getType(): AbstractType {
         return this.type;
     }
 

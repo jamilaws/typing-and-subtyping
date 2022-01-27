@@ -1,4 +1,5 @@
 A. Goal of the Tool
+	* Goal of Typing (see screenshots, e.g.: manage memory, select correct assembler instruction, avoid certain run-time errors)
 
 B. Technical Decisions
 	* Framework / Language

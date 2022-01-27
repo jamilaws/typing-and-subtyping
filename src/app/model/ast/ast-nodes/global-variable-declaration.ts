@@ -1,6 +1,6 @@
 import { AstNode, NodeType } from "../abstract-syntax-tree";
 import { Edge, Graph } from "../graph";
-import { AbstractType } from "./type/abstract-type";
+import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
@@ -11,11 +11,11 @@ import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-l
 
 export class GlobalVariableDeclaration extends AstNode implements Declaration {
 
-    public defType: AbstractType; // TODO: Check if ok
+    public defType: AbstractTypeExpression; // TODO: Check if ok
     public name: string;
     public value: AstNode;
 
-    constructor(codeLine: number, defType: AbstractType, name: string, value: AstNode) {
+    constructor(codeLine: number, defType: AbstractTypeExpression, name: string, value: AstNode) {
         super(codeLine);
         this.defType = defType;
         this.name = name;
