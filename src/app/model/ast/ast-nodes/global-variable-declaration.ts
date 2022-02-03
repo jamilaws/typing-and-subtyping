@@ -40,6 +40,7 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
         return new Graph([newNode], edges).merge(defTypeGraph).merge(valueGraph);
     }
 
+    // TODO: Suptyping! - Check 't_2 can be converted into t_1'
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
 
         const typeType = this.defType.performTypeCheck(t);

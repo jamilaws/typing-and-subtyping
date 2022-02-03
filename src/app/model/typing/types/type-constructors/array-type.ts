@@ -1,4 +1,5 @@
 import { AbstractType } from "../abstract-type";
+import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
 export class ArrayType extends AbstractType {
 
@@ -17,7 +18,12 @@ export class ArrayType extends AbstractType {
         return this.baseType;
     }
 
-    public isSubtypeOf(other: AbstractType): boolean {
-        throw new Error("Not implemented.");
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
+        if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;
+        if(other instanceof ArrayType) {
+            return this.baseType.isStrutcturalSubtypeOf_Impl(other, queryHistory);
+        } else {
+            return false;
+        }
     }
 }

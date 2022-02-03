@@ -68,8 +68,8 @@ export class BinaryExpression extends AstNode {
 
 
         if (this.operator === BinaryOperator.EQ) {
-            // TODO: Suptyping! - Check 't_2 can be converted into t_1'
-            if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
+            const isSubtype = t_1.isStrutcturalSubtypeOf(t_2);
+            if (!isSubtype) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         } else {
             if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);

@@ -8,7 +8,7 @@ export const storeError = () => {
         // anonymous function, not arrow!
         descriptor.value = function (...args: any[]) {
 
-            let obj: AstNode = <AstNode> this;
+            let object: AstNode = <AstNode> this;
             
             let result: AbstractType = null;
             try {
@@ -17,9 +17,9 @@ export const storeError = () => {
                 // set error by placeholder error instead of leaving null ?
                 // TODO: Check for TypeError
                 if(e instanceof TypeError) {
-                    obj.setTypeError(e);
+                    object.setTypeError(e);
                 } else if(e instanceof Error){
-                    obj.setTypeError(e);
+                    object.setTypeError(e);
                     console.log(e);
                     throw e
                 } else {

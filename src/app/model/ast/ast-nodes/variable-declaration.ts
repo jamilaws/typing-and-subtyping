@@ -41,15 +41,14 @@ export class VariableDeclaration extends AstNode implements Declaration {
         return new Graph([newNode], edges).merge(defTypeGraph).merge(valueGraph);
     }
 
+    // TODO: Suptyping! - Check 't_2 can be converted into t_1'
     public performTypeCheck(t: TypeEnvironment): AbstractType {
 
         const typeType = this.defType.performTypeCheck(t);
         const valueType = this.value.performTypeCheck(t);
 
-        // TODO: Check subtyping!
-        if (!typeType.equals(valueType)) {
-            // TODO: Uncomment
-            //throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
+        if (!valueType.isStrutcturalSubtypeOf(typeType)) {
+            throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
         }
 
         t.declare(this);

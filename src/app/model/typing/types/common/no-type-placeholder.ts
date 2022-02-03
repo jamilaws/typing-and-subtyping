@@ -1,4 +1,5 @@
 import { AbstractType } from "../abstract-type";
+import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
 /**
  * Type placeholder for e.g. if-statements
@@ -9,7 +10,7 @@ export class NoTypePlaceholder extends AbstractType {
         return "No Type.";
     }
 
-    public isSubtypeOf(other: AbstractType): boolean {
-        throw new Error("Not implemented.");
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
+        throw new Error("Method call unexpected.");
     }
 }
