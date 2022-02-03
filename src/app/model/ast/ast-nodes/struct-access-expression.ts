@@ -64,8 +64,10 @@ export class StructAccessExpression extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        // TODO: !!!
-        return new TypingTree(TypingTreeNodeLabel.APP, this.getCode(), this.getType().toString(), [this.struct.getTypingTree()]);
+        const structTree = this.struct.getTypingTree();
+        //const memberTree = this.member.getTypingTree();
+
+        return new TypingTree(TypingTreeNodeLabel.STRUCT, this.getCode(), this.getType().toString(), [structTree]);
     }
 
 }

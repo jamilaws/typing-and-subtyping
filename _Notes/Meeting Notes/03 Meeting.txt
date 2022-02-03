@@ -1,6 +1,24 @@
 Questions:
 
-- Video 47: "Choosing which rule to apply on an ast node is determined by the type of the child nodes" --> What exactly does this mean?
-- "Structural Subtyping" ... "does not hold in C" --> why needed then?
+- Thesis
+	* method to formally "proove"/explain co- and contra-variance of subtyping of functions
+
+- Parser problems:
+	* Does not distingush between expressions for ArrayType and PointerType (both will be mapped to PointerType)
+	* char extractInfo( struct{char info} ) not Supported. Must Define struct with name before.
+	* Nested structs not supported, e.g.: struct list { int info; struct list* next }
+	* Only valid struct type expression is e.g.:
+		struct Test { int x; }
+		struct Test y = { .x = 3};
+
+		Not valid:
+		- struct { int x; } y;
+		- typedef struct { .x = 3 } Test;
+
+		(Note: Within every declaration, initialization is required...)
+		--> See example from lecture		
+	* Take functions as parameter like so: void func ( void (*f)(int) );
+		
+
 - Currently: separation of code into "ast" and "typing" module --> would it be better to use abstraction TypExpression on respective ast nodes?
 - Idea Replayable History

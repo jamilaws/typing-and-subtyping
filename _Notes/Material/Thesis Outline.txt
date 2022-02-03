@@ -1,15 +1,21 @@
-A. Goal of the Tool
+A. Goal (and blueprint) of the Tool
 	* Goal of Typing (see screenshots, e.g.: manage memory, select correct assembler instruction, avoid certain run-time errors)
+	* Goal of Tool (lerning by vizualization of ... a) Typing b) Structural Subtyping
 
 B. Technical Decisions
 	* Framework / Language
-        	- Angular Basics
+		- TypeScript (override and the --noImplicitOverride Flag)
+        	- Angular Basics (directive examples, change detection)
 	* Dependencies (e.g. monaco-code-editor, apache echart, cparse)
 	* DevOps (CI/CD Pipeline: AWS, Docker, GitHub Actions,...)
-	* Class Diagram (AstNode, TypeExpression, ... ) 
+	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... ) 
 
 C. Development Progress
     * New Features
+	- Baseline: Integration of monaco, cparse and echarts (Realtime refresh by angular change detection)
+	- Adding TypeEnvironment / Symbol Table
+	- Adding performTypeCheck()
+	- Vizualization by Typing tree (also: add type placeholder to always have full typing tree)
         - Replayable TypingTree- and Symbol Table-History (using Decorators)
     * Refactorings (Abstractions etc.)
         - Better display size allocation for TypingTree visualization (Add node width depending on number of children; add screenshots)
@@ -21,5 +27,10 @@ Not yet positioned:
 
 - "Structural Subtyping"
 	* Theory
+		- Part 1: (Structural) Type Equality (Note: "equality is subset of subtyping") (Node: for previous features; equals was just easy string comp for testing purpose) (Note: does not hold in C)
+		- Part 2: (Structural) Subtyping (e.g. co- and contra-variance of subtyping of functions -> explanation with subsets)
 	* Proof of termination
 	* Implementation in project
+- User Experience
+	* Only show AST of selected row (with cursor)?
+	* 

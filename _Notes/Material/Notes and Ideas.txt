@@ -139,6 +139,12 @@ length: 3
 	- Session 19.01.2022
 		--> Special treatment of BinaryExpression: tranlate "a->b" to "(*a).b"
  
+------------------------------------
+New Feature "(Structural subtyping)"
+------------------------------------
+* Introduce new Function 'isSubtypeOf' in AbstractType --> Talk about implementations in more detail
+* Use this function in some of the deduction rules (see slides), in the project inside of 'performTypeCheck' of the following Node implementations: 
+	CallExpression, BinaryExpression (case EQ), CastExpression
 
 __________
 Additional notes / Ideas:

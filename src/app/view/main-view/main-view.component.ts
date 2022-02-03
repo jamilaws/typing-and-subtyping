@@ -91,6 +91,9 @@ export class MainViewComponent implements OnInit {
 
     this.typeErrorString = null;
     this.typingTree = node.getTypingTree();
+
+    //console.log("Clicked AST-Node:");
+    //console.log(node);
   }
 
   /*

@@ -27,7 +27,7 @@ export class CallExpression extends AstNode {
     }
 
     public getGraphNodeLabel(): string {
-        return "...(...)";
+        return "( )";
     }
 
     public getGraph(): Graph<AstNode> {
@@ -46,6 +46,9 @@ export class CallExpression extends AstNode {
         return newGraph;
     }
 
+    /**
+     * TODO: SUBTYPING
+     */
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {        
         const functionType: AbstractType_ = this.base.performTypeCheck(t);
 

@@ -56,6 +56,9 @@ export class BinaryExpression extends AstNode {
         return this.operator;
     }
 
+    /**
+     * TODO: SUBTYPING
+     */
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const t_1 = this.left.performTypeCheck(t);
         const t_2 = this.right.performTypeCheck(t);

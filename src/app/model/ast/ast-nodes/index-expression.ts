@@ -27,7 +27,7 @@ export class IndexExpression extends AstNode {
     }
 
     public getGraphNodeLabel(): string {
-        return "[]";
+        return "[ ]";
     }
 
     public getGraph(): Graph<AstNode> {

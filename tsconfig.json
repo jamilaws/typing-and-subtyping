@@ -20,7 +20,8 @@
       "es2018",
       "dom"
     ],
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "noImplicitOverride": true // TODO: CHECK!
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
