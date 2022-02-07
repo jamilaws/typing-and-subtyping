@@ -11,7 +11,7 @@ export class ArrayType extends AbstractType {
     }
 
     public toString(): string {
-        return this.baseType.toString() + "[]";
+        return this.baseType.toString() + "[ ]";
     }
 
     public getBaseType(): AbstractType {
@@ -21,7 +21,7 @@ export class ArrayType extends AbstractType {
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
         if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;
         if(other instanceof ArrayType) {
-            return this.baseType.isStrutcturalSubtypeOf_Impl(other, queryHistory);
+            return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, queryHistory);
         } else {
             return false;
         }

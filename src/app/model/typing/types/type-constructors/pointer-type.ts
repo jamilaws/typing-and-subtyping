@@ -13,7 +13,7 @@ export class PointerType extends AbstractType {
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
         if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;
         if(other instanceof PointerType) {
-            return this.baseType.isStrutcturalSubtypeOf_Impl(other, queryHistory);
+            return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, queryHistory);
         } else {
             return false;
         }

@@ -16,8 +16,8 @@ export class StructType extends AbstractType {
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
         if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;
         if(other instanceof StructType) {
-            return this.members.every(d1 => {
-                return other.members.some(d2 => {
+            return other.members.every(d2 => {
+                return this.members.some(d1 => {
                     return d1.getName() === d2.getName() && d1.getType().isStrutcturalSubtypeOf_Impl(d2.getType(), queryHistory);
                 });
             });

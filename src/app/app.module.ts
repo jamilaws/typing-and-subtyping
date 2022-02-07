@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TypingTreeComponent } from './util/typing-tree/typing-tree.component';
+import { DummySubtypingTestComponent } from './util/dummy-subtyping-test/dummy-subtyping-test.component';
 
 
 const monacoConfig: NgxMonacoEditorConfig = {
@@ -24,7 +25,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     AppComponent,
     CodeEditorComponent,
     MainViewComponent,
-    TypingTreeComponent
+    TypingTreeComponent,
+    DummySubtypingTestComponent
   ],
   imports: [
     BrowserModule,

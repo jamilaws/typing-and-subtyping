@@ -41,13 +41,22 @@
             </div>
         </div>
     </div>
+    <div class="lowerPart">
+        <div class="row">
+            <div class="col-sm-12">
+                <div *ngIf="typeErrorString">
+                    {{typeErrorString}}
+                </div>
+                <div *ngIf="!typeErrorString" class="typing-tree-wrapper">
+                    <app-typing-tree [typingTree]="typingTree"></app-typing-tree>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
-            <div *ngIf="typeErrorString">
-                {{typeErrorString}}
-            </div>
-            <div *ngIf="!typeErrorString" class="typing-tree-wrapper">
-                <app-typing-tree [typingTree]="typingTree"></app-typing-tree>
+            <div style="">
+                <app-dummy-subtyping-test></app-dummy-subtyping-test>
             </div>
         </div>
     </div>
