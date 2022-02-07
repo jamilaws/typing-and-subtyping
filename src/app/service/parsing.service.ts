@@ -11,7 +11,7 @@ import { Literal } from '../model/ast/ast-nodes/literal';
 import { PointerTypeExpression } from '../model/ast/ast-nodes/type-expressions/pointer-type-expression';
 import { ReturnStatement } from '../model/ast/ast-nodes/return-statement';
 import { StructDefinition } from '../model/ast/ast-nodes/struct-definition';
-import { TypeExpression } from '../model/ast/ast-nodes/type-expressions/type-expression';
+import { TypeExpression, TypeName } from '../model/ast/ast-nodes/type-expressions/type-expression';
 import { VariableDeclaration } from '../model/ast/ast-nodes/variable-declaration';
 import { BinaryExpression, BinaryOperator } from '../model/ast/ast-nodes/binary-expression';
 import { StructAccessExpression } from '../model/ast/ast-nodes/struct-access-expression';
@@ -22,6 +22,8 @@ import { AbstractTypeExpression } from '../model/ast/ast-nodes/type-expressions/
 import { InitializerListArray } from '../model/ast/ast-nodes/initializer-list-array';
 import { InitializerListStruct, StructMemberValue } from '../model/ast/ast-nodes/initializer-list-struct';
 import { AstNode, NodeType } from '../model/ast/ast-node';
+import { TypeDefStatement } from '../model/ast/ast-nodes/type-def-statement';
+import { AliasTypeExpression } from '../model/ast/ast-nodes/type-expressions/alias-type-expression';
 
 const parse = require('../../assets/js/cparse/cparse.js');
 
@@ -109,6 +111,9 @@ export class ParsingService {
         break;
       case NodeType.PrefixExpression:
         out = this.rawToAstNode_PrefixExpression(x);
+        break;
+      case NodeType.TypeDefStatement:
+        out = this.rawToAstNode_TypeDefStatement(x);
         break;
       default: throw new IncompleteAstWrapperException(type, x);
     }
@@ -220,12 +225,16 @@ export class ParsingService {
   }
 
   private rawToAstNode_Type(x: any): TypeExpression | StructTypeExpression {
+    const line: number = x["pos"]["line"];
     const name = x["name"];
 
     if (x["modifier"].find((e: any) => e === "struct")) {
-      return new StructTypeExpression(x["pos"]["line"], name);
+      return new StructTypeExpression(line, name);
     }
-    return new TypeExpression(x["pos"]["line"], name);
+    if(Object.values(TypeName).includes(name)){
+      return new TypeExpression(line, name);
+    }
+    return new AliasTypeExpression(line, name);
   }
 
   private rawToAstNode_VariableDeclaration(x: any): VariableDeclaration {
@@ -267,6 +276,11 @@ export class ParsingService {
   private rawToAstNode_PrefixExpression(x: any): PrefixExpression {
     const value = this.rawToAstNode(x["value"]);
     return new PrefixExpression(x["pos"]["line"], value, x["operator"]);
+  }
+
+  private rawToAstNode_TypeDefStatement(x: any): TypeDefStatement {
+    const target = this.rawToAstNode(x["defType"]);
+    return new TypeDefStatement(x["pos"]["line"], target, x["name"]);
   }
 
   // Helper

@@ -31,6 +31,16 @@ Not yet positioned:
 		- Part 2: (Structural) Subtyping (e.g. co- and contra-variance of subtyping of functions -> explanation with subsets)
 	* Proof of termination
 	* Implementation in project
+- New Featur: typedefs
+	* Add AstNode "TypeDefStatement"
+	* Add placeholder-type for it
+	* Refactor: Add Typedefs to TypeEnvironment (idea: refactor to context holding all entities?)
+	* Refactor: Add Typedefs as parameter to AbstractType::isStrutcturalSubtypeOf
+
+- High Coupling/Low Cohesion
+	* Theory (slides EIST, PSE)
+	* Subsystems 'typing' and 'ast'
+	* Callback pattern with dedicated interfaces
 - User Experience
 	* Only show AST of selected row (with cursor)?
 	* 

@@ -28,6 +28,7 @@ export enum NodeType {
     InitializerListArray = "InitializerListArray",
     InitializerListStruct = "InitializerListStruct",
     StructMemberValue = "StructMemberValue",
+    TypeDefStatement = "TypeDefStatement",
 }
 
 export abstract class AstNode implements TypeCheckable {

@@ -1,3 +1,5 @@
+import { IntType } from "./base-types/int-type";
+import { AliasPlaceholderType } from "./placeholder-types/alias-placeholder-type";
 import { StructuralEquivalenceQuery } from "./structural-subtyping/structural-equivalence-query";
 
 export abstract class AbstractType {
@@ -26,14 +28,20 @@ export abstract class AbstractType {
      * @returns true if a query loop was detected or this is equal to other.
      */
     public isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
-                
-        if(this.equals(other)){
+
+        // TODO! FIX!!!
+        if(other instanceof AliasPlaceholderType) {
+            return this.isStrutcturalSubtypeOf_Impl(other, queryHistory);
+        }
+
+        if(this.equals(other)) {
             return true;
         }
 
         const newQuery = new StructuralEquivalenceQuery(this, other);
         
         if(queryHistory.some(q => q.equals(newQuery))) {
+            alert("Query loop found.");
             return true;
         } else {
             queryHistory.push(newQuery);
