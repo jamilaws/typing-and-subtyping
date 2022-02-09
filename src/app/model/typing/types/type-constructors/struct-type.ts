@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, SubtypingContext } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
@@ -13,12 +13,12 @@ export class StructType extends AbstractType {
         this.members = members;
     }
 
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
-        if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
+        if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
         if(other instanceof StructType) {
             return other.members.every(d2 => {
                 return this.members.some(d1 => {
-                    return d1.getName() === d2.getName() && d1.getType().isStrutcturalSubtypeOf_Impl(d2.getType(), queryHistory);
+                    return d1.getName() === d2.getName() && d1.getType().isStrutcturalSubtypeOf_Impl(d2.getType(), context);
                 });
             });
         } else {

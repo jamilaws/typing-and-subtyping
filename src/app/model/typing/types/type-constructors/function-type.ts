@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, SubtypingContext } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
@@ -18,13 +18,13 @@ export class FunctionType extends AbstractType {
         this.returnType = returnType;
     }
 
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
-        if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
+        if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
         if(other instanceof FunctionType) {
             if(this.parameterTypes.length !== other.parameterTypes.length) return false;
-            const returnTypesCheck = this.returnType.isStrutcturalSubtypeOf_Impl(other.returnType, queryHistory);
+            const returnTypesCheck = this.returnType.isStrutcturalSubtypeOf_Impl(other.returnType, context);
             // co-/contra-variance
-            const parameterTypesCheck = zip(this.parameterTypes, other.parameterTypes).every(tup2 => tup2[1].isStrutcturalSubtypeOf_Impl(tup2[0], queryHistory));
+            const parameterTypesCheck = zip(this.parameterTypes, other.parameterTypes).every(tup2 => tup2[1].isStrutcturalSubtypeOf_Impl(tup2[0], context));
             return returnTypesCheck && parameterTypesCheck;
         } else {
             return false;

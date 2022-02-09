@@ -3,14 +3,13 @@ import { AstNode } from "../../ast-node";
 import { Graph, Node } from "../../graph";
 import { AbstractTypeExpression } from "./abstract-type-expression";
 
-import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { AbstractType as AbstractType_, AliasPlaceholderType } from "src/app/model/typing/types/abstract-type";
 import { CharType } from "src/app/model/typing/types/base-types/char-type";
 import { FloatType } from "src/app/model/typing/types/base-types/float-type";
 import { IntType } from "src/app/model/typing/types/base-types/int-type";
 import { VoidType } from "src/app/model/typing/types/base-types/void-type";
 import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
-import { AliasPlaceholderType } from "src/app/model/typing/types/placeholder-types/alias-placeholder-type";
 
 export class AliasTypeExpression extends AbstractTypeExpression {
 
@@ -36,7 +35,7 @@ export class AliasTypeExpression extends AbstractTypeExpression {
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const targetType = t.getTypeForAlias(this.name);
-        return this.type = new AliasPlaceholderType(this.name, targetType);
+        return this.type = new AliasPlaceholderType(this.name);
     }
 
     public getType(): AbstractType_ {

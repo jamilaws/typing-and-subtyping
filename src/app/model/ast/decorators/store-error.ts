@@ -30,5 +30,7 @@ export const storeError = () => {
             // Note: null if error occured (or no type is applicable)
             return result;
         };
+
+        return descriptor;
     };
 };

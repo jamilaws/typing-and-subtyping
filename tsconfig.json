@@ -21,7 +21,8 @@
       "dom"
     ],
     "strictNullChecks": false,
-    "noImplicitOverride": true // TODO: CHECK!
+    "noImplicitOverride": true,
+    //"emitDecoratorMetadata": false,
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

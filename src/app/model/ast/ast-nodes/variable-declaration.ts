@@ -47,7 +47,7 @@ export class VariableDeclaration extends AstNode implements Declaration {
         const typeType = this.defType.performTypeCheck(t);
         const valueType = this.value.performTypeCheck(t);
 
-        if (!valueType.isStrutcturalSubtypeOf(typeType)) {
+        if (!valueType.isStrutcturalSubtypeOf(typeType, t.getTypeDefinitions())) {
             throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
         }
 

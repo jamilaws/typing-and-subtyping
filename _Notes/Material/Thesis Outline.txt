@@ -6,6 +6,7 @@ B. Technical Decisions
 	* Framework / Language
 		- TypeScript (override and the --noImplicitOverride Flag)
         	- Angular Basics (directive examples, change detection)
+			- Decorators
 	* Dependencies (e.g. monaco-code-editor, apache echart, cparse)
 	* DevOps (CI/CD Pipeline: AWS, Docker, GitHub Actions,...)
 	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... ) 
@@ -33,7 +34,7 @@ Not yet positioned:
 	* Implementation in project
 - New Featur: typedefs
 	* Add AstNode "TypeDefStatement"
-	* Add placeholder-type for it
+	* Add placeholder-type for it only containing name (reference to targte type would break recursion)
 	* Refactor: Add Typedefs to TypeEnvironment (idea: refactor to context holding all entities?)
 	* Refactor: Add Typedefs as parameter to AbstractType::isStrutcturalSubtypeOf
 
@@ -44,3 +45,7 @@ Not yet positioned:
 - User Experience
 	* Only show AST of selected row (with cursor)?
 	* 
+
+- URLs for decorators
+	* https://www.typescriptlang.org/docs/handbook/decorators.html#method-decorators
+	* https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition

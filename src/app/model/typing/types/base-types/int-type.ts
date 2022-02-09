@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, replaceAlias, SubtypingContext } from "../abstract-type";
 import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 import { FloatType } from "./float-type";
 
@@ -8,8 +8,9 @@ export class IntType extends AbstractType {
         return "int";
     }
 
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, queryHistory: StructuralEquivalenceQuery[]): boolean {
-        if (super.isStrutcturalSubtypeOf_Impl(other, queryHistory)) return true;    
+    @replaceAlias()
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
+        if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;    
         if (other instanceof FloatType) return true;
         return false;
     }

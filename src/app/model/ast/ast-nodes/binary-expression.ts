@@ -68,7 +68,7 @@ export class BinaryExpression extends AstNode {
 
 
         if (this.operator === BinaryOperator.EQ) {
-            const isSubtype = t_1.isStrutcturalSubtypeOf(t_2);
+            const isSubtype = t_1.isStrutcturalSubtypeOf(t_2, t.getTypeDefinitions());
             if (!isSubtype) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         } else {
