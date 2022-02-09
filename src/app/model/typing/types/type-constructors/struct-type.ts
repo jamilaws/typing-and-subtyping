@@ -1,4 +1,4 @@
-import { AbstractType, SubtypingContext } from "../abstract-type";
+import { AbstractType, otherAliasReplaced, SubtypingContext } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
@@ -13,6 +13,7 @@ export class StructType extends AbstractType {
         this.members = members;
     }
 
+    @otherAliasReplaced()
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
         if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
         if(other instanceof StructType) {
@@ -27,7 +28,7 @@ export class StructType extends AbstractType {
     }
 
     public toString(): string {
-        return "struct { " + this.members.map(m => m.toString()).join(", ") + " }";
+        return "struct { " + this.members.map(m => m.toString() + "; ").join("") + "}";
     }
 
     public getName(): string {

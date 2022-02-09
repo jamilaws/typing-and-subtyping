@@ -1,16 +1,12 @@
 <div class="wrapper" style="padding: 10px;">
-    <div class="typeDefsWrapper">
-        <table style="border: solid 1px lightgray;">
-            <tr>
-                <th style="padding: 5px; border: solid 1px grey;">Alias</th>
-                <th style="padding: 5px; border: solid 1px grey;">Target Type</th>
-            </tr>
-            <tr *ngFor="let row of typeDefTable">
-                <td style="padding: 5px; border: solid 1px grey;">{{row[0]}}</td>
-                <td style="padding: 5px; border: solid 1px grey;">{{row[1]}}</td>
-            </tr>
-        </table>
-    </div>
+    <table>
+        <tr *ngFor="let row of typeDefTable">
+            <td style="padding-right: 20px;">typedef</td>
+            <td style="padding-right: 20px;">{{row[1]}}</td>
+            <td>{{row[0]}}</td>
+        </tr>
+    </table>
+    <br>
     <table style="border: solid 1px lightgray;">
         <tr>
             <th style="padding: 5px; border: solid 1px grey;">Structural Subtyping Query</th>

@@ -1,4 +1,4 @@
-import { AbstractType, SubtypingContext } from "../abstract-type";
+import { AbstractType, otherAliasReplaced, SubtypingContext } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
@@ -18,6 +18,7 @@ export class FunctionType extends AbstractType {
         this.returnType = returnType;
     }
 
+    @otherAliasReplaced()
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
         if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
         if(other instanceof FunctionType) {

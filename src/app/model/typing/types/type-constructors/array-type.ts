@@ -1,4 +1,4 @@
-import { AbstractType, SubtypingContext } from "../abstract-type";
+import { AbstractType, otherAliasReplaced, SubtypingContext } from "../abstract-type";
 import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
 
 export class ArrayType extends AbstractType {
@@ -18,6 +18,7 @@ export class ArrayType extends AbstractType {
         return this.baseType;
     }
 
+    @otherAliasReplaced()
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
         if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
         if(other instanceof ArrayType) {
