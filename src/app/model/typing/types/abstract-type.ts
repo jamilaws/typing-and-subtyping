@@ -1,21 +1,52 @@
-import { StructuralEquivalenceQuery } from "./structural-subtyping/structural-equivalence-query";
+import { Graph, Node, Edge } from 'src/app/model/common/graph/_module';
+import { StructuralSubtypingQueryContext } from "./structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQuery } from "./structural-subtyping/structural-subtyping-query";
+import { StructuralSubtypingQueryResult } from "./structural-subtyping/structural-subtyping-query-result";
 //import { otherAliasReplaced } from "./structural-subtyping/decorators/replace-alias";
+
+export const queryGraphUpdated = () => {
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+        const originalMethod = descriptor.value;
+        descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
+
+            let newNode = new Node(new StructuralSubtypingQuery(<AbstractType> this, other));
+            let newGraph = new Graph<StructuralSubtypingQuery, string>([newNode]);
+
+            if(context.accumulator.queryGraphRoot) {
+                // Query graph empty so far
+                newGraph = context.accumulator.queryGraph.merge(newGraph);
+                const newEdge = new Edge(context.accumulator.queryGraphRoot, newNode, "test");
+                newGraph.addEdge(newEdge);        
+            }
+            
+            context.accumulator.queryGraph = newGraph;
+
+            // Update queryGraphRoot
+            context.accumulator.queryGraphRoot = newNode;
+
+
+            return originalMethod.apply(this, [other, context]);
+        };
+    };
+}
 
 export const queryLoopChecked = () => {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         const originalMethod = descriptor.value;
-        descriptor.value = function (other: AbstractType, context: SubtypingContext) {
-            const newQuery = new StructuralEquivalenceQuery(<AbstractType> this, other);
+        descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
+            const newQuery = new StructuralSubtypingQuery(<AbstractType> this, other);
             if (context.queryHistory.some(q => q.equals(newQuery))) {
                 // Query loop in history detected. Resolve structural subtyping query with true.
 
                 // Add current query to history (Not relevant anymore, but for the sake of completeness)
                 context.queryHistory.push(newQuery);
 
-                console.log("Subtype due to query loop! History:");
+                console.log("Subtyping query results true due to query loop! History:");
                 console.log(context.queryHistory);
 
-                return true;
+                context.accumulator.value = true;
+                return context.accumulator;
+
             } else {
                 // Add current query to history
                 context.queryHistory.push(newQuery);
@@ -28,7 +59,7 @@ export const queryLoopChecked = () => {
 export const otherAliasReplaced = () => {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         const originalMethod = descriptor.value;
-        descriptor.value = function (other: AbstractType, context: SubtypingContext) {
+        descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
 
             // TODO: Fix error with instanceof operator!!!
             if (other.constructor.name === "AliasPlaceholderType") {
@@ -45,11 +76,6 @@ export const otherAliasReplaced = () => {
     };
 };
 
-export interface SubtypingContext {
-    typeDefinitions: Map<string, AbstractType>;
-    queryHistory: StructuralEquivalenceQuery[];
-}
-
 export abstract class AbstractType {
     abstract toString(): string;
 
@@ -62,28 +88,31 @@ export abstract class AbstractType {
         return this.toString() === other.toString();
     }
 
-    public isStrutcturalSubtypeOf(other: AbstractType, typeDefs: Map<string, AbstractType>): boolean {
-        const context: SubtypingContext = {
+    public isStrutcturalSubtypeOf(other: AbstractType, typeDefs: Map<string, AbstractType>): StructuralSubtypingQueryResult {
+        const context: StructuralSubtypingQueryContext = {
             typeDefinitions: typeDefs,
-            queryHistory: new Array()
+            queryHistory: new Array(),
+            accumulator: {
+                value: false,
+                queryGraphRoot: null,
+                queryGraph: new Graph<StructuralSubtypingQuery, string>()
+            }
         };
         return this.isStrutcturalSubtypeOf_Impl(other, context);
     }
 
     /**
-     * Override this method if needed
+     * Performs a basic subtyping check by:
+     * - In case other is an AliasPlaceholderType, replace it by its target
+     * - Check for loops in the query history
+     * - Finally, check for equallity by calling equals method
      * 
-     * @param other Type to compare to
-     * @param queryHistory as termination condition in recursive type definition case
-     * @returns true if a query loop was detected or this is equal to other.
+     * Override this method if needed and call it to preserve basic subtyping check.
      */
-    @queryLoopChecked() @otherAliasReplaced()
-    public isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
-        if (this.equals(other)){
-            return true; // Equality as a subset of Subtype relation
-        } else {
-            return false; // For more complex subtyping querys override this method
-        }
+    @queryGraphUpdated() @queryLoopChecked() @otherAliasReplaced()
+    public isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
+        context.accumulator.value = this.equals(other);
+        return context.accumulator;
     }
 }
 
@@ -105,8 +134,10 @@ export class AliasPlaceholderType extends AbstractType {
         return this.alias;
     }
 
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
-        if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
+        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
+        if (basicCheckResult.value) return basicCheckResult;
+
         const target = context.typeDefinitions.get(this.getAlias());
         if (!target) throw new Error("No type definition exists for " + this.getAlias());
         return target.isStrutcturalSubtypeOf_Impl(other, context);

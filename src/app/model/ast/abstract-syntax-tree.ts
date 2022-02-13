@@ -4,7 +4,8 @@ import { AbstractType } from "../typing/types/abstract-type";
 import { NoTypePlaceholder } from "../typing/types/common/no-type-placeholder";
 import { TypingTree } from "../typing/typing-tree/typing-tree";
 import { AstNode } from "./ast-node";
-import { Graph } from "./graph";
+import { Graph } from "../common/graph/_module";
+
 
 export class AbstractSyntaxTree implements TypeCheckable {
     private roots: AstNode[];

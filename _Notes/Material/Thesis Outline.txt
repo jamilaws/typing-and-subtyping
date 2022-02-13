@@ -6,7 +6,7 @@ B. Technical Decisions
 	* Framework / Language
 		- TypeScript (override and the --noImplicitOverride Flag)
         	- Angular Basics (directive examples, change detection)
-			- Decorators
+			- Decorators (Purpose, variants, math concat explanation)
 	* Dependencies (e.g. monaco-code-editor, apache echart, cparse)
 	* DevOps (CI/CD Pipeline: AWS, Docker, GitHub Actions,...)
 	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... ) 
@@ -32,6 +32,7 @@ Not yet positioned:
 		- Part 2: (Structural) Subtyping (e.g. co- and contra-variance of subtyping of functions -> explanation with subsets)
 	* Proof of termination
 	* Implementation in project
+		- order of decorators! (see math concat from B.)
 - New Featur: typedefs
 	* Add AstNode "TypeDefStatement"
 	* Add placeholder-type for it only containing name (reference to targte type would break recursion)

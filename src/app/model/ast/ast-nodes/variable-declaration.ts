@@ -1,5 +1,6 @@
 import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../graph";
+import { Edge, Graph } from "../../common/graph/_module";
+
 import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
 import { TypeEnvironment } from "../../typing/type-environment";

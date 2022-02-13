@@ -1,5 +1,6 @@
-import { AbstractType, SubtypingContext } from "../abstract-type";
-import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
+import { AbstractType } from "../abstract-type";
+import { StructuralSubtypingQueryContext } from "../structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryResult } from "../structural-subtyping/structural-subtyping-query-result";
 
 /**
  * Type placeholder for e.g. if-statements
@@ -10,7 +11,7 @@ export class NoTypePlaceholder extends AbstractType {
         return "No Type.";
     }
 
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
         throw new Error("Method call unexpected.");
     }
 }

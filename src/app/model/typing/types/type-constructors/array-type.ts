@@ -1,5 +1,6 @@
-import { AbstractType, otherAliasReplaced, SubtypingContext } from "../abstract-type";
-import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
+import { AbstractType, otherAliasReplaced } from "../abstract-type";
+import { StructuralSubtypingQueryContext } from "../structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryResult } from "../structural-subtyping/structural-subtyping-query-result";
 
 export class ArrayType extends AbstractType {
 
@@ -19,12 +20,14 @@ export class ArrayType extends AbstractType {
     }
 
     @otherAliasReplaced()
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: SubtypingContext): boolean {
-        if (super.isStrutcturalSubtypeOf_Impl(other, context)) return true;
+    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
+        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
+        if (basicCheckResult.value) return basicCheckResult;
         if(other instanceof ArrayType) {
             return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, context);
         } else {
-            return false;
+            context.accumulator.value = false;
+            return context.accumulator;
         }
     }
 }

@@ -1,6 +1,6 @@
 import { AbstractType } from "../abstract-type";
 
-export class StructuralEquivalenceQuery {
+export class StructuralSubtypingQuery {
     public a: AbstractType;
     public b: AbstractType;
 
@@ -9,7 +9,7 @@ export class StructuralEquivalenceQuery {
         this.b = b;
     }
 
-    public equals(other: StructuralEquivalenceQuery): boolean {          
+    public equals(other: StructuralSubtypingQuery): boolean {          
         return this.a.equals(other.a) && this.b.equals(other.b);
     }
 }

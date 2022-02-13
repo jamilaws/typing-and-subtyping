@@ -1,5 +1,6 @@
 import { AstNode } from "../ast-node";
-import { Graph, Node } from "../graph";
+import { Graph, Node } from "../../common/graph/_module";
+
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";

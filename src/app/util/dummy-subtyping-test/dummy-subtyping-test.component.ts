@@ -1,19 +1,26 @@
 import { Component, OnInit } from '@angular/core';
+import { EChartsOption } from 'echarts';
+import { DisplayGraphEdge, DisplayGraphNode } from 'src/app/model/common/graph/displayed-graph';
+import { Graph } from 'src/app/model/common/graph/graph';
 import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { CharType } from 'src/app/model/typing/types/base-types/char-type';
 import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { Definition } from 'src/app/model/typing/types/common/definition';
+import { StructuralSubtypingQuery } from 'src/app/model/typing/types/structural-subtyping/structural-subtyping-query';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
 import { FunctionType } from 'src/app/model/typing/types/type-constructors/function-type';
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
+
+const NODE_SIZE: number = 20;
 
 interface DummyRow {
   t1: AbstractType;
   t2: AbstractType;
   input?: string;
   output?: boolean;
+  graph?: Graph<StructuralSubtypingQuery, string>;
 }
 @Component({
   selector: 'app-dummy-subtyping-test',
@@ -22,16 +29,24 @@ interface DummyRow {
 })
 export class DummySubtypingTestComponent implements OnInit {
 
+  public _graphOptions: EChartsOption;
+  private graphNodes: DisplayGraphNode[] = new Array<DisplayGraphNode>();
+  private graphEdges: DisplayGraphEdge[] = new Array<DisplayGraphEdge>();
+
 
   public dummyData: DummyRow[];
   public typeDefTable: string[][];
   private typeDefinitions: Map<string, AbstractType>;
+  public selectedGraph: Graph<StructuralSubtypingQuery, string>;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.initDummyData();
+    this.updateGraphOptions();
+  }
 
-
+  public initDummyData(): void {
     /*
     this.dummyData = [
       {
@@ -83,13 +98,92 @@ export class DummySubtypingTestComponent implements OnInit {
 
     this.dummyData = this.dummyData.map(d => {
 
-      d.input = `${d.t1.toString()} <= ${d.t2.toString()}`;
-      d.output = d.t1.isStrutcturalSubtypeOf(d.t2, this.typeDefinitions);
+      const str = `${d.t1.toString()} <= ${d.t2.toString()}`;
+      const result = d.t1.isStrutcturalSubtypeOf(d.t2, this.typeDefinitions);
+
+      console.log(str);
+      console.log(result);
+
+      d.input = str;
+      d.output = result.value;
+      d.graph = result.queryGraph;
 
       return d;
     });
 
     this.typeDefTable = Array.from(this.typeDefinitions.entries()).map(tup => [tup[0], tup[1].toString()]);
   }
+
+  public clickDummyRow(row: DummyRow){
+    this.selectedGraph = row.graph
+  }
+
+  /*
+
+  Graph
+
+  */
+
+  private updateGraphOptions(): void {
+    this._graphOptions = {
+      color: "#2469B3",
+      //layout: "",
+      // label: {
+      //   show: true
+      // },
+      tooltip: {},
+      animationDurationUpdate: 0,
+      animationEasingUpdate: 'quinticInOut',
+      series: [
+        {
+          type: "graph",
+          layout: 'none',
+          symbolSize: NODE_SIZE,
+          roam: true, // Graph position movable
+          lineStyle: {
+            curveness: 0.1
+          },
+          edgeSymbol: ['circle', 'arrow'],
+          edgeSymbolSize: [4, 10],
+          edgeLabel: {
+            // normal: {
+            //   textStyle: {
+            //     fontSize: 20
+            //   }
+            // }
+          },
+          data: this.graphNodes.map(node => {
+            return {
+              name: node.name,
+              x: node.x,
+              y: node.y,
+              astNodeIndex: node.astNodeIndex,
+              label: {
+                show: true,
+                position: 'top',
+                textStyle: {
+                  color: node.highlighted ? "red" : "black",
+                }
+              },
+              tooltip: {
+                show: false,
+              }
+            }
+          }),
+          links: this.graphEdges.map(edge => {
+            return {
+              source: edge.source,
+              target: edge.target,
+              tooltip: {
+                show: false,
+              }
+            }
+          }),
+        }
+      ]
+    };
+  }
+
+  public onClickAST(event: any) {}
 
 }

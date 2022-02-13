@@ -1,13 +1,9 @@
 import { TypeEnvironment } from "src/app/model/typing/type-environment";
 import { AstNode } from "../../ast-node";
-import { Graph, Node } from "../../graph";
+import { Graph } from 'src/app/model/common/graph/_module';
 import { AbstractTypeExpression } from "./abstract-type-expression";
 
 import { AbstractType as AbstractType_, AliasPlaceholderType } from "src/app/model/typing/types/abstract-type";
-import { CharType } from "src/app/model/typing/types/base-types/char-type";
-import { FloatType } from "src/app/model/typing/types/base-types/float-type";
-import { IntType } from "src/app/model/typing/types/base-types/int-type";
-import { VoidType } from "src/app/model/typing/types/base-types/void-type";
 import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
 

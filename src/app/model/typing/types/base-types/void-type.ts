@@ -1,5 +1,5 @@
 import { AbstractType } from "../abstract-type";
-import { StructuralEquivalenceQuery } from "../structural-subtyping/structural-equivalence-query";
+import { StructuralSubtypingQuery } from "../structural-subtyping/structural-subtyping-query";
 
 export class VoidType extends AbstractType {
     public toString(): string {

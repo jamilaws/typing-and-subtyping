@@ -1,12 +1,10 @@
 import { AstNode } from "../ast-node";
-import { Edge, Graph, Node } from "../graph";
+import { Graph, Edge } from 'src/app/model/common/graph/_module';
 
 import { TypeEnvironment } from "../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
-import { PointerType } from "../../typing/types/type-constructors/pointer-type";
-import { Identifier } from "./identifier";
 import { StructType } from "../../typing/types/type-constructors/struct-type";
 import { Definition } from "../../typing/types/common/definition";
 
@@ -30,7 +28,7 @@ export class StructMemberValue extends AstNode{
         return "." + this.member + " = ";
     }
 
-    public getGraph(): Graph<AstNode> {
+    public getGraph(): Graph<AstNode, void> {
         //const g1 = this.member.getGraph();
         const g2 = this.value.getGraph();
 

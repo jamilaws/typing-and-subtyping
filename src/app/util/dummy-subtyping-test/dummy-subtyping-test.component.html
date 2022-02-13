@@ -1,20 +1,30 @@
 <div class="wrapper" style="padding: 10px;">
-    <table>
-        <tr *ngFor="let row of typeDefTable">
-            <td style="padding-right: 20px;">typedef</td>
-            <td style="padding-right: 20px;">{{row[1]}}</td>
-            <td>{{row[0]}}</td>
-        </tr>
-    </table>
-    <br>
-    <table style="border: solid 1px lightgray;">
-        <tr>
-            <th style="padding: 5px; border: solid 1px grey;">Structural Subtyping Query</th>
-            <th style="padding: 5px; border: solid 1px grey;">Result</th>
-        </tr>
-        <tr *ngFor="let row of dummyData">
-            <td style="padding: 5px; border: solid 1px grey;">{{row.input}}</td>
-            <td style="padding: 5px; border: solid 1px grey;">{{row.output}}</td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="col-sm-6">
+            <table>
+                <tr *ngFor="let row of typeDefTable">
+                    <td style="padding-right: 20px;">typedef</td>
+                    <td style="padding-right: 20px;">{{row[1]}}</td>
+                    <td>{{row[0]}}</td>
+                </tr>
+            </table>
+            <br>
+            <table style="border: solid 1px lightgray;">
+                <tr>
+                    <th style="padding: 5px; border: solid 1px grey;">Structural Subtyping Query</th>
+                    <th style="padding: 5px; border: solid 1px grey;">Result</th>
+                </tr>
+                <tr *ngFor="let row of dummyData">
+                    <td style="padding: 5px; border: solid 1px grey;">{{row.input}}</td>
+                    <td style="padding: 5px; border: solid 1px grey;">{{row.output}}</td>
+                    <td style="padding: 5px; border: solid 1px grey;">
+                        <button (click)="clickDummyRow(row)">Show Graph</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-6">
+            <div echarts [options]="_graphOptions" (chartClick)="onClickAST($event)"></div>
+        </div>
+    </div>
 </div>

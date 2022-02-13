@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
 import { AstNode } from 'src/app/model/ast/ast-node';
-import { Graph, Node } from 'src/app/model/ast/graph';
+import { DisplayGraphEdge, DisplayGraphNode, GRAPH_SCALE_FACTOR_X, GRAPH_SCALE_FACTOR_Y, updateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
+import { Graph, Node, Edge } from 'src/app/model/common/graph/_module';
 import { SymbolTable, SymbolTableUiData } from 'src/app/model/typing/symbol-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
 import { TypeError } from 'src/app/model/typing/type-error';
@@ -14,25 +15,6 @@ const TYPE_STRING_PLACEHOLDER: string = "Please select an AST-Node.";
 
 const NODE_SIZE: number = 20;
 
-const GRAPH_SCALE_FACTOR_X: number = 1;
-const GRAPH_SCALE_FACTOR_Y: number = 0.8;
-
-interface DisplayGraphNode {
-  name: string;
-  x: number; // [0; 100] left->right
-  y: number; // [0; 100] top->bottom
-  highlighted: boolean;
-  astNodeIndex: number;
-}
-
-/**
- * DisplayGraphNode array index based
- */
-interface DisplayGraphEdge {
-  source: number;
-  target: number;
-}
-
 @Component({
   selector: 'app-main-view',
   templateUrl: './main-view.component.html',
@@ -43,7 +25,6 @@ export class MainViewComponent implements OnInit {
   symbolTable: SymbolTableUiData[] = null;
 
   _graphOptions: EChartsOption;
-  private displayedNodeToAstNode: Map<DisplayGraphNode, AstNode> = new Map();
 
   public initialCode: string = 'int main()\n{\n\treturn 0;\n}';
   private currentCodeEditorLine = -1;
@@ -113,7 +94,16 @@ export class MainViewComponent implements OnInit {
       this.isAstValid = true;
       try {
         const astGraph: Graph<AstNode> = this.ast.getGraph();
-        this.updateDisplayedGraph(this.ast.getRoots().map(r => r.getGraphNode()), astGraph);
+        
+        const displayedGraph = updateDisplayedGraph(this.ast.getRoots().map(r => r.getGraphNode()), astGraph, (node) => {
+          return node.getData().getGraphNodeLabel();
+        }, (node) => {
+          return node.getData().getCodeLine() === this.currentCodeEditorLine;
+        });
+
+        this.graphNodes = displayedGraph.nodes;
+        this.graphEdges = displayedGraph.edges;
+
       } catch (e) {
         alert("Valid AST but building graph failed.");
         console.log(e);
@@ -153,63 +143,6 @@ export class MainViewComponent implements OnInit {
       //   throw e;
       // }
     }
-  }
-
-  private updateDisplayedGraph(roots: Node<AstNode>[], graph: Graph<AstNode>) {
-    let graphNodeToDisplayGraphNode = new Map<Node<AstNode>, DisplayGraphNode>();
-    // Init displayed nodes
-    this.graphNodes = graph.getNodes().map((n, i) => {
-      const dNode = {
-        name: n.getData().getGraphNodeLabel(),
-        x: i * 10,
-        y: i * 10,
-        highlighted: false,
-        astNodeIndex: 0
-      }; // Set coordinates later
-      graphNodeToDisplayGraphNode.set(n, dNode);
-
-      if (n.getData().getCodeLine() === this.currentCodeEditorLine) {
-        dNode.highlighted = true;
-      }
-
-      // Remember link from displayed node to ast node for click callbacks
-      this.displayedNodeToAstNode.set(dNode, n.getData());
-
-      return dNode;
-    });
-    // Init displayed edges
-    this.graphEdges = graph.getEdges().map(e => {
-      let s = this.graphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getFrom()));
-      let t = this.graphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getTo()));
-      return { source: s, target: t };
-    });
-    // Traverse displayed graph via breadth first search to set coorinates
-    let levelIndex: number = 1;
-    let currentLevel: DisplayGraphNode[] = roots.map(n => graphNodeToDisplayGraphNode.get(n));
-    while (currentLevel.length > 0) {
-
-      currentLevel.forEach((n, col) => {
-        n.x = col + 1;
-        n.y = levelIndex;
-      })
-
-      // Update currentLevel with next one
-      currentLevel = this.graphEdges.filter(e => currentLevel.includes(this.graphNodes[e.source])).map(e => this.graphNodes[e.target]);
-      levelIndex++;
-    }
-
-    // Scale coordinates
-    this.graphNodes.forEach(n => {
-      n.x *= 100 * GRAPH_SCALE_FACTOR_X;
-      n.y *= 100 * GRAPH_SCALE_FACTOR_Y;
-    })
-
-    // Handle node index
-    this.graphNodes.forEach((n, index) => {
-      n.name = n.name + ` [${index}]`;
-      n.astNodeIndex = index;
-    });
-
   }
 
   private updateGraphOptions(): void {

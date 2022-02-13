@@ -3,7 +3,7 @@ import { TypeEnvironment } from "../typing/type-environment";
 import { AbstractType } from "../typing/types/abstract-type";
 import { NotVisitedPlaceholderType } from "../typing/types/placeholder-types/not-visited-placeholder-type";
 import { TypingTree } from "../typing/typing-tree/typing-tree";
-import { Graph, Node } from "./graph";
+import { Graph, Node } from 'src/app/model/common/graph/_module';
 
 
 export enum NodeType {

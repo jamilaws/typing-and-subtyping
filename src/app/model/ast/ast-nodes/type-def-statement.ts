@@ -1,8 +1,8 @@
 import { TypeEnvironment } from "src/app/model/typing/type-environment";
 import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../graph";
+import { Edge, Graph } from "../../common/graph/_module";
 
-import { PointerType } from "src/app/model/typing/types/type-constructors/pointer-type";
+
 import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
