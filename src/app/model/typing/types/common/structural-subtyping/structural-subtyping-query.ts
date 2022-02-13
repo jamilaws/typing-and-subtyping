@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType } from "../../abstract-type";
 
 export class StructuralSubtypingQuery {
     public a: AbstractType;

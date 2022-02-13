@@ -1,7 +1,7 @@
 import { AbstractType, otherAliasReplaced } from "../abstract-type";
-import { StructuralSubtypingQuery } from "../structural-subtyping/structural-subtyping-query";
-import { StructuralSubtypingQueryContext } from "../structural-subtyping/structural-subtyping-query-context";
-import { StructuralSubtypingQueryResult } from "../structural-subtyping/structural-subtyping-query-result";
+import { StructuralSubtypingQuery } from "../common/structural-subtyping/structural-subtyping-query";
+import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 
 export class PointerType extends AbstractType {
 
@@ -19,8 +19,7 @@ export class PointerType extends AbstractType {
         if(other instanceof PointerType) {
             return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, context);
         } else {
-            context.accumulator.value = false;
-            return context.accumulator;
+            return { value: false };
         }
     }
 

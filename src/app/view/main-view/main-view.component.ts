@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
 import { AstNode } from 'src/app/model/ast/ast-node';
-import { DisplayGraphEdge, DisplayGraphNode, GRAPH_SCALE_FACTOR_X, GRAPH_SCALE_FACTOR_Y, updateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
+import { DisplayGraphEdge, DisplayGraphNode, GRAPH_SCALE_FACTOR_X, GRAPH_SCALE_FACTOR_Y, generateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
 import { Graph, Node, Edge } from 'src/app/model/common/graph/_module';
 import { SymbolTable, SymbolTableUiData } from 'src/app/model/typing/symbol-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
@@ -39,7 +39,7 @@ export class MainViewComponent implements OnInit {
   public typeErrorString: string = TYPE_STRING_PLACEHOLDER;
   public typingTree: TypingTree = null; //DUMMY_TYPING_TREE;
 
-  constructor(private changeDetector: ChangeDetectorRef, private parsingService: ParsingService) { }
+  constructor(private parsingService: ParsingService) { }
 
   ngOnInit(): void {
     this.code = this.initialCode;
@@ -95,7 +95,7 @@ export class MainViewComponent implements OnInit {
       try {
         const astGraph: Graph<AstNode> = this.ast.getGraph();
         
-        const displayedGraph = updateDisplayedGraph(this.ast.getRoots().map(r => r.getGraphNode()), astGraph, (node) => {
+        const displayedGraph = generateDisplayedGraph(this.ast.getRoots().map(r => r.getGraphNode()), astGraph, (node) => {
           return node.getData().getGraphNodeLabel();
         }, (node) => {
           return node.getData().getCodeLine() === this.currentCodeEditorLine;

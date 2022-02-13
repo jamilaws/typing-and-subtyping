@@ -13,10 +13,11 @@
                 <tr>
                     <th style="padding: 5px; border: solid 1px grey;">Structural Subtyping Query</th>
                     <th style="padding: 5px; border: solid 1px grey;">Result</th>
+                    <th style="padding: 5px; border: solid 1px grey;">Options</th>
                 </tr>
                 <tr *ngFor="let row of dummyData">
                     <td style="padding: 5px; border: solid 1px grey;">{{row.input}}</td>
-                    <td style="padding: 5px; border: solid 1px grey;">{{row.output}}</td>
+                    <td style="padding: 5px; border: solid 1px grey;">{{row.output.value}}</td>
                     <td style="padding: 5px; border: solid 1px grey;">
                         <button (click)="clickDummyRow(row)">Show Graph</button>
                     </td>
@@ -24,7 +25,12 @@
             </table>
         </div>
         <div class="col-sm-6">
-            <div echarts [options]="_graphOptions" (chartClick)="onClickAST($event)"></div>
+            <div echarts [options]="_graphOptions" (chartClick)="onClickGraph($event)"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="/">Back to Tool</a>
         </div>
     </div>
 </div>

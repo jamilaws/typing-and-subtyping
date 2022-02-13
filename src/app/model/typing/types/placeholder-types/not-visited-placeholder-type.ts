@@ -1,7 +1,7 @@
 import { AbstractType } from "../abstract-type";
-import { StructuralSubtypingQuery } from "../structural-subtyping/structural-subtyping-query";
-import { StructuralSubtypingQueryContext } from "../structural-subtyping/structural-subtyping-query-context";
-import { StructuralSubtypingQueryResult } from "../structural-subtyping/structural-subtyping-query-result";
+import { StructuralSubtypingQuery } from "../common/structural-subtyping/structural-subtyping-query";
+import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 
 export class NotVisitedPlaceholderType extends AbstractType {
     public toString(): string {

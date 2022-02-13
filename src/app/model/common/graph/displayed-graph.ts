@@ -1,3 +1,4 @@
+import { Edge } from './edge';
 import { Graph } from './graph';
 import { Node } from './node';
 
@@ -18,6 +19,7 @@ export interface DisplayGraphNode {
 export interface DisplayGraphEdge {
   source: number;
   target: number;
+  title?: string;
 }
 
 export interface DisplayedGraph {
@@ -25,15 +27,18 @@ export interface DisplayedGraph {
   edges: DisplayGraphEdge[];
 }
 
-export const updateDisplayedGraph = function <T>
+export const generateDisplayedGraph = function <T, K>
   (roots: Node<T>[],
-    graph: Graph<T>,
+    graph: Graph<T, K>,
     nodeToLabel: (n: Node<T>) => string = null,
-    nodeIsHighlighted: (n: Node<T>) => boolean = null
+    nodeIsHighlighted: (n: Node<T>) => boolean = null,
+    edgeToLabel: (n: Edge<T, K>) => string = null,
   ): DisplayedGraph {
 
   if (!nodeToLabel) nodeToLabel = (n) => { return "" }; // TODO Solve node ID issue
   if (!nodeIsHighlighted) nodeIsHighlighted = (n) => { return false };
+  if (!edgeToLabel) edgeToLabel = (e) => { return "" };
+
 
   let outGraphNodes: DisplayGraphNode[] = new Array<DisplayGraphNode>();
   let outGraphEdges: DisplayGraphEdge[] = new Array<DisplayGraphEdge>();
@@ -58,7 +63,8 @@ export const updateDisplayedGraph = function <T>
   outGraphEdges = graph.getEdges().map(e => {
     let s = outGraphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getFrom()));
     let t = outGraphNodes.indexOf(graphNodeToDisplayGraphNode.get(e.getTo()));
-    return { source: s, target: t };
+    let n = edgeToLabel(e)
+    return { source: s, target: t, title: n };
   });
   // Traverse displayed graph via breadth first search to set coorinates
   let levelIndex: number = 1;

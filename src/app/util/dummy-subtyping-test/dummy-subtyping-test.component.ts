@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { DisplayGraphEdge, DisplayGraphNode } from 'src/app/model/common/graph/displayed-graph';
-import { Graph } from 'src/app/model/common/graph/graph';
+import { DisplayGraphEdge, DisplayGraphNode, generateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
+import { Graph, Node } from 'src/app/model/common/graph/_module';
 import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { CharType } from 'src/app/model/typing/types/base-types/char-type';
 import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { Definition } from 'src/app/model/typing/types/common/definition';
-import { StructuralSubtypingQuery } from 'src/app/model/typing/types/structural-subtyping/structural-subtyping-query';
+import { StructuralSubtypingQuery } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query';
+import { StructuralSubtypingQueryResult } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query-result';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
 import { FunctionType } from 'src/app/model/typing/types/type-constructors/function-type';
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
@@ -19,8 +20,7 @@ interface DummyRow {
   t1: AbstractType;
   t2: AbstractType;
   input?: string;
-  output?: boolean;
-  graph?: Graph<StructuralSubtypingQuery, string>;
+  output?: StructuralSubtypingQueryResult;
 }
 @Component({
   selector: 'app-dummy-subtyping-test',
@@ -37,40 +37,16 @@ export class DummySubtypingTestComponent implements OnInit {
   public dummyData: DummyRow[];
   public typeDefTable: string[][];
   private typeDefinitions: Map<string, AbstractType>;
-  public selectedGraph: Graph<StructuralSubtypingQuery, string>;
 
   constructor() { }
 
   ngOnInit(): void {
     this.initDummyData();
-    this.updateGraphOptions();
   }
 
   public initDummyData(): void {
-    /*
-    this.dummyData = [
-      {
-        t1: new ArrayType(new IntType()),
-        t2: new ArrayType(new FloatType())
-      },
-      {
-        t1: new StructType("T1", [new Definition("x", new IntType()), new Definition("y", new CharType())]),
-        t2: new StructType("T2", [new Definition("x", new FloatType())])
-      },
-      {
-        t1: new FunctionType([new FloatType(), new CharType()], new IntType()),
-        t2: new FunctionType([new IntType(), new CharType()], new FloatType())
-      },
-      {
-        t1: aliasA,
-        t2: new IntType()
-      },
-      {
-        t1: new IntType(),
-        t2: aliasA
-      },
-    ];
-    */
+
+    const aliasTargetX = new IntType();
 
     const aliasTargetA = new StructType(undefined, [
       new Definition("info", new IntType()),
@@ -86,14 +62,41 @@ export class DummySubtypingTestComponent implements OnInit {
     ]);
 
     this.typeDefinitions = new Map();
+    this.typeDefinitions.set("X", aliasTargetX);
     this.typeDefinitions.set("A", aliasTargetA);
     this.typeDefinitions.set("B", aliasTargetB);
     
     this.dummyData = [
       {
+        t1: new StructType("T1", [new Definition("x", new CharType()), new Definition("y", new IntType())]),
+        t2: new StructType("T2", [new Definition("x", new CharType()), new Definition("y", new IntType())]),
+      },
+      /*
+      {
+        t1: new ArrayType(new IntType()),
+        t2: new ArrayType(new FloatType())
+      },
+      {
+        t1: new StructType("T1", [new Definition("x", new IntType()), new Definition("y", new CharType()), new Definition("z", new IntType())]),
+        t2: new StructType("T2", [new Definition("x", new FloatType()), new Definition("y", new CharType())])
+      },
+      {
+        t1: new FunctionType([new FloatType(), new CharType()], new IntType()),
+        t2: new FunctionType([new IntType(), new CharType()], new FloatType())
+      },
+      {
+        t1: new AliasPlaceholderType("X"),
+        t2: new IntType()
+      },
+      {
+        t1: new IntType(),
+        t2: new AliasPlaceholderType("X")
+      },
+      {
         t1: new AliasPlaceholderType("A"),
         t2: new AliasPlaceholderType("B"),
       }
+      */
     ];
 
     this.dummyData = this.dummyData.map(d => {
@@ -105,8 +108,7 @@ export class DummySubtypingTestComponent implements OnInit {
       console.log(result);
 
       d.input = str;
-      d.output = result.value;
-      d.graph = result.queryGraph;
+      d.output = result;
 
       return d;
     });
@@ -115,7 +117,8 @@ export class DummySubtypingTestComponent implements OnInit {
   }
 
   public clickDummyRow(row: DummyRow){
-    this.selectedGraph = row.graph
+    this.updateGraph(row.output.queryGraph.getRoot(), row.output.queryGraph);
+    this.updateGraphOptions();
   }
 
   /*
@@ -123,6 +126,14 @@ export class DummySubtypingTestComponent implements OnInit {
   Graph
 
   */
+
+  private updateGraph(root: Node<StructuralSubtypingQuery>, graph: Graph<StructuralSubtypingQuery, string>): void {
+    const gen = generateDisplayedGraph([root], graph, node => {
+      return node.getData().a.toString() + '<=' + node.getData().b.toString();
+    }, node => false, edge => edge.getData());
+    this.graphNodes = gen.nodes;
+    this.graphEdges = gen.edges;
+  }
 
   private updateGraphOptions(): void {
     this._graphOptions = {
@@ -172,11 +183,14 @@ export class DummySubtypingTestComponent implements OnInit {
           }),
           links: this.graphEdges.map(edge => {
             return {
+              label: {
+                formatter: d => {
+                  return edge.title;
+                },
+                show: true
+              },
               source: edge.source,
               target: edge.target,
-              tooltip: {
-                show: false,
-              }
             }
           }),
         }
@@ -184,6 +198,6 @@ export class DummySubtypingTestComponent implements OnInit {
     };
   }
 
-  public onClickAST(event: any) {}
+  public onClickGraph(event: any) {}
 
 }

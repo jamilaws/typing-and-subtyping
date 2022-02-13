@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { RouterModule, Routes } from '@angular/router';
+
 import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
 import { FormsModule } from '@angular/forms';
 
@@ -12,7 +14,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TypingTreeComponent } from './util/typing-tree/typing-tree.component';
 import { DummySubtypingTestComponent } from './util/dummy-subtyping-test/dummy-subtyping-test.component';
+import { AppRoutingModule } from './app-routing.module';
 
+
+const routes: Routes = [
+  { path: '', component: MainViewComponent },
+  { path: 'subtyping-dummy', component: DummySubtypingTestComponent },
+]
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'app-name/assets', // configure base path cotaining monaco-editor directory after build default: './assets'
@@ -30,13 +38,15 @@ const monacoConfig: NgxMonacoEditorConfig = {
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(routes),
     FormsModule,
     MonacoEditorModule.forRoot(),
     BrowserAnimationsModule,
     MatToolbarModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
-    })
+    }),
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

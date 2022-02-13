@@ -1,6 +1,6 @@
 import { AbstractType } from "../abstract-type";
-import { StructuralSubtypingQueryContext } from "../structural-subtyping/structural-subtyping-query-context";
-import { StructuralSubtypingQueryResult } from "../structural-subtyping/structural-subtyping-query-result";
+import { StructuralSubtypingQueryContext } from "./structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryResult } from "./structural-subtyping/structural-subtyping-query-result";
 
 /**
  * Type placeholder for e.g. if-statements

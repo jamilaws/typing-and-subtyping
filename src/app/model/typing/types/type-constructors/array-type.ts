@@ -1,6 +1,6 @@
 import { AbstractType, otherAliasReplaced } from "../abstract-type";
-import { StructuralSubtypingQueryContext } from "../structural-subtyping/structural-subtyping-query-context";
-import { StructuralSubtypingQueryResult } from "../structural-subtyping/structural-subtyping-query-result";
+import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 
 export class ArrayType extends AbstractType {
 
@@ -26,8 +26,7 @@ export class ArrayType extends AbstractType {
         if(other instanceof ArrayType) {
             return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, context);
         } else {
-            context.accumulator.value = false;
-            return context.accumulator;
+            return { value: false };
         }
     }
 }
