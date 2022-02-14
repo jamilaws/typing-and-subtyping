@@ -1,5 +1,6 @@
 import { Graph, Node } from 'src/app/model/common/graph/_module';
 import { StructuralSubtypingQuery } from "./structural-subtyping-query";
+import { StructuralSubtypingQueryGraph } from './structural-subtyping-query-graph';
 
 // TODO
 export enum StructuralSubtypingQueryResultMessage {
@@ -11,5 +12,5 @@ export enum StructuralSubtypingQueryResultMessage {
 export interface StructuralSubtypingQueryResult {
     value: boolean;
     //message?: StructuralSubtypingQueryResultMessage;
-    queryGraph?: Graph<StructuralSubtypingQuery, string>;
+    queryGraph?: StructuralSubtypingQueryGraph;
 }

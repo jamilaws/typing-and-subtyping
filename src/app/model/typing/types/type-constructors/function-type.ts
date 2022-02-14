@@ -40,7 +40,10 @@ export class FunctionType extends AbstractType {
             // co-variance of the return type
             const returnTypesCheck = this.returnType.isStrutcturalSubtypeOf_Impl(other.returnType, context);
             // contra-variance of the parameter types
-            const parameterTypesCheck = zip(this.parameterTypes, other.parameterTypes).every(tup2 => tup2[1].isStrutcturalSubtypeOf_Impl(tup2[0], context));
+            const parameterTypesCheck = zip(this.parameterTypes, other.parameterTypes).every(tup2 => {
+                const pass = tup2[1].isStrutcturalSubtypeOf_Impl(tup2[0], context);
+                return pass.value;
+            });
 
             // TODO Check if this is ok !!! Handle message somehow?
             this.isSubtype_buffer = returnTypesCheck && parameterTypesCheck;
@@ -55,7 +58,7 @@ export class FunctionType extends AbstractType {
         let out = super.buildQueryGraph();
         const root = out.getRoot();
 
-        if(!this.isSubtype_buffer) return out; // Do not extend the basic query graph in case of query result false
+        //if(!this.isSubtype_buffer) return out; // Do not extend the basic query graph in case of query result false
 
         // Contra
         const parameterSubgraphs = (<FunctionType>this.subtypingQueryBuffer.b).getParameters().map(p => p.buildQueryGraph());

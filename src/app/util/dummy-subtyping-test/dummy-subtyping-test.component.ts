@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { DisplayGraphEdge, DisplayGraphNode, generateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
 import { Graph, Node } from 'src/app/model/common/graph/_module';
@@ -8,6 +8,7 @@ import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { Definition } from 'src/app/model/typing/types/common/definition';
 import { StructuralSubtypingQuery } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query';
+import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query-graph';
 import { StructuralSubtypingQueryResult } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query-result';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
 import { FunctionType } from 'src/app/model/typing/types/type-constructors/function-type';
@@ -65,8 +66,12 @@ export class DummySubtypingTestComponent implements OnInit {
     this.typeDefinitions.set("X", aliasTargetX);
     this.typeDefinitions.set("A", aliasTargetA);
     this.typeDefinitions.set("B", aliasTargetB);
-    
+
     this.dummyData = [
+      {
+        t1: new FloatType(),
+        t2: new IntType()
+      },
       /*
       {
         t1: new ArrayType(new IntType()),
@@ -118,7 +123,7 @@ export class DummySubtypingTestComponent implements OnInit {
     this.typeDefTable = Array.from(this.typeDefinitions.entries()).map(tup => [tup[0], tup[1].toString()]);
   }
 
-  public clickDummyRow(row: DummyRow){
+  public clickDummyRow(row: DummyRow) {
     this.updateGraph(row.output.queryGraph.getRoot(), row.output.queryGraph);
     this.updateGraphOptions();
   }
@@ -129,10 +134,12 @@ export class DummySubtypingTestComponent implements OnInit {
 
   */
 
-  private updateGraph(root: Node<StructuralSubtypingQuery>, graph: Graph<StructuralSubtypingQuery, string>): void {
+  private updateGraph(root: Node<QueryGraphNodeData>, graph: StructuralSubtypingQueryGraph): void {
     const gen = generateDisplayedGraph([root], graph, node => {
-      return node.getData().a.toString() + '<=' + node.getData().b.toString();
-    }, node => false, edge => edge.getData());
+      return node.getData().query.a.toString() + '<=' + node.getData().query.b.toString();
+    }, node => {
+      return node.getData().highlight;
+    }, edge => edge.getData());
     this.graphNodes = gen.nodes;
     this.graphEdges = gen.edges;
   }
@@ -200,6 +207,5 @@ export class DummySubtypingTestComponent implements OnInit {
     };
   }
 
-  public onClickGraph(event: any) {}
-
+  public onClickGraph(event: any) { }
 }
