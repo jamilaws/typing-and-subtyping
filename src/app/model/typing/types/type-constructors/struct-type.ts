@@ -5,23 +5,29 @@ import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/
 import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 import { Graph, Node, Edge } from '../../../common/graph/_module';
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
-import { StructMemberValue } from "src/app/model/ast/ast-nodes/initializer-list-struct";
 
 export class StructType extends AbstractType {
 
     private name: string;
     private members: Definition[];
 
+    private relevantMembers_SubtypingBuffer: Definition[];
+
     constructor(name: string, members: Definition[]) {
         super();
         this.name = name;
         this.members = members;
+        this.resetSubtypingBuffer();
     }
 
-    //@otherAliasReplaced()
+    private resetSubtypingBuffer() {
+        this.relevantMembers_SubtypingBuffer = new Array();
+    }
+
+    @otherAliasReplaced()
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
         const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
-        if (basicCheckResult.value) return basicCheckResult;
+        if (basicCheckResult.value) { return basicCheckResult; };
 
         if (other instanceof StructType) {
             const isSubtype = other.members.every(d2 => {
@@ -30,7 +36,7 @@ export class StructType extends AbstractType {
                         // Name match...
                         if (d1.getType().isStrutcturalSubtypeOf_Impl(d2.getType(), context).value) {
                             // ...and type match
-                            
+                            this.relevantMembers_SubtypingBuffer.push(d1);
                             return true;
                         }
                         return false;
@@ -57,24 +63,22 @@ export class StructType extends AbstractType {
         let out = super.buildQueryGraph();
         let root = out.getRoot();
 
-        const other = this.subtypingQueryBuffer.b;
-        if (!(other instanceof StructType)) return out; // TODO signalize mismatch!
-        const relevantMembers = this.getMembers().filter(m => other.getMembers().map(m => m.getName()).includes(m.getName()));
-
-        console.log("DEBUG");
-        console.log(relevantMembers);
-
-
-        relevantMembers.map(m => {
+        console.log("relevantMembers_SubtypingBuffer");
+        console.log(this.relevantMembers_SubtypingBuffer);
+        
+        this.relevantMembers_SubtypingBuffer.map(m => {
             return {
                 subgraph: m.getType().buildQueryGraph(),
                 name: m.getName()
             };
         }).forEach(e => {
-            if (!e.subgraph) return; // TODO!!!!!
+            if (!e.subgraph) alert("No subgraph for " + e.name + "?!");
             out = out.merge(e.subgraph);
             out.addEdge(new Edge(root, e.subgraph.getRoot(), e.name));
         });
+
+        // Cleanup
+        this.resetSubtypingBuffer();
 
         return out;
     }

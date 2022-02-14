@@ -33,11 +33,14 @@ export const DEPRECATED_queryGraphUpdated = () => {
 }
 */
 
+/*
 export const queryLoopChecked = () => {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         const originalMethod = descriptor.value;
         descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
+
             const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
+
             if (context.queryHistory.some(q => q.equals(newQuery))) {
                 // Query loop in history detected. Resolve structural subtyping query with true.
 
@@ -57,6 +60,7 @@ export const queryLoopChecked = () => {
         };
     };
 };
+*/
 
 export const otherAliasReplaced = () => {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -115,12 +119,24 @@ export abstract class AbstractType {
      * 
      * Override this method if needed and call it to preserve basic subtyping check.
      */
-    //@queryGraphUpdated() 
-    //@queryLoopChecked() @otherAliasReplaced()
+    //@queryGraphUpdated() @queryLoopChecked()
+    @otherAliasReplaced()
     public isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        this.subtypingQueryBuffer = new StructuralSubtypingQuery(this, other);
-        
-        return {value: this.equals(other)};
+        const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
+        // Check for query loop
+        if (context.queryHistory.some(q => q.equals(newQuery))) {
+            // Add current query to history (Not relevant anymore, but for the sake of completeness)
+            this.storeNewQuery(newQuery, context);
+            return { value: true };
+        }
+        // Add current query to history
+        this.storeNewQuery(newQuery, context);
+        return { value: this.equals(other) };
+    }
+
+    private storeNewQuery(query: StructuralSubtypingQuery, context: StructuralSubtypingQueryContext): void {
+        context.queryHistory.push(query);
+        this.subtypingQueryBuffer = query;
     }
 
     /**
@@ -130,7 +146,7 @@ export abstract class AbstractType {
      * @param context 
      */
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
-        if(!this.subtypingQueryBuffer) return null; //throw new Error("Must perform structural subtyping check before calling buildQueryGraph");
+        if (!this.subtypingQueryBuffer) throw new Error("Must perform structural subtyping check before calling buildQueryGraph");
         let newNode = new Node(this.subtypingQueryBuffer);
 
         let out = new Graph<StructuralSubtypingQuery, string>([newNode]);

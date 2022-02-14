@@ -67,10 +67,6 @@ export class DummySubtypingTestComponent implements OnInit {
     this.typeDefinitions.set("B", aliasTargetB);
     
     this.dummyData = [
-      {
-        t1: new StructType("T1", [new Definition("x", new CharType()), new Definition("y", new IntType())]),
-        t2: new StructType("T2", [new Definition("x", new CharType()), new Definition("y", new IntType())]),
-      },
       /*
       {
         t1: new ArrayType(new IntType()),
@@ -84,6 +80,12 @@ export class DummySubtypingTestComponent implements OnInit {
         t1: new FunctionType([new FloatType(), new CharType()], new IntType()),
         t2: new FunctionType([new IntType(), new CharType()], new FloatType())
       },
+      */
+      {
+        t1: new FunctionType([new IntType()], new IntType()),
+        t2: new FunctionType([new FloatType()], new FloatType())
+      },
+      /*
       {
         t1: new AliasPlaceholderType("X"),
         t2: new IntType()
@@ -152,7 +154,7 @@ export class DummySubtypingTestComponent implements OnInit {
           symbolSize: NODE_SIZE,
           roam: true, // Graph position movable
           lineStyle: {
-            curveness: 0.1
+            //curveness: 0.1
           },
           edgeSymbol: ['circle', 'arrow'],
           edgeSymbolSize: [4, 10],
