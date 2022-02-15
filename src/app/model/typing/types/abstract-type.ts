@@ -85,6 +85,7 @@ export const otherAliasReplaced = () => {
 export abstract class AbstractType {
 
     protected subtypingQueryBuffer: StructuralSubtypingQuery = null;
+    protected loopDetectedBuffer: boolean = false;
 
     abstract toString(): string;
 
@@ -100,6 +101,7 @@ export abstract class AbstractType {
     }
 
     public isStrutcturalSubtypeOf(other: AbstractType, typeDefs: Map<string, AbstractType>): StructuralSubtypingQueryResult {
+        
         const context: StructuralSubtypingQueryContext = {
             typeDefinitions: typeDefs,
             queryHistory: new Array()
@@ -122,15 +124,16 @@ export abstract class AbstractType {
      * Override this method if needed and call it to preserve basic subtyping check.
      */
     //@queryGraphUpdated() @queryLoopChecked()
-    //@otherAliasReplaced()
+    @otherAliasReplaced()
     public isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
         const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
         // Check for query loop
-        // if (context.queryHistory.some(q => q.equals(newQuery))) {
-        //     // Add current query to history (Not relevant anymore, but for the sake of completeness)
-        //     this.storeNewQuery(newQuery, context);
-        //     return { value: true };
-        // }
+        if (context.queryHistory.some(q => q.equals(newQuery))) {
+            // Add current query to history (Not relevant anymore, but for the sake of completeness)
+            this.storeNewQuery(newQuery, context);
+            this.loopDetectedBuffer = true;
+            return { value: true };
+        }
         // Add current query to history
         this.storeNewQuery(newQuery, context);
         return { value: this.equals(other) };
@@ -173,6 +176,8 @@ export class AliasPlaceholderType extends AbstractType {
 
     private alias: string;
 
+    private target_buffer: AbstractType;
+
     constructor(alias: string) {
         super();
 
@@ -193,7 +198,23 @@ export class AliasPlaceholderType extends AbstractType {
 
         const target = context.typeDefinitions.get(this.getAlias());
         if (!target) throw new Error("No type definition exists for " + this.getAlias());
+
+        this.target_buffer = target;
+
         return target.isStrutcturalSubtypeOf_Impl(other, context);
+    }
+
+    public override buildQueryGraph(): StructuralSubtypingQueryGraph {
+        let out = super.buildQueryGraph();
+        const root = out.getRoot();
+
+        const subgraph = this.target_buffer.buildQueryGraph();
+        const newEdge = new Edge(root, subgraph.getRoot(), "");
+
+        out = out.merge(subgraph);
+        out.addEdge(newEdge);
+
+        return out;
     }
 }
 

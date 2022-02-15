@@ -1,7 +1,9 @@
-import { AbstractType } from "../abstract-type";
-import { StructuralSubtypingQuery } from "../common/structural-subtyping/structural-subtyping-query";
+import { BaseType } from "../base-type";
 
-export class VoidType extends AbstractType {
+export class VoidType extends BaseType {
+
+    protected superTypes: (typeof BaseType)[] = [];
+    
     public toString(): string {
         return "void";
     }

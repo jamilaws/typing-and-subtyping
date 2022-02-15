@@ -68,29 +68,33 @@ export class DummySubtypingTestComponent implements OnInit {
     this.typeDefinitions.set("B", aliasTargetB);
 
     this.dummyData = [
+      /*
       {
         t1: new FloatType(),
         t2: new IntType()
       },
-      /*
       {
         t1: new ArrayType(new IntType()),
         t2: new ArrayType(new FloatType())
       },
+      */
       {
         t1: new StructType("T1", [new Definition("x", new IntType()), new Definition("y", new CharType()), new Definition("z", new IntType())]),
         t2: new StructType("T2", [new Definition("x", new FloatType()), new Definition("y", new CharType())])
       },
       {
+        t1: new StructType("T1", [new Definition("x", new PointerType(new AliasPlaceholderType("X")))]),
+        t2: new StructType("T1", [new Definition("x", new PointerType(new FloatType()))]),
+      }
+      /*
+      {
         t1: new FunctionType([new FloatType(), new CharType()], new IntType()),
         t2: new FunctionType([new IntType(), new CharType()], new FloatType())
       },
-      */
       {
         t1: new FunctionType([new IntType()], new IntType()),
         t2: new FunctionType([new FloatType()], new FloatType())
       },
-      /*
       {
         t1: new AliasPlaceholderType("X"),
         t2: new IntType()

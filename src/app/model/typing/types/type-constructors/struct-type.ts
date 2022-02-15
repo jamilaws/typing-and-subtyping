@@ -63,9 +63,6 @@ export class StructType extends AbstractType {
         let out = super.buildQueryGraph();
         let root = out.getRoot();
 
-        console.log("relevantMembers_SubtypingBuffer");
-        console.log(this.relevantMembers_SubtypingBuffer);
-        
         this.relevantMembers_SubtypingBuffer.map(m => {
             return {
                 subgraph: m.getType().buildQueryGraph(),

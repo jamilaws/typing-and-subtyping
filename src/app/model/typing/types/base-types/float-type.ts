@@ -1,27 +1,11 @@
-import { AbstractType } from "../abstract-type";
-import { StructuralSubtypingQuery } from "../common/structural-subtyping/structural-subtyping-query";
-import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
-import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
+import { BaseType } from "../base-type";
 
-export class FloatType extends AbstractType {
+export class FloatType extends BaseType {
 
-    private isStrutcturalSubtype_buffer: boolean = false;
+    protected superTypes: (typeof BaseType)[] = [];
 
     public toString(): string {
         return "float";
     }
-
-    // Only override this method to remember its output in subclass
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const result = super.isStrutcturalSubtypeOf_Impl(other, context);
-        
-        // Store value in buffer for 'isQueryGraphNodeHighlighted' method
-        this.isStrutcturalSubtype_buffer = result.value;
-        
-        return result;
-    }
-
-    protected override isQueryGraphNodeHighlighted(): boolean {
-        return !this.isStrutcturalSubtype_buffer;
-    }
+   
 }
