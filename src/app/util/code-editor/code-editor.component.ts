@@ -13,14 +13,13 @@ export interface Position {
 })
 export class CodeEditorComponent implements OnInit {
 
-  @Input('initialCode')   initialCode: string = "";
+  @Input('code') _code: string = "";
   @Input('editorOptions') editorOptions = {theme: 'vs-light', language: 'c'};
   @Output('onCodeChange') onCodeChange = new EventEmitter<string>();
   @Output('onPositionChange') onPositionChange = new EventEmitter<Position>();
 
   private _editor: any;
   
-  private _code: string= '';
   private _currentPosition: Position = { lineNumber: -1, column: -1};
 
   public get code() {    
@@ -45,7 +44,7 @@ export class CodeEditorComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this._code = this.initialCode;
+    //this._code = this.initialCode;
   }
 
   onCodeEditorInit(editor: any): void {

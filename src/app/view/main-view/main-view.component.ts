@@ -30,8 +30,8 @@ export class MainViewComponent implements OnInit {
 
   public initialCode: string = 'int main()\n{\n\treturn 0;\n}';
   private currentCodeEditorLine = -1;
+  public code: string = "";
 
-  private code: string = "";
   private ast: AbstractSyntaxTree = null;
   public isAstValid: boolean = true;
 
@@ -44,8 +44,12 @@ export class MainViewComponent implements OnInit {
   constructor(private parsingService: ParsingService) { }
 
   ngOnInit(): void {
-    this.code = this.initialCode;
+    this.setCodeInEditor(this.initialCode);
     this.updateComponent();
+  }
+
+  public setCodeInEditor(code: string): void {
+    this.code = code;
   }
 
   /*
@@ -186,7 +190,7 @@ export class MainViewComponent implements OnInit {
                 show: true,
                 position: 'top',
                 textStyle: {
-                  color: node.highlighted ? "red" : "black",
+                  color: node.highlighted ? "blue" : "darkgrey",
                 }
               },
               tooltip: {
@@ -206,6 +210,12 @@ export class MainViewComponent implements OnInit {
         }
       ]
     };
+  }
+
+  public clickAddDummyCode(): void {
+    const code: string = "struct list { int info; }\nint f(struct list *x){}\nstruct Test { struct list* c; }\n\nint main()\n{\nstruct Test *b = { .x = 3};\nint* a[11] = {1, 2, 3};\nreturn *a[f(b->c)] + 2;\n}";
+    this.setCodeInEditor(code);
+    this.onCodeChange(code);
   }
 
 }

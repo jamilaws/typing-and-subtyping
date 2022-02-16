@@ -4,7 +4,7 @@
             <div class="col-sm-4">
                 <div class="code-editor-wrapper">
                     <span class="title" style="padding-left: 10px;">C-Code</span>
-                    <app-code-editor class="code-editor" [initialCode]="initialCode" (onCodeChange)="onCodeChange($event)"
+                    <app-code-editor class="code-editor" [code]="code" (onCodeChange)="onCodeChange($event)"
                         (onPositionChange)="onCodeEditorPositionChange($event)"></app-code-editor>
                 </div>
             </div>
@@ -72,7 +72,13 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <a [routerLink]="'/subtyping-demo'">Subtyping Demo</a>
+            <div class="dummy-panel-wrapper" style="padding: 5px; border: solid 1px lightgrey">
+                <span class="title">Demo controls (for development)</span>
+                <br>
+                <button (click)="clickAddDummyCode()">Add example code from lecture</button>
+                <br>
+                <a [routerLink]="'/subtyping-demo'">View Structural Subtyping Demo</a>
+            </div>
         </div>
     </div>
 </div>
