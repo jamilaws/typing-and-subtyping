@@ -1,0 +1,28 @@
+<div class="wrapper">
+    <div class="section base-types-wrapper">
+        <span class="title">Base Types</span>
+        <app-base-type-bubble *ngFor="let bt of baseTypes" [type]="bt"></app-base-type-bubble>
+    </div>
+    <div class="section constructed-types-wrapper">
+        <span class="title">Constructed Types</span>
+        <button class="createTypeButton" mat-icon-button [matMenuTriggerFor]="menu">
+            +
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="onClickCreatePointer()">
+                <span class="construtor-option-icon"><b>*</b></span>
+                <span>Pointer</span>
+            </button>
+            <button mat-menu-item (click)="onClickCreateArray()">
+                <span class="construtor-option-icon"><b>[ ]</b></span>
+                <span>Array</span>
+            </button>
+            <button mat-menu-item (click)="onClickCreateStruct()">
+                <span class="construtor-option-icon"><b>{{ '{ }' }}</b></span>
+                <span>Struct</span>
+            </button>
+        </mat-menu>
+        <app-constructed-type-bubble *ngFor="let ct of constructedTypes" [type]="ct"></app-constructed-type-bubble>
+        <app-create-array-type-bubble [visible]="createArrayActive"></app-create-array-type-bubble>
+    </div>
+</div>

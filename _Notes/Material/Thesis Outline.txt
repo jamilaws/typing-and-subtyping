@@ -9,10 +9,10 @@ B. Technical Decisions / Fundamentals
         - Angular Basics (directive examples, change detection)
 	* Dependencies (e.g. monaco-code-editor, apache echart, cparse)
 	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... )
-	* Explanation of some of the applied design patterns
+	* (Explanation of some of the applied design patterns
 		- Callback Pattern
 		- Template Method Pattern
-		- ...
+		- State Pattern)
 
 C. Development Progress
     * New Features

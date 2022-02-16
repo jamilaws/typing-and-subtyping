@@ -15,11 +15,24 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { TypingTreeComponent } from './util/typing-tree/typing-tree.component';
 import { DummySubtypingTestComponent } from './util/dummy-subtyping-test/dummy-subtyping-test.component';
 import { AppRoutingModule } from './app-routing.module';
+import { TypeConstructionKitComponent } from './util/type-construction-kit/type-construction-kit.component';
+import { TypeConstructionKitDemoViewComponent } from './view/type-construction-kit-demo-view/type-construction-kit-demo-view.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatMenuModule } from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
+import { SingleselectDropdownComponent } from './util/dropdown/singleselect-dropdown/singleselect-dropdown.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { CreatePointerDialogComponent } from './util/type-construction-kit/create-dialogs/create-pointer-dialog/create-pointer-dialog.component';
+import { CreateStructDialogComponent } from './util/type-construction-kit/create-dialogs/create-struct-dialog/create-struct-dialog.component';
+import { BaseTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/base-type-bubble/base-type-bubble.component';
+import { ConstructedTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/constructed-type-bubble/constructed-type-bubble.component';
+import { CreateArrayTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
 
 
 const routes: Routes = [
   { path: '', component: MainViewComponent },
   { path: 'subtyping-demo', component: DummySubtypingTestComponent },
+  { path: 'type-construction-kit-demo', component: TypeConstructionKitDemoViewComponent },
 ]
 
 const monacoConfig: NgxMonacoEditorConfig = {
@@ -34,7 +47,15 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CodeEditorComponent,
     MainViewComponent,
     TypingTreeComponent,
-    DummySubtypingTestComponent
+    DummySubtypingTestComponent,
+    TypeConstructionKitComponent,
+    TypeConstructionKitDemoViewComponent,
+    SingleselectDropdownComponent,
+    CreatePointerDialogComponent,
+    CreateStructDialogComponent,
+    BaseTypeBubbleComponent,
+    ConstructedTypeBubbleComponent,
+    CreateArrayTypeBubbleComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +67,11 @@ const monacoConfig: NgxMonacoEditorConfig = {
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
-    AppRoutingModule
+    AppRoutingModule,
+    MatChipsModule,
+    MatMenuModule,
+    MatIconModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -21,4 +21,10 @@ Questions:
 	* method to formally "proove"/explain 
 		- co- and contra-variance of subtyping of functions
 
-- Idea Replayable History
+- Idea Replayable History (maybe only in section "outlook")
+
+
+Input:
+
+- Ideen zum Aufbau des Tools (grafisch) z.B. wie gibt man declarations an
+- 

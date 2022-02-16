@@ -1,0 +1,24 @@
+<div #dropdown mat-icon-button [matMenuTriggerFor]="menu" (menuClosed)="isMenuOpen = false" (menuOpened)="isMenuOpen = true" class="selectDiv panel">
+    <div class="dropdownSelectedContent">
+  <!--     <mat-icon style="color: red; padding-top: 2px;" [inline]="true">circle</mat-icon> -->
+      <span style="padding-left: 15px;">{{options[selectedIndex].name}}</span>
+    </div>
+    <div class="dropdownIcon">
+      <div *ngIf="isMenuOpen; then openIcon else closedIcon"></div>
+      <ng-template #openIcon>
+        <mat-icon>keyboard_arrow_up</mat-icon>
+      </ng-template>
+      <ng-template #closedIcon>
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </ng-template>
+    </div>
+  </div>
+  <mat-menu #menu="matMenu">
+    <div mat-menu-item *ngFor="let option of options; let i = index" (click)="_onSelect(i)">
+      <div class="option">
+  <!--       <mat-icon style="color: red;" [inline]="true">circle</mat-icon> -->
+        <span>{{option.name}}</span>
+      </div>
+    </div>
+  </mat-menu>
+  

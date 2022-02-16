@@ -1,0 +1,10 @@
+.constructed-type-ui {
+    width: 150px;
+    padding-left: 15px;
+    text-align: left;
+    border: 1px solid grey;
+    border-radius: 8px;
+    margin: 2px;
+    background-color: white;
+    color: black;
+}

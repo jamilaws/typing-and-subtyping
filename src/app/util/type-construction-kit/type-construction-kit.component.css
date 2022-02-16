@@ -1,0 +1,19 @@
+.title {
+    color: #2469B3;
+    font-size: 16px;
+}
+
+.createTypeButton{
+    outline: none;
+    border: none;
+    background-color: transparent;
+    font-size: 20px;
+}
+
+.section {
+    margin: 10px;
+}
+
+.construtor-option-icon{
+    padding-right: 20px;
+}

@@ -1,0 +1,8 @@
+.base-type-ui {
+    width: 75px;
+    text-align: center;
+    border-radius: 8px;
+    margin: 2px;
+    background-color: #2469B3;
+    color: white;
+}
