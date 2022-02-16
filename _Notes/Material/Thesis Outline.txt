@@ -2,14 +2,17 @@ A. Goal (and blueprint) of the Tool
 	* Goal of Typing (see screenshots, e.g.: manage memory, select correct assembler instruction, avoid certain run-time errors)
 	* Goal of Tool (lerning by vizualization of ... a) Typing b) Structural Subtyping
 
-B. Technical Decisions
+B. Technical Decisions / Fundamentals
 	* Framework / Language
 		- TypeScript (override and the --noImplicitOverride Flag)
-        	- Angular Basics (directive examples, change detection)
 			- Decorators (Purpose, variants, math concat explanation)
+        - Angular Basics (directive examples, change detection)
 	* Dependencies (e.g. monaco-code-editor, apache echart, cparse)
-	* DevOps (CI/CD Pipeline: AWS, Docker, GitHub Actions,...)
-	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... ) 
+	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... )
+	* Explanation of some of the applied design patterns
+		- Callback Pattern
+		- Template Method Pattern
+		- ...
 
 C. Development Progress
     * New Features
@@ -17,14 +20,15 @@ C. Development Progress
 	- Adding TypeEnvironment / Symbol Table
 	- Adding performTypeCheck()
 	- Vizualization by Typing tree (also: add type placeholder to always have full typing tree)
-        - Replayable TypingTree- and Symbol Table-History (using Decorators)
     * Refactorings (Abstractions etc.)
         - Better display size allocation for TypingTree visualization (Add node width depending on number of children; add screenshots)
 
 
-
 _________________________________________________________
 Not yet positioned:
+
+- Ideas:
+	* Replayable TypingTree- and Symbol Table-History (using Decorators)
 
 - "Structural Subtyping"
 	* Theory
@@ -39,7 +43,7 @@ Not yet positioned:
 	* Refactor: Add Typedefs to TypeEnvironment (idea: refactor to context holding all entities?)
 	* Refactor: Add Typedefs as parameter to AbstractType::isStrutcturalSubtypeOf
 
-- High Coupling/Low Cohesion
+- Low Coupling/High Cohesion
 	* Theory (slides EIST, PSE)
 	* Subsystems 'typing' and 'ast'
 	* Callback pattern with dedicated interfaces

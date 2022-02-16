@@ -1,10 +1,12 @@
 1. Decisions at project kick off
+
 	- Agular: Webfrontend framework, types (TS), 
-	- Docker: Plattformagnostic, easy/clean dployment
-	- CI/CD pipeline with with test server hosted on AWS --> better and faster feedback from chair
+	- Docker: Plattformagnostic, easy/clean deployment
+	- CI/CD test server --> better and faster feedback from chair
 		* branch model
 	
 2. External Project Dependencies
+
 	- Code editor
 		* https://ace.c9.io/ (no suitable angular wrapper) // TODO Probably not relevant
 		* monaco code editor / ngx-monaco-editor
@@ -22,23 +24,23 @@
 			--> library supposed to run in node backend process
 			--> Client-Server-Architecture needed (without mayor overhead of providing "adapter" environment)
 		* cparse: https://github.com/M4GNV5/cparse
-			--> fast (maybe compare?)
-			--> Client-only-approach posible (maybe compare with work of leo fahrbach)
+			--> Client-only-approach possible (maybe compare with work of leo fahrbach)
 			--> easy to adopt
+	- Graph library
+		* Apache echart
 
 3. Journal
 
 	- Session 1
 		* Analysing output of cparse; Creating Types for relevant AstNodes
-		* graph lib (TODO: note above in 2.)
+		* graph lib
 		* extend AstNodes with graph generation functionality
 	- Session 2
 		* ...
 	- Session 3 (26.11.2021)
-		* Re-watch videos
 		* new subsystem: typing
 		* class TypeEnvironment including axioms and rules
-		* ideas about integration of "typing" and "ast" --> interface TypeCheckable
+		* ideas about integration of "typing" and "ast" --> interface TypeCheckable / Callback Pattern
 	- Session 4 (29.11.2021)
 		Video 46
 		* App-Concept (according to video 46): TypeChecking visualization subdivided into (at least) two phases:
@@ -48,7 +50,7 @@
 			2. Backpropagation phase
 				- check for any rule that can be discharged to optain type
 				- accumulate resulting type for whole expression
-		* Open: What to do with subtyping ('=<')
+		* Open: What to do with subtyping ('<=')
 		
 	- Session 5 (30.11.2021)
 		* Question: where to get declarations from? shadowning? (--> video 44)
@@ -137,7 +139,7 @@ length: 3
 		--> http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf (137)
 
 	- Session 19.01.2022
-		--> Special treatment of BinaryExpression: tranlate "a->b" to "(*a).b"
+		--> Special treatment of BinaryExpression: translate "a->b" to "(*a).b"
  
 ------------------------------------
 New Feature "(Structural subtyping)"
