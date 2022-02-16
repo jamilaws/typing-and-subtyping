@@ -30,7 +30,7 @@ export class AliasTypeExpression extends AbstractTypeExpression {
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
-        const targetType = t.getTypeForAlias(this.name);
+        //const targetType = t.getTypeForAlias(this.name);
         return this.type = new AliasPlaceholderType(this.name);
     }
 

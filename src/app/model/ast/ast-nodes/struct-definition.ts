@@ -12,7 +12,7 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
 // TODO: Why does this implement Declaration?!
-export class StructDefinition extends AstNode implements Declaration {
+export class StructDefinition extends AstNode {
 
     name: string;
     member: Definition[];
@@ -42,9 +42,12 @@ export class StructDefinition extends AstNode implements Declaration {
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
-        t.declare(this);
+        //t.declare(this);
         const members = this.member.map(m => new Definition_(m.name, m.defType.performTypeCheck(t)));
-        return this.type = new StructType(this.name, members);
+        this.type = new StructType(this.name, members);
+
+        t.addTypeDefinition(this.name, this.type); // TODO: Check if this is ok
+        return this.type;
     }
 
     public getType(): AbstractType_ {
@@ -59,11 +62,11 @@ export class StructDefinition extends AstNode implements Declaration {
      * Declaration Implementation
      */
 
-    getDeclarationIdentifier(): string {
-        return this.name;
-    }
+    // getDeclarationIdentifier(): string {
+    //     return this.name;
+    // }
 
-    getDeclarationType(): AbstractType_ {
-        return this.getType();
-    }
+    // getDeclarationType(): AbstractType_ {
+    //     return this.getType();
+    // }
 }

@@ -35,13 +35,15 @@ export class ArrayType extends AbstractType {
 
     public override buildQueryGraph(): StructuralSubtypingQueryGraph {
         let out = super.buildQueryGraph();
-        const root = out.getRoot();
+        const root = out.getGraph().getRoot();
 
-        const subgraph = this.baseType.buildQueryGraph();
-        const newEdge = new Edge(root, subgraph.getRoot(), "");
+        if(this.loopDetectedBuffer) return out;
 
-        out = out.merge(subgraph);
-        out.addEdge(newEdge);
+        const targetOu = this.baseType.buildQueryGraph();
+        const newEdge = new Edge(root, targetOu.getGraph().getRoot(), "");
+
+        out.merge(targetOu);
+        out.getGraph().addEdge(newEdge);
 
         return out;
     }

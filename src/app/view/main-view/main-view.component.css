@@ -26,6 +26,10 @@
     height: 100%;
     width: 100%;
     border-right: solid 1px lightgrey;
+    min-height: 20vh;
+}
+
+.typeDefinitionsWrapper {
 }
 
 .symbolTableHeader {

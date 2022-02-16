@@ -30,7 +30,8 @@ export class StructTypeExpression extends AbstractTypeExpression {
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType {
-        return this.type = t.getTypeOfIdentifier(this.name);
+        //return this.type = t.getTypeOfIdentifier(this.name);
+        return this.type = t.getTypeForAlias(this.name);
     }
 
     public getType(): AbstractType {

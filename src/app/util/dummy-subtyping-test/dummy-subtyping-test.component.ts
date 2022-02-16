@@ -15,7 +15,7 @@ import { FunctionType } from 'src/app/model/typing/types/type-constructors/funct
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
 
-const NODE_SIZE: number = 20;
+const NODE_SIZE: number = 60;
 
 interface DummyRow {
   t1: AbstractType;
@@ -68,7 +68,6 @@ export class DummySubtypingTestComponent implements OnInit {
     this.typeDefinitions.set("B", aliasTargetB);
 
     this.dummyData = [
-      /*
       {
         t1: new FloatType(),
         t2: new IntType()
@@ -77,7 +76,6 @@ export class DummySubtypingTestComponent implements OnInit {
         t1: new ArrayType(new IntType()),
         t2: new ArrayType(new FloatType())
       },
-      */
       {
         t1: new StructType("T1", [new Definition("x", new IntType()), new Definition("y", new CharType()), new Definition("z", new IntType())]),
         t2: new StructType("T2", [new Definition("x", new FloatType()), new Definition("y", new CharType())])
@@ -85,8 +83,7 @@ export class DummySubtypingTestComponent implements OnInit {
       {
         t1: new StructType("T1", [new Definition("x", new PointerType(new AliasPlaceholderType("X")))]),
         t2: new StructType("T1", [new Definition("x", new PointerType(new FloatType()))]),
-      }
-      /*
+      },
       {
         t1: new FunctionType([new FloatType(), new CharType()], new IntType()),
         t2: new FunctionType([new IntType(), new CharType()], new FloatType())
@@ -107,7 +104,6 @@ export class DummySubtypingTestComponent implements OnInit {
         t1: new AliasPlaceholderType("A"),
         t2: new AliasPlaceholderType("B"),
       }
-      */
     ];
 
     this.dummyData = this.dummyData.map(d => {
@@ -128,7 +124,7 @@ export class DummySubtypingTestComponent implements OnInit {
   }
 
   public clickDummyRow(row: DummyRow) {
-    this.updateGraph(row.output.queryGraph.getRoot(), row.output.queryGraph);
+    this.updateGraph(row.output.queryGraph.getGraph().getRoot(), row.output.queryGraph);
     this.updateGraphOptions();
   }
 
@@ -139,8 +135,8 @@ export class DummySubtypingTestComponent implements OnInit {
   */
 
   private updateGraph(root: Node<QueryGraphNodeData>, graph: StructuralSubtypingQueryGraph): void {
-    const gen = generateDisplayedGraph([root], graph, node => {
-      return node.getData().query.a.toString() + '<=' + node.getData().query.b.toString();
+    const gen = generateDisplayedGraph([root], graph.getGraph(), node => {
+      return node.getData().query.a.toString() + '\n<=\n' + node.getData().query.b.toString();
     }, node => {
       return node.getData().highlight;
     }, edge => edge.getData());
@@ -150,7 +146,7 @@ export class DummySubtypingTestComponent implements OnInit {
 
   private updateGraphOptions(): void {
     this._graphOptions = {
-      color: "#2469B3",
+      color: "lightgreys", //"#2469B3",
       //layout: "",
       // label: {
       //   show: true
@@ -160,8 +156,10 @@ export class DummySubtypingTestComponent implements OnInit {
       animationEasingUpdate: 'quinticInOut',
       series: [
         {
+          //itemStyle: {borderColor: "blue", borderWidth: 100, },
           type: "graph",
           layout: 'none',
+          symbol: 'emptyRect',
           symbolSize: NODE_SIZE,
           roam: true, // Graph position movable
           lineStyle: {
@@ -184,7 +182,7 @@ export class DummySubtypingTestComponent implements OnInit {
               astNodeIndex: node.astNodeIndex,
               label: {
                 show: true,
-                position: 'top',
+                position: 'inside',
                 textStyle: {
                   color: node.highlighted ? "red" : "black",
                 }

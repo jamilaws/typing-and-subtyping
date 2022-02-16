@@ -86,6 +86,7 @@ export abstract class AbstractType {
 
     protected subtypingQueryBuffer: StructuralSubtypingQuery = null;
     protected loopDetectedBuffer: boolean = false;
+    protected loopPairBuffer: StructuralSubtypingQuery;
 
     abstract toString(): string;
 
@@ -108,6 +109,7 @@ export abstract class AbstractType {
         };
 
         const out = this.isStrutcturalSubtypeOf_Impl(other, context);
+
         out.queryGraph = this.buildQueryGraph();
 
         return out;
@@ -128,15 +130,24 @@ export abstract class AbstractType {
     public isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
         const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
         // Check for query loop
-        if (context.queryHistory.some(q => q.equals(newQuery))) {
+        const found = context.queryHistory.find(q => q.equals(newQuery))
+        if (found) {
+            // Loop deteced
+            this.loopDetectedBuffer = true;
+            this.loopPairBuffer = found;
+
             // Add current query to history (Not relevant anymore, but for the sake of completeness)
             this.storeNewQuery(newQuery, context);
-            this.loopDetectedBuffer = true;
-            return { value: true };
+
+            return { 
+                value: true
+            };
         }
         // Add current query to history
         this.storeNewQuery(newQuery, context);
-        return { value: this.equals(other) };
+        return {
+            value: this.equals(other)
+        };
     }
 
     private storeNewQuery(query: StructuralSubtypingQuery, context: StructuralSubtypingQueryContext): void {
@@ -152,15 +163,27 @@ export abstract class AbstractType {
      */
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
         if (!this.subtypingQueryBuffer) throw new Error("Must perform structural subtyping check before calling buildQueryGraph");
+        
+        // Build basic graph with node belonging to this
         let newNode = new Node({
             query: this.subtypingQueryBuffer,
             highlight: this.isQueryGraphNodeHighlighted()
         });
 
-        let out = new Graph<QueryGraphNodeData, string>([newNode]);
-        out.setRoot(newNode);
+        let graph = new Graph<QueryGraphNodeData, string>([newNode]);
+        graph.setRoot(newNode);
 
-        return out;
+        // Add loop edge if needed
+        let loopPairs = new Array();
+        if(this.loopDetectedBuffer){
+            const pair = {
+                first: this.subtypingQueryBuffer,
+                second: this.loopPairBuffer
+            };
+            loopPairs.push(pair);
+        }
+
+        return new StructuralSubtypingQueryGraph(graph, loopPairs);
     }
 
     /**
@@ -176,7 +199,8 @@ export class AliasPlaceholderType extends AbstractType {
 
     private alias: string;
 
-    private target_buffer: AbstractType;
+    // FIFO
+    private target_buffer: AbstractType[] = new Array();
 
     constructor(alias: string) {
         super();
@@ -192,6 +216,7 @@ export class AliasPlaceholderType extends AbstractType {
         return this.alias;
     }
 
+    @otherAliasReplaced()
     public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
         const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
         if (basicCheckResult.value) return basicCheckResult;
@@ -199,20 +224,25 @@ export class AliasPlaceholderType extends AbstractType {
         const target = context.typeDefinitions.get(this.getAlias());
         if (!target) throw new Error("No type definition exists for " + this.getAlias());
 
-        this.target_buffer = target;
+        this.target_buffer.push(target);
 
         return target.isStrutcturalSubtypeOf_Impl(other, context);
     }
 
     public override buildQueryGraph(): StructuralSubtypingQueryGraph {
         let out = super.buildQueryGraph();
-        const root = out.getRoot();
+        const root = out.getGraph().getRoot();
 
-        const subgraph = this.target_buffer.buildQueryGraph();
-        const newEdge = new Edge(root, subgraph.getRoot(), "");
+        if(this.loopDetectedBuffer) return out;
+        
+        const target = this.target_buffer.shift();
+        if(!target) throw new Error("Must call isStrutcturalSubtypeOf_Impl before buildQueryGraph");
 
-        out = out.merge(subgraph);
-        out.addEdge(newEdge);
+        const targetOut = target.buildQueryGraph();
+        const newEdge = new Edge(root, targetOut.getGraph().getRoot(), "");
+
+        out.merge(targetOut);
+        out.getGraph().addEdge(newEdge);
 
         return out;
     }

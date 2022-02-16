@@ -11,7 +11,7 @@ export class StructType extends AbstractType {
     private name: string;
     private members: Definition[];
 
-    private relevantMembers_SubtypingBuffer: Definition[];
+    private subtypingRelevantMembers_buffer: Definition[];
 
     constructor(name: string, members: Definition[]) {
         super();
@@ -20,8 +20,20 @@ export class StructType extends AbstractType {
         this.resetSubtypingBuffer();
     }
 
+    public toString(): string {
+        return "struct { " + this.members.map(m => m.toString() + "; ").join("") + "}";
+    }
+
+    public getName(): string {
+        return this.name;
+    }
+
+    public getMembers(): Definition[] {
+        return this.members;
+    }
+
     private resetSubtypingBuffer() {
-        this.relevantMembers_SubtypingBuffer = new Array();
+        this.subtypingRelevantMembers_buffer = new Array();
     }
 
     @otherAliasReplaced()
@@ -29,14 +41,18 @@ export class StructType extends AbstractType {
         const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
         if (basicCheckResult.value) { return basicCheckResult; };
 
+        // Cleanup
+        this.resetSubtypingBuffer();
+
         if (other instanceof StructType) {
             const isSubtype = other.members.every(d2 => {
                 return this.members.some(d1 => {
                     if (d1.getName() === d2.getName()) {
                         // Name match...
+                        this.subtypingRelevantMembers_buffer.push(d1);
+                        
                         if (d1.getType().isStrutcturalSubtypeOf_Impl(d2.getType(), context).value) {
                             // ...and type match
-                            this.relevantMembers_SubtypingBuffer.push(d1);
                             return true;
                         }
                         return false;
@@ -61,34 +77,24 @@ export class StructType extends AbstractType {
      */
     public override buildQueryGraph(): StructuralSubtypingQueryGraph {
         let out = super.buildQueryGraph();
-        let root = out.getRoot();
+        let root = out.getGraph().getRoot();
 
-        this.relevantMembers_SubtypingBuffer.map(m => {
+        if(this.loopDetectedBuffer) return out;
+
+        this.subtypingRelevantMembers_buffer.map(m => {
             return {
-                subgraph: m.getType().buildQueryGraph(),
+                out: m.getType().buildQueryGraph(),
                 name: m.getName()
             };
         }).forEach(e => {
-            if (!e.subgraph) alert("No subgraph for " + e.name + "?!");
-            out = out.merge(e.subgraph);
-            out.addEdge(new Edge(root, e.subgraph.getRoot(), e.name));
+            out.merge(e.out);
+            out.getGraph().addEdge(new Edge(root, e.out.getGraph().getRoot(), e.name));
         });
-
-        // Cleanup
-        this.resetSubtypingBuffer();
 
         return out;
     }
 
-    public toString(): string {
-        return "struct { " + this.members.map(m => m.toString() + "; ").join("") + "}";
-    }
-
-    public getName(): string {
-        return this.name;
-    }
-
-    public getMembers(): Definition[] {
-        return this.members;
+    protected override isQueryGraphNodeHighlighted(): boolean {
+        return this.loopDetectedBuffer;
     }
 }

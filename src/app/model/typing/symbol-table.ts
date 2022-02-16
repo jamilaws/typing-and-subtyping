@@ -8,6 +8,7 @@ export interface SymbolTableUiData {
     }[];
 }
 
+
 /**
  * Interface for all of those ast nodes which represent any kind of declaration
  */
@@ -71,7 +72,12 @@ export class SymbolTable {
 
     public lookup(identifier: string): Declaration {
         const foundStack = this.declarationStacks.get(identifier);
-        if(!foundStack) throw new Error(`Invalid use of undeclared identifier '${identifier}'`);
+        if(!foundStack) {
+            const e = new Error(`Invalid use of undeclared identifier '${identifier}'`)
+            console.log(e);
+            
+            throw e;
+        }
         return foundStack.getTopElement();
     }
 

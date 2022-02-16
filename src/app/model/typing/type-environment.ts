@@ -1,11 +1,21 @@
 import { TypeDefStatement } from "../ast/ast-nodes/type-def-statement";
 import { Declaration, SymbolTable } from "./symbol-table";
+import { TypeDefinitionTable, TypeDefinitionTableUiData } from "./type-definition-table";
 import { AbstractType } from "./types/abstract-type";
 import { CharType } from "./types/base-types/char-type";
 import { FloatType } from "./types/base-types/float-type";
 import { IntType } from "./types/base-types/int-type";
 import { ArrayType } from "./types/type-constructors/array-type";
 import { PointerType } from "./types/type-constructors/pointer-type";
+
+export interface SymbolTableUiData {
+    identifier: string;
+    declarations: {
+        type: string;
+        line: number;
+    }[];
+}
+
 
 /**
  * Context entity for AST traversal during performTypeCheck execution
@@ -18,7 +28,7 @@ import { PointerType } from "./types/type-constructors/pointer-type";
 export class TypeEnvironment {
 
     private symbolTable: SymbolTable;
-    private typeDefs: Map<string, AbstractType>; // better than storing TypeDefStatement array for lower cohesion
+    private typeDefs: TypeDefinitionTable; // better than storing TypeDefStatement array for lower cohesion
 
     constructor() {
         this.symbolTable = new SymbolTable();
@@ -120,6 +130,16 @@ export class TypeEnvironment {
 
     public getTypeDefinitions():  Map<string, AbstractType> {
         return this.typeDefs;
+    }
+
+    // TODO create class and move there?
+    public getTypeDefinitionTableUiData():  TypeDefinitionTableUiData[] {
+        let out = new Array();
+        this.typeDefs.forEach((value, key) => {
+            out.push({alias: key, type: value.toString()})
+        });
+
+        return out;
     }
 
 }

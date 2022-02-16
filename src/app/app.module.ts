@@ -19,7 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 const routes: Routes = [
   { path: '', component: MainViewComponent },
-  { path: 'subtyping-dummy', component: DummySubtypingTestComponent },
+  { path: 'subtyping-demo', component: DummySubtypingTestComponent },
 ]
 
 const monacoConfig: NgxMonacoEditorConfig = {

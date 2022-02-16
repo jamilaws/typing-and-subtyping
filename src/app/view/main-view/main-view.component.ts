@@ -5,6 +5,7 @@ import { AstNode } from 'src/app/model/ast/ast-node';
 import { DisplayGraphEdge, DisplayGraphNode, GRAPH_SCALE_FACTOR_X, GRAPH_SCALE_FACTOR_Y, generateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
 import { Graph, Node, Edge } from 'src/app/model/common/graph/_module';
 import { SymbolTable, SymbolTableUiData } from 'src/app/model/typing/symbol-table';
+import { TypeDefinitionTableUiData } from 'src/app/model/typing/type-definition-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
 import { TypeError } from 'src/app/model/typing/type-error';
 import { TypingTree } from 'src/app/model/typing/typing-tree/typing-tree';
@@ -23,6 +24,7 @@ const NODE_SIZE: number = 20;
 export class MainViewComponent implements OnInit {
 
   symbolTable: SymbolTableUiData[] = null;
+  typeDefinitions: TypeDefinitionTableUiData[] = null;
 
   _graphOptions: EChartsOption;
 
@@ -73,8 +75,8 @@ export class MainViewComponent implements OnInit {
     this.typeErrorString = null;
     this.typingTree = node.getTypingTree();
 
-    //console.log("Clicked AST-Node:");
-    //console.log(node);
+    console.log("Clicked AST-Node:");
+    console.log(node);
   }
 
   /*
@@ -130,6 +132,7 @@ export class MainViewComponent implements OnInit {
       this.typeErrorString = null;
 
       this.symbolTable = typeEnv.getSymbolTable().toUiData();
+      this.typeDefinitions = typeEnv.getTypeDefinitionTableUiData();
 
     } catch (e) {
       this.typeErrorString = (<Error>e).message;

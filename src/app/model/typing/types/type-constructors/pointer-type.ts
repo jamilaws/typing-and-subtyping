@@ -27,13 +27,15 @@ export class PointerType extends AbstractType {
 
     public override buildQueryGraph(): StructuralSubtypingQueryGraph {
         let out = super.buildQueryGraph();
-        const root = out.getRoot();
+        const root = out.getGraph().getRoot();
 
-        const subgraph = this.baseType.buildQueryGraph();
-        const newEdge = new Edge(root, subgraph.getRoot(), "");
+        if(this.loopDetectedBuffer) return out;
 
-        out = out.merge(subgraph);
-        out.addEdge(newEdge);
+        const targetOut = this.baseType.buildQueryGraph();
+        const newEdge = new Edge(root, targetOut.getGraph().getRoot(), "");
+
+        out.merge(targetOut);
+        out.getGraph().addEdge(newEdge);
 
         return out;
     }

@@ -56,22 +56,23 @@ export class FunctionType extends AbstractType {
 
     public override buildQueryGraph(): StructuralSubtypingQueryGraph {
         let out = super.buildQueryGraph();
-        const root = out.getRoot();
+        const root = out.getGraph().getRoot();
 
+        if(this.loopDetectedBuffer) return out;
         //if(!this.isSubtype_buffer) return out; // Do not extend the basic query graph in case of query result false
 
         // Contra
-        const parameterSubgraphs = (<FunctionType>this.subtypingQueryBuffer.b).getParameters().map(p => p.buildQueryGraph());
-        const parameterEdges = parameterSubgraphs.map(sg => new Edge(root, sg.getRoot(), ""));
+        const parameterOuts = (<FunctionType>this.subtypingQueryBuffer.b).getParameters().map(p => p.buildQueryGraph());
+        const parameterEdges = parameterOuts.map((sg, index) => new Edge(root, sg.getGraph().getRoot(), "param" + index));
 
-        const returnSubgraph = this.returnType.buildQueryGraph();
-        const returnEdge = new Edge(root, returnSubgraph.getRoot(), "return");
+        const returnOut = this.returnType.buildQueryGraph();
+        const returnEdge = new Edge(root, returnOut.getGraph().getRoot(), "return");
 
-        parameterSubgraphs.forEach(sg => out = out.merge(sg));
-        parameterEdges.forEach(e => out.addEdge(e));
+        parameterOuts.forEach(po => out.merge(po));
+        parameterEdges.forEach(e => out.getGraph().addEdge(e));
 
-        out = out.merge(returnSubgraph);
-        out.addEdge(returnEdge);
+        out.merge(returnOut);   
+        out.getGraph().addEdge(returnEdge);
 
         return out;
     }
