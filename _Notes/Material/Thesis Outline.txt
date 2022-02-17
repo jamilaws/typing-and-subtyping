@@ -54,3 +54,13 @@ Not yet positioned:
 - URLs for decorators
 	* https://www.typescriptlang.org/docs/handbook/decorators.html#method-decorators
 	* https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition
+
+
+- Transition Plan to Actual Tool
+	* Explain basic idea (only code editor as input covering all required features)
+	* Problems of cparse --> input boundaries / problems leading to bad UX
+	* type-construction-kit.component
+	* For typecheck two alternatives:
+		- use existing parser and write adapter to translate input to "code with bad UI"
+		- implement simple parser for expressions 
+	* do not use symbol table etc

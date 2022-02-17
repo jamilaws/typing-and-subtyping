@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Name for {{data.type.toString()}} declaration.</h1>
+<div mat-dialog-content>
+    <input #nameInput type="text">
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClickCancel()">Cancel</button>
+  <button mat-button (click)="onClickCreate(nameInput.value)" cdkFocusInitial>Create</button>
+</div>

@@ -1,7 +1,17 @@
 <div class="wrapper">
     <div class="bubble-container">
-        <app-base-type-bubble *ngFor="let bt of baseTypes" [type]="bt"></app-base-type-bubble>
-        <app-constructed-type-bubble *ngFor="let ct of constructedTypes" [type]="ct"></app-constructed-type-bubble>
+        <app-base-type-bubble *ngFor="let bt of baseTypes"
+        [type]="bt"
+        [state]="creationActive ? 1 : 0"
+        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
+        ></app-base-type-bubble>
+        <app-constructed-type-bubble *ngFor="let ct of constructedTypes"
+        [type]="ct"
+        [state]="creationActive ? 1 : 0"
+        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
+        ></app-constructed-type-bubble>
 
         <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-pointer-type-bubble>
@@ -42,11 +52,21 @@
             </tr>
             <tr>
                 <td>'Enter'</td>
-                <td>Confirm creation if the type</td>
+                <td>Confirm creation of the type</td>
             </tr>
             <tr>
                 <td>'Esc'</td>
                 <td>Cancel the creation of the type</td>
+            </tr>
+        </table>
+    </div>
+    <div class="typedef-wrapper">
+        <table>
+            <tr *ngFor="let row of getTypedefsAsTable()">
+                <td style="padding-right: 10px; color: #2469B3">typedef</td>
+                <td style="padding-right: 10px;">{{row[1]}}</td>
+                <td>{{row[0]}}</td>
+                <td>;</td>
             </tr>
         </table>
     </div>

@@ -11,6 +11,8 @@ import { CreateArrayTypeBubbleComponent } from './create-type-bubbles/create-arr
 import { CreateFunctionTypeBubbleComponent } from './create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
 import { CreatePointerTypeBubbleComponent } from './create-type-bubbles/create-pointer-type-bubble/create-pointer-type-bubble.component';
 import { CreateStructTypeBubbleComponent } from './create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
+import { CreateDeclarationDialogComponent } from './dialogs/create-declaration-dialog/create-declaration-dialog.component';
+import { CreateTypedefDialogComponent } from './dialogs/create-typedef-dialog/create-typedef-dialog.component';
 
 interface ConstructionOption {
   _id: string;
@@ -29,21 +31,19 @@ export class TypeConstructionKitComponent implements OnInit {
   @ViewChild('createStructBubble') createStructBubble: CreateStructTypeBubbleComponent;
   @ViewChild('createFunctionBubble') createFunctionBubble: CreateFunctionTypeBubbleComponent;
 
+  /*
+  Type bubbles
+  */
+
   baseTypes: BaseType[] = [new IntType(), new CharType(), new FloatType()];
   constructedTypes: AbstractType[] = [new ArrayType(new IntType())];
 
   creationActive: boolean = false;
 
-  constructionOptions: ConstructionOption[] = [
-    {
-      _id: "1",
-      name: "struct"
-    },
-    {
-      _id: "2",
-      name: "array"
-    },
-  ];
+  /*
+  Typedefs
+  */
+  private typeDefinitions: Map<string, AbstractType> = new Map();
 
   constructor(public dialog: MatDialog) { }
 
@@ -76,6 +76,39 @@ export class TypeConstructionKitComponent implements OnInit {
 
   onCancelCreation(): void {
     this.creationActive = false;
+  }
+
+  onClickCreateTypedef(type: AbstractType): void {
+    const dialogRef = this.dialog.open(CreateTypedefDialogComponent, {
+      width: '300px',
+      data: {
+        type: type
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return;
+      this.typeDefinitions.set(result.alias, result.type);
+    });
+  }
+
+  onClickCreateDeclaration(type: AbstractType): void {
+    const dialogRef = this.dialog.open(CreateDeclarationDialogComponent, {
+      width: '300px',
+      data: {
+        type: type
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return;
+      alert(result.type.toString() + " " + result.name + ";");
+      // TODO
+    });
+  }
+
+  getTypedefsAsTable(): string[][] {
+    return Array.from(this.typeDefinitions.entries()).map(tup => [tup[0], tup[1].toString()]);
   }
 
 }
