@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractType } from 'src/app/model/typing/types/abstract-type';
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
-import { TypeBubble } from '../../service/bubble-selection.service';
+import { NO_SELECTION_PLACEHOLDER_BUBBLE, TypeBubble } from '../../service/bubble-selection.service';
 import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
 
 @Component({
@@ -36,7 +36,7 @@ export class CreatePointerTypeBubbleComponent extends AbstractCreateTypeBubble i
   }
 
   protected onCreationStopped(): void {
-    // Intentionally left blank
+    this.currentTargetSelection = NO_SELECTION_PLACEHOLDER_BUBBLE.getType();
   }
 
   getSelectionText(): string {

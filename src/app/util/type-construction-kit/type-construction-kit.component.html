@@ -1,27 +1,26 @@
 <div class="wrapper">
     <div class="bubble-container">
-        <app-base-type-bubble *ngFor="let bt of baseTypes"
-        [type]="bt"
-        [state]="creationActive ? 1 : 0"
-        (onClickCreateTypedef)="onClickCreateTypedef($event)"
-        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
-        ></app-base-type-bubble>
-        <app-constructed-type-bubble *ngFor="let ct of constructedTypes"
-        [type]="ct"
-        [state]="creationActive ? 1 : 0"
-        (onClickCreateTypedef)="onClickCreateTypedef($event)"
-        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
-        ></app-constructed-type-bubble>
+        <app-base-type-bubble *ngFor="let bt of baseTypes" [type]="bt" [state]="creationActive ? 1 : 0"
+            (onClickCreateTypedef)="onClickCreateTypedef($event)"
+            (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-base-type-bubble>
+        <app-constructed-type-bubble *ngFor="let ct of constructedTypes" [type]="ct" [state]="creationActive ? 1 : 0"
+            (onClickCreateTypedef)="onClickCreateTypedef($event)"
+            (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-constructed-type-bubble>
 
-        <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)"
+            (onCancelCreation)="onCancelCreation()">
         </app-create-pointer-type-bubble>
-        <app-create-array-type-bubble #createArrayBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        <app-create-array-type-bubble #createArrayBubble (onApplyCreation)="onApplyCreation($event)"
+            (onCancelCreation)="onCancelCreation()">
         </app-create-array-type-bubble>
-        <app-create-struct-type-bubble #createStructBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        <app-create-struct-type-bubble #createStructBubble (onApplyCreation)="onApplyCreation($event)"
+            (onCancelCreation)="onCancelCreation()">
         </app-create-struct-type-bubble>
-        <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)"
+            (onCancelCreation)="onCancelCreation()">
         </app-create-function-type-bubble>
-        <app-create-alias-type-bubble #createAliasBubble [isAliasAvailableCallback]="isAliasAvailableCallback" (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        <app-create-alias-type-bubble #createAliasBubble [isAliasAvailableCallback]="isAliasAvailableCallback"
+            (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-alias-type-bubble>
 
         <div *ngIf="!creationActive">
@@ -50,29 +49,29 @@
             </mat-menu>
         </div>
 
-        <app-alias-type-bubble *ngFor="let at of aliasTypes"
-        [type]="at"
-        [state]="creationActive ? 1 : 0"
-        (onClickCreateTypedef)="onClickCreateTypedef($event)"
-        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
-        ></app-alias-type-bubble>
+        <app-alias-type-bubble *ngFor="let at of aliasTypes" [type]="at" [state]="creationActive ? 1 : 0"
+            (onClickCreateTypedef)="onClickCreateTypedef($event)"
+            (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-alias-type-bubble>
 
     </div>
     <div class="creation-active-explanation-wrapper">
-        <table *ngIf="creationActive" class="creation-active-explanation">
-            <tr>
-                <td>'Mouse'</td>
-                <td>Reference existing types</td>
-            </tr>
-            <tr>
-                <td>'Enter'</td>
-                <td>Confirm creation of the type</td>
-            </tr>
-            <tr>
-                <td>'Esc'</td>
-                <td>Cancel the creation of the type</td>
-            </tr>
-        </table>
+
+            <table *ngIf="creationActive" class="creation-active-explanation">
+                <tr>
+                    <td class="explanation-tag">
+                        <img src="/assets/icons/enter.png" class="explanation-icon">
+                        <span class="explanation-text">Apply</span>
+                    </td>
+                    <td class="explanation-tag">
+                        <img src="/assets/icons/escape.png" class="explanation-icon">
+                        <span class="explanation-text">Cancel</span>
+                    </td>
+                    <td class="explanation-tag">
+                        <img src="/assets/icons/left-click.png" class="explanation-icon">
+                        <span class="explanation-text">Reference types</span>
+                    </td>
+                </tr>
+            </table>
     </div>
     <div class="typedef-wrapper">
         <table>

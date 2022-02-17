@@ -37,7 +37,7 @@ export class CreateArrayTypeBubbleComponent extends AbstractCreateTypeBubble imp
   }
 
   protected onCreationStopped(): void {
-    // Intentionally left blank
+    this.currentTargetSelection = NO_SELECTION_PLACEHOLDER_BUBBLE.getType();
   }
 
   getSelectionText(): string {

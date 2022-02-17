@@ -34,9 +34,23 @@
 }
 
 .creation-active-explanation-wrapper {
-    height: 69px;
+    height: 21px;
+    margin: 5px;
     background-color: lightgray;
 }
+
+.explanation-icon {
+    width: 14px;
+}
+
+.explanation-text {
+    margin-left: 5px;
+}
+
+.explanation-tag {
+    padding-right: 15px;
+}
+
 .creation-active-explanation {
     font-size: 14px;
 }
