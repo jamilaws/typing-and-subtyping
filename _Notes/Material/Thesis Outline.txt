@@ -60,6 +60,7 @@ Not yet positioned:
 	* Explain basic idea (only code editor as input covering all required features)
 	* Problems of cparse --> input boundaries / problems leading to bad UX
 	* type-construction-kit.component
+		- Explain lifecycle (e.g. on one example component. Maybe one difficult and one simple)
 	* For typecheck two alternatives:
 		- use existing parser and write adapter to translate input to "code with bad UI"
 		- implement simple parser for expressions 
@@ -70,4 +71,9 @@ Not yet positioned:
 			1. Add alias placeholder bubble with every typedef
 			2. Add feature to add alias placeholder bubble without acutal Typedef (--> can use it in struct creation)
 			3. Add actual typedef afterwards
+			4. Invariance: Every typedef comes with its placeholder && placeholders are unique
+				-   @Input("isAliasAvailableCallback") isAliasAvailableCallback: (alias: string) => boolean;
+				-	private addTypedef(alias: string, type: AbstractType): void {...} --> always checking if there is already a suitable placeholder
+				- 	Goal: Placeholders either already defined, or will be soon (-->exception to enable recursiveness)
+
 

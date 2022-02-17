@@ -12,12 +12,6 @@
         (onClickCreateTypedef)="onClickCreateTypedef($event)"
         (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
         ></app-constructed-type-bubble>
-        <app-alias-type-bubble *ngFor="let at of aliasTypes"
-        [type]="at"
-        [state]="creationActive ? 1 : 0"
-        (onClickCreateTypedef)="onClickCreateTypedef($event)"
-        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
-        ></app-alias-type-bubble>
 
         <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-pointer-type-bubble>
@@ -27,7 +21,7 @@
         </app-create-struct-type-bubble>
         <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-function-type-bubble>
-        <app-create-alias-type-bubble #createAliasBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        <app-create-alias-type-bubble #createAliasBubble [isAliasAvailableCallback]="isAliasAvailableCallback" (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-alias-type-bubble>
 
         <div *ngIf="!creationActive">
@@ -55,6 +49,14 @@
                 </button>
             </mat-menu>
         </div>
+
+        <app-alias-type-bubble *ngFor="let at of aliasTypes"
+        [type]="at"
+        [state]="creationActive ? 1 : 0"
+        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
+        ></app-alias-type-bubble>
+
     </div>
     <div class="creation-active-explanation-wrapper">
         <table *ngIf="creationActive" class="creation-active-explanation">

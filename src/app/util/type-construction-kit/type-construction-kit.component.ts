@@ -45,6 +45,10 @@ export class TypeConstructionKitComponent implements OnInit {
   Typedefs
   */
   private typeDefinitions: Map<string, AbstractType> = new Map();
+  public isAliasAvailableCallback = (alias: string) => {
+    const found = this.typeDefinitions.get(alias);
+    return !found
+  }; 
 
   constructor(public dialog: MatDialog) { }
 
@@ -56,7 +60,11 @@ export class TypeConstructionKitComponent implements OnInit {
   }
 
   onApplyCreation(type: AbstractType) {
-    this.constructedTypes.push(type);
+    if(type instanceof AliasPlaceholderType) {
+      this.aliasTypes.unshift(type);
+    } else {
+      this.constructedTypes.push(type);
+    }
     this.creationActive = false;
   }
 
@@ -95,7 +103,12 @@ export class TypeConstructionKitComponent implements OnInit {
 
   private addTypedef(alias: string, type: AbstractType): void {
     this.typeDefinitions.set(alias, type);
-    this.aliasTypes.push(new AliasPlaceholderType(alias));
+    if(this.aliasTypes.some(at => at.getAlias() === alias)) {
+      // AliasPlaceholderType has already been added without typdef
+      alert("Info: Alias " + alias + " now covered by typedef.");
+    } else {
+      this.aliasTypes.push(new AliasPlaceholderType(alias));
+    }
   }
 
   getTypedefsAsTable(): string[][] {
