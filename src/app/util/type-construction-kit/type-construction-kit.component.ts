@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AbstractType } from 'src/app/model/typing/types/abstract-type';
 import { BaseType } from 'src/app/model/typing/types/base-type';
@@ -6,10 +6,11 @@ import { CharType } from 'src/app/model/typing/types/base-types/char-type';
 import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
-import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
-import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
-import { CreatePointerDialogComponent } from './create-dialogs/create-pointer-dialog/create-pointer-dialog.component';
-import { CreateStructDialogComponent } from './create-dialogs/create-struct-dialog/create-struct-dialog.component';
+import { AbstractCreateTypeBubble } from './create-type-bubbles/abstract-create-type-bubble';
+import { CreateArrayTypeBubbleComponent } from './create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
+import { CreateFunctionTypeBubbleComponent } from './create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
+import { CreatePointerTypeBubbleComponent } from './create-type-bubbles/create-pointer-type-bubble/create-pointer-type-bubble.component';
+import { CreateStructTypeBubbleComponent } from './create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
 
 interface ConstructionOption {
   _id: string;
@@ -23,10 +24,15 @@ interface ConstructionOption {
 })
 export class TypeConstructionKitComponent implements OnInit {
 
+  @ViewChild('createPointerBubble') createPointerBubble: CreatePointerTypeBubbleComponent;
+  @ViewChild('createArrayBubble') createArrayBubble: CreateArrayTypeBubbleComponent;
+  @ViewChild('createStructBubble') createStructBubble: CreateStructTypeBubbleComponent;
+  @ViewChild('createFunctionBubble') createFunctionBubble: CreateFunctionTypeBubbleComponent;
+
   baseTypes: BaseType[] = [new IntType(), new CharType(), new FloatType()];
   constructedTypes: AbstractType[] = [new ArrayType(new IntType())];
 
-  createArrayActive: boolean = false;
+  creationActive: boolean = false;
 
   constructionOptions: ConstructionOption[] = [
     {
@@ -41,39 +47,35 @@ export class TypeConstructionKitComponent implements OnInit {
 
   constructor(public dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void { }
+
+  public onClickCreatePointer() {
+    this.createPointerBubble.start();
+    this.createArrayBubble.reset();
+    this.createStructBubble.reset();
+    this.createFunctionBubble.reset();
+
+    this.creationActive = true;
   }
 
-  public onClickCreatePointer(): void {
-    const dialogRef = this.dialog.open(CreatePointerDialogComponent, {
-      width: '300px',
-      data: {
-        baseTypes: this.baseTypes,
-        constructedTypes: this.constructedTypes
-      },
-    });
+  public onClickStartCreation(creationBubble: AbstractCreateTypeBubble) {
+    this.createPointerBubble.reset();
+    this.createArrayBubble.reset();
+    this.createStructBubble.reset();
+    this.createFunctionBubble.reset();
 
-    dialogRef.afterClosed().subscribe((result: PointerType) => {
-      if(result) this.constructedTypes.push(result);
-    });
+    creationBubble.start();
+
+    this.creationActive = true;
   }
 
-  public onClickCreateArray(): void {
-    this.createArrayActive = true;
+  onApplyCreation(type: AbstractType) {
+    this.constructedTypes.push(type);
+    this.creationActive = false;
   }
 
-  public onClickCreateStruct(): void {
-    const dialogRef = this.dialog.open(CreateStructDialogComponent, {
-      width: '500px',
-      data: {
-        baseTypes: this.baseTypes,
-        constructedTypes: this.constructedTypes
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: StructType) => {
-      if(result) this.constructedTypes.push(result);
-    });
+  onCancelCreation(): void {
+    this.creationActive = false;
   }
 
 }

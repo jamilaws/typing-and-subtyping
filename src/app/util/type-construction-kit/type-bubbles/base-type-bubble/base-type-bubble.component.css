@@ -1,5 +1,6 @@
 .base-type-ui {
-    width: 75px;
+    padding-left: 10px;
+    padding-right: 10px;
     text-align: center;
     border-radius: 8px;
     margin: 2px;

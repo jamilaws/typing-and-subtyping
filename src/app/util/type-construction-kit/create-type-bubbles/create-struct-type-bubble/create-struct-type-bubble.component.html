@@ -1,0 +1,36 @@
+<div class="constructed-type-ui" [ngStyle]="{'display': visible ? undefined : 'none'}">
+    <div class="row">
+        <div class="col-sm-12">
+            {{ 'struct {' }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="member-table">
+                <tr *ngFor="let m of members">
+                    <td>{{m.getType().toString()}}</td>
+                    <td>{{m.getName()}}</td>
+                    <td><b>;</b></td>
+                </tr>
+                <tr>
+                    <td>
+                        <span style="width: 50px;">
+                            {{getSelectionText()}}
+                        </span>
+                    </td>
+                    <td>
+                        <input #nameInput type="text" style="width: 50px;">
+                    </td>
+                    <td>
+                        <button (click)="onClickAddMember(nameInput.value)">+</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            {{ '}' }}
+        </div>
+    </div>
+</div>

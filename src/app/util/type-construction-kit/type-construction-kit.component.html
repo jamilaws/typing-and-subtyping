@@ -1,28 +1,53 @@
 <div class="wrapper">
-    <div class="section base-types-wrapper">
-        <span class="title">Base Types</span>
+    <div class="bubble-container">
         <app-base-type-bubble *ngFor="let bt of baseTypes" [type]="bt"></app-base-type-bubble>
-    </div>
-    <div class="section constructed-types-wrapper">
-        <span class="title">Constructed Types</span>
-        <button class="createTypeButton" mat-icon-button [matMenuTriggerFor]="menu">
-            +
-        </button>
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="onClickCreatePointer()">
-                <span class="construtor-option-icon"><b>*</b></span>
-                <span>Pointer</span>
-            </button>
-            <button mat-menu-item (click)="onClickCreateArray()">
-                <span class="construtor-option-icon"><b>[ ]</b></span>
-                <span>Array</span>
-            </button>
-            <button mat-menu-item (click)="onClickCreateStruct()">
-                <span class="construtor-option-icon"><b>{{ '{ }' }}</b></span>
-                <span>Struct</span>
-            </button>
-        </mat-menu>
         <app-constructed-type-bubble *ngFor="let ct of constructedTypes" [type]="ct"></app-constructed-type-bubble>
-        <app-create-array-type-bubble [visible]="createArrayActive"></app-create-array-type-bubble>
+
+        <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        </app-create-pointer-type-bubble>
+        <app-create-array-type-bubble #createArrayBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        </app-create-array-type-bubble>
+        <app-create-struct-type-bubble #createStructBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        </app-create-struct-type-bubble>
+        <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        </app-create-function-type-bubble>
+
+        <div *ngIf="!creationActive">
+            <button class="createTypeButton" mat-icon-button [matMenuTriggerFor]="menu">+</button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="onClickStartCreation(createPointerBubble)">
+                    <span class="construtor-option-icon"><b>*</b></span>
+                    <span>Pointer</span>
+                </button>
+                <button mat-menu-item (click)="onClickStartCreation(createArrayBubble)">
+                    <span class="construtor-option-icon"><b>[ ]</b></span>
+                    <span>Array</span>
+                </button>
+                <button mat-menu-item (click)="onClickStartCreation(createStructBubble)">
+                    <span class="construtor-option-icon"><b>{{ '{ }' }}</b></span>
+                    <span>Struct</span>
+                </button>
+                <button mat-menu-item (click)="onClickStartCreation(createFunctionBubble)">
+                    <span class="construtor-option-icon"><b>{{ '( )' }}</b></span>
+                    <span>Function</span>
+                </button>
+            </mat-menu>
+        </div>
+    </div>
+    <div class="creation-active-explanation-wrapper">
+        <table *ngIf="creationActive" class="creation-active-explanation">
+            <tr>
+                <td>'Mouse'</td>
+                <td>Reference existing types</td>
+            </tr>
+            <tr>
+                <td>'Enter'</td>
+                <td>Confirm creation if the type</td>
+            </tr>
+            <tr>
+                <td>'Esc'</td>
+                <td>Cancel the creation of the type</td>
+            </tr>
+        </table>
     </div>
 </div>

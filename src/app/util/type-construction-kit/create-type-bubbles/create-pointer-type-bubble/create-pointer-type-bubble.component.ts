@@ -1,16 +1,16 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractType } from 'src/app/model/typing/types/abstract-type';
 import { NoTypePlaceholder } from 'src/app/model/typing/types/common/no-type-placeholder';
-import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
-import { BubbleSelectionService, NO_SELECTION_PLACEHOLDER_BUBBLE, TypeBubble } from '../../service/bubble-selection.service';
+import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
+import { TypeBubble } from '../../service/bubble-selection.service';
 import { AbstractCreateTypeBubble } from '../abstract-create-type-bubble';
 
 @Component({
-  selector: 'app-create-array-type-bubble',
-  templateUrl: './create-array-type-bubble.component.html',
-  styleUrls: ['./create-array-type-bubble.component.css']
+  selector: 'app-create-pointer-type-bubble',
+  templateUrl: './create-pointer-type-bubble.component.html',
+  styleUrls: ['./create-pointer-type-bubble.component.css']
 })
-export class CreateArrayTypeBubbleComponent extends AbstractCreateTypeBubble implements OnInit {
+export class CreatePointerTypeBubbleComponent extends AbstractCreateTypeBubble implements OnInit {
 
   private currentTargetSelection: AbstractType;
 
@@ -40,7 +40,7 @@ export class CreateArrayTypeBubbleComponent extends AbstractCreateTypeBubble imp
       return;
     }
 
-    this.outputTypeToCreate(new ArrayType(this.currentTargetSelection));
+    this.outputTypeToCreate(new PointerType(this.currentTargetSelection));
 
     this.reset();
   }
