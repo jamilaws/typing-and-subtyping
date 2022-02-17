@@ -23,7 +23,7 @@ export class BubbleSelectionService {
     this.selectedBubble = new BehaviorSubject(NO_SELECTION_PLACEHOLDER_BUBBLE);
   }
 
-  public selected(bubble: TypeBubble) {
+  public select(bubble: TypeBubble) {
     this.selectedBubble.next(bubble);
   }
 

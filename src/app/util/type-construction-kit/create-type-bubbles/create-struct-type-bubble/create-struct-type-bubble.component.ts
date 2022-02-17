@@ -4,7 +4,7 @@ import { Definition } from 'src/app/model/typing/types/common/definition';
 import { NoTypePlaceholder } from 'src/app/model/typing/types/common/no-type-placeholder';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
 import { TypeBubble } from '../../service/bubble-selection.service';
-import { AbstractCreateTypeBubble } from '../abstract-create-type-bubble';
+import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
 
 @Component({
   selector: 'app-create-struct-type-bubble',
@@ -20,42 +20,58 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
 
   ngOnInit(): void { }
 
-  public override reset(): void {
-      super.reset();
-      this.members = new Array();
+  protected onCreationStarted(): void {
+    // Intentionally left blank
   }
 
-  onClickAddMember(name: string) {
-    if(this.isSelectionEmpty()){
-      alert("Please select a type bubble.");
-      return;
+  protected onTypeBubbleSelected(bubble: TypeBubble): void {
+    this.currentTypeSelection = bubble.getType();
+    this.nameInput.nativeElement.focus();
+  }
+
+  protected onApplyCreation(): AbstractType {
+    if (this.members.length === 0) {
+      throw new InvalidTypeCreationError("Please add a member to the struct.");
     }
-    this.members.push(new Definition(name, this.currentTypeSelection));
+
+    return new StructType("TODO", this.members);
+  }
+
+  protected onCancelCreation(): void {
+    // Intentionally left blank
+  }
+
+  protected onCreationStopped(): void {
+    this.members = new Array();
+    this.resetAddRow();
+  }
+
+
+  private resetAddRow(): void {
     // Reset
     this.bubbleSelectionService.unselect();
     this.nameInput.nativeElement.value = "";
+    this.nameInput.nativeElement.focus();
   }
 
-  private isSelectionEmpty(): boolean {
-    return this.currentTypeSelection instanceof NoTypePlaceholder;
+
+  onClickAddMember(name: string) {
+    if (!name) {
+      alert("Please enter a member name");
+      return;
+    }
+
+    if (AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection)) {
+      alert("Please select a member type");
+      return;
+    }
+    this.members.push(new Definition(name, this.currentTypeSelection));
+
+    this.resetAddRow();
   }
 
   getSelectionText(): string {
-    return this.isSelectionEmpty() ? "_" : this.currentTypeSelection.toString();
-  }
-
-  protected override onTypeBubbleSelected(bubble: TypeBubble): void {
-    this.currentTypeSelection = bubble.getType();
-  }
-
-  protected applyCreation(): void {
-    if(this.members.length === 0) {
-      alert("Please add a member to the struct.");
-      return;
-    }
-    
-    this.outputTypeToCreate(new StructType("TODO", this.members));
-    this.reset();
+    return AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.currentTypeSelection.toString();
   }
 
 }

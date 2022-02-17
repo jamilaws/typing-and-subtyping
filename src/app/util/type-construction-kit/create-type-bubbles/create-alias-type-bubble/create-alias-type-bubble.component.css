@@ -1,0 +1,20 @@
+.constructed-type-ui {
+    height: 26px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: left;
+    border: 1px solid grey;
+    border-radius: 8px;
+    margin: 2px;
+    background-color: darkgrey;
+    color: white;
+}
+
+.alias-input {
+    height: 24px;
+    background-color: darkgrey;
+    color: white;
+    border: none;
+    outline: none;
+    width: 30px;
+}

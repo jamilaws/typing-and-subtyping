@@ -1,0 +1,11 @@
+.base-type-ui {
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+    border-radius: 8px;
+    border: solid 1px black;
+    margin: 2px;
+    background-color: darkgrey;
+    color: white;
+    cursor: pointer;
+}

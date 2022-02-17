@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractType } from 'src/app/model/typing/types/abstract-type';
-import { NoTypePlaceholder } from 'src/app/model/typing/types/common/no-type-placeholder';
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
 import { TypeBubble } from '../../service/bubble-selection.service';
-import { AbstractCreateTypeBubble } from '../abstract-create-type-bubble';
+import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
 
 @Component({
   selector: 'app-create-pointer-type-bubble',
@@ -14,35 +13,34 @@ export class CreatePointerTypeBubbleComponent extends AbstractCreateTypeBubble i
 
   private currentTargetSelection: AbstractType;
 
-  ngOnInit(): void {
-    
-  }
-
-  public override setVisible(value: boolean): void {
-    super.setVisible(value);
-  }
-
-  private isSelectionEmpty(): boolean {
-    return this.currentTargetSelection instanceof NoTypePlaceholder;
-  }
+  ngOnInit(): void {}
   
-  getSelectionText(): string {
-    return this.isSelectionEmpty() ? "_" : this.currentTargetSelection.toString();
+  protected onCreationStarted(): void {
+    // Intentionally left blank
   }
 
-  protected override onTypeBubbleSelected(bubble: TypeBubble): void {
+  protected onTypeBubbleSelected(bubble: TypeBubble): void {
     this.currentTargetSelection = bubble.getType();
   }
 
-  protected override applyCreation(): void {
-    if (this.isSelectionEmpty()) {
-      alert("Please select a bubble.");
-      return;
+  protected onApplyCreation(): AbstractType {
+    if (AbstractCreateTypeBubble.isEmpty(this.currentTargetSelection)) {
+      throw new InvalidTypeCreationError("Please select a target type.");
     }
 
-    this.outputTypeToCreate(new PointerType(this.currentTargetSelection));
+    return new PointerType(this.currentTargetSelection);
+  }
 
-    this.reset();
+  protected onCancelCreation(): void {
+    // Intentionally left blank
+  }
+
+  protected onCreationStopped(): void {
+    // Intentionally left blank
+  }
+
+  getSelectionText(): string {
+    return AbstractCreateTypeBubble.isEmpty(this.currentTargetSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.currentTargetSelection.toString();
   }
 
 }

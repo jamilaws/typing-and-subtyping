@@ -12,3 +12,16 @@
 .member-table {
     margin-left: 10px;
 }
+
+.input-member-name {
+    width: 50px;
+    border: none;
+    border-bottom: solid 1px black;
+    outline: none;
+}
+
+.add-member-button {
+    outline: none;
+    border: none;
+
+}

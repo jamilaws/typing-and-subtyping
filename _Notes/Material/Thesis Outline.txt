@@ -64,3 +64,10 @@ Not yet positioned:
 		- use existing parser and write adapter to translate input to "code with bad UI"
 		- implement simple parser for expressions 
 	* do not use symbol table etc
+	* type-construction-kit.component
+		- Add Typedef, declaration action on bubbles
+		- Make recursive structs work:
+			1. Add alias placeholder bubble with every typedef
+			2. Add feature to add alias placeholder bubble without acutal Typedef (--> can use it in struct creation)
+			3. Add actual typedef afterwards
+

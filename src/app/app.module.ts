@@ -30,6 +30,8 @@ import { CreatePointerTypeBubbleComponent } from './util/type-construction-kit/c
 import { CreateFunctionTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
 import { CreateTypedefDialogComponent } from './util/type-construction-kit/dialogs/create-typedef-dialog/create-typedef-dialog.component';
 import { CreateDeclarationDialogComponent } from './util/type-construction-kit/dialogs/create-declaration-dialog/create-declaration-dialog.component';
+import { AliasTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/alias-type-bubble/alias-type-bubble.component';
+import { CreateAliasTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-alias-type-bubble/create-alias-type-bubble.component';
 
 
 const routes: Routes = [
@@ -62,6 +64,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CreateFunctionTypeBubbleComponent,
     CreateTypedefDialogComponent,
     CreateDeclarationDialogComponent,
+    AliasTypeBubbleComponent,
+    CreateAliasTypeBubbleComponent,
   ],
   imports: [
     BrowserModule,

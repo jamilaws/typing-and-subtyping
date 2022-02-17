@@ -1,0 +1,14 @@
+<div class="base-type-ui" (click)="onClick()">
+    <span>{{type.toString()}}</span>
+</div>
+
+<!-- Insert this anywhere in any subtype component of AbstractTypeBubble -->
+<div #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu"></div>
+<mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="onClickAddTypedef()">
+        <span>+ Typedef</span>
+    </button>
+    <button mat-menu-item (click)="onClickAddDeclaration()">
+        <span>+ Declaration</span>
+    </button>
+</mat-menu>

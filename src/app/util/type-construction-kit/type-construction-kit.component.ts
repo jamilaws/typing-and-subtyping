@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AbstractType } from 'src/app/model/typing/types/abstract-type';
+import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { BaseType } from 'src/app/model/typing/types/base-type';
 import { CharType } from 'src/app/model/typing/types/base-types/char-type';
 import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
@@ -37,6 +37,7 @@ export class TypeConstructionKitComponent implements OnInit {
 
   baseTypes: BaseType[] = [new IntType(), new CharType(), new FloatType()];
   constructedTypes: AbstractType[] = [new ArrayType(new IntType())];
+  aliasTypes: AliasPlaceholderType[] = new Array();
 
   creationActive: boolean = false;
 
@@ -49,23 +50,8 @@ export class TypeConstructionKitComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  public onClickCreatePointer() {
-    this.createPointerBubble.start();
-    this.createArrayBubble.reset();
-    this.createStructBubble.reset();
-    this.createFunctionBubble.reset();
-
-    this.creationActive = true;
-  }
-
   public onClickStartCreation(creationBubble: AbstractCreateTypeBubble) {
-    this.createPointerBubble.reset();
-    this.createArrayBubble.reset();
-    this.createStructBubble.reset();
-    this.createFunctionBubble.reset();
-
-    creationBubble.start();
-
+    creationBubble.activate();
     this.creationActive = true;
   }
 
@@ -88,7 +74,7 @@ export class TypeConstructionKitComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(!result) return;
-      this.typeDefinitions.set(result.alias, result.type);
+      this.addTypedef(result.alias, result.type)
     });
   }
 
@@ -105,6 +91,11 @@ export class TypeConstructionKitComponent implements OnInit {
       alert(result.type.toString() + " " + result.name + ";");
       // TODO
     });
+  }
+
+  private addTypedef(alias: string, type: AbstractType): void {
+    this.typeDefinitions.set(alias, type);
+    this.aliasTypes.push(new AliasPlaceholderType(alias));
   }
 
   getTypedefsAsTable(): string[][] {

@@ -1,4 +1,8 @@
-<div class="constructed-type-ui" [ngStyle]="{'display': visible ? undefined : 'none'}">
-    <span>{{"todo"}}</span>
-    <span>*</span>
+<div class="constructed-type-ui" [ngStyle]="{'display': isVisible() ? undefined : 'none'}">
+    <div style="display:flex">
+        <span>{{getReturnTypeText()}}</span>
+        (
+        <span>{{getParamTypesText()}}</span>
+        )
+    </div>
 </div>

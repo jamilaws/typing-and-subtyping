@@ -12,6 +12,12 @@
         (onClickCreateTypedef)="onClickCreateTypedef($event)"
         (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
         ></app-constructed-type-bubble>
+        <app-alias-type-bubble *ngFor="let at of aliasTypes"
+        [type]="at"
+        [state]="creationActive ? 1 : 0"
+        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"
+        ></app-alias-type-bubble>
 
         <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-pointer-type-bubble>
@@ -21,6 +27,8 @@
         </app-create-struct-type-bubble>
         <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
         </app-create-function-type-bubble>
+        <app-create-alias-type-bubble #createAliasBubble (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+        </app-create-alias-type-bubble>
 
         <div *ngIf="!creationActive">
             <button class="createTypeButton" mat-icon-button [matMenuTriggerFor]="menu">+</button>
@@ -40,6 +48,10 @@
                 <button mat-menu-item (click)="onClickStartCreation(createFunctionBubble)">
                     <span class="construtor-option-icon"><b>{{ '( )' }}</b></span>
                     <span>Function</span>
+                </button>
+                <button mat-menu-item (click)="onClickStartCreation(createAliasBubble)">
+                    <span class="construtor-option-icon"><b>@</b></span>
+                    <span>Alias</span>
                 </button>
             </mat-menu>
         </div>

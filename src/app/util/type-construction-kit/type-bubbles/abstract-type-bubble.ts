@@ -24,7 +24,7 @@ export abstract class AbstractTypeBubble {
                 this.menuTrigger.openMenu();
                 break;
             case TypeBubbleState.SELECTION:
-                this.bubbleSelectionService.selected(this)
+                this.bubbleSelectionService.select(this)
                 break;
             default: throw new Error("Unexpected bubble state found.")
         }
