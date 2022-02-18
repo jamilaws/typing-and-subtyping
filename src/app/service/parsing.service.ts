@@ -46,7 +46,24 @@ export class ParsingService {
 
   constructor() { }
 
+  public parseExpression(code: string): AbstractSyntaxTree {
+    const extendedCode = `int main(){return ${code};}`
+    const root = this.parseImpl(extendedCode)[0];
+    if(root instanceof FunctionDeclaration) {
+      if(root.body[0] instanceof ReturnStatement){
+        const expressionAstNode = root.body[0].value;
+        return new AbstractSyntaxTree([expressionAstNode]);
+      }
+    }
+    throw new Error("Unexpected AST structure");
+  }
+
   public parse(code: string): AbstractSyntaxTree {
+    const roots = this.parseImpl(code);
+    return new AbstractSyntaxTree(roots);
+  }
+
+  private parseImpl(code: string): AstNode[] {
     const parsedRaw: any[] = parse(code);
 
     console.log("Parsed raw:");
@@ -54,7 +71,7 @@ export class ParsingService {
 
     const roots = parsedRaw.map(x => this.rawToAstNode(x));
 
-    return new AbstractSyntaxTree(roots);
+    return roots;
   }
 
   private rawToAstNode(x: any): AstNode {

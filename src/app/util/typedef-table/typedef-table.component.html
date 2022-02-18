@@ -1,0 +1,10 @@
+<div class="typedef-wrapper">
+    <table>
+        <tr *ngFor="let row of getTypedefsAsTable()">
+            <td style="padding-right: 10px; color: #2469B3">typedef</td>
+            <td style="padding-right: 10px;">{{row[1]}}</td>
+            <td>{{row[0]}}</td>
+            <td>;</td>
+        </tr>
+    </table>
+</div>

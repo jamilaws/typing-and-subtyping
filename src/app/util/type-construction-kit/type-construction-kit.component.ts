@@ -1,11 +1,13 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TypeDefinitionTable } from 'src/app/model/typing/type-definition-table';
 import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { BaseType } from 'src/app/model/typing/types/base-type';
 import { CharType } from 'src/app/model/typing/types/base-types/char-type';
 import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
+import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
 import { AbstractCreateTypeBubble } from './create-type-bubbles/abstract-create-type-bubble';
 import { CreateArrayTypeBubbleComponent } from './create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
 import { CreateFunctionTypeBubbleComponent } from './create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
@@ -14,10 +16,6 @@ import { CreateStructTypeBubbleComponent } from './create-type-bubbles/create-st
 import { CreateDeclarationDialogComponent } from './dialogs/create-declaration-dialog/create-declaration-dialog.component';
 import { CreateTypedefDialogComponent } from './dialogs/create-typedef-dialog/create-typedef-dialog.component';
 
-interface ConstructionOption {
-  _id: string;
-  name: string;
-}
 
 @Component({
   selector: 'app-type-construction-kit',
@@ -31,12 +29,17 @@ export class TypeConstructionKitComponent implements OnInit {
   @ViewChild('createStructBubble') createStructBubble: CreateStructTypeBubbleComponent;
   @ViewChild('createFunctionBubble') createFunctionBubble: CreateFunctionTypeBubbleComponent;
 
+  @Output('typeDefs') typeDefs_extern = new EventEmitter<TypeDefinitionTable>();
+
   /*
   Type bubbles
   */
 
   baseTypes: BaseType[] = [new IntType(), new CharType(), new FloatType()];
-  constructedTypes: AbstractType[] = [new ArrayType(new IntType())];
+  constructedTypes: AbstractType[] = [ // Predefined constructed types
+    new ArrayType(new IntType()),
+    new PointerType(new CharType()),
+  ];
   aliasTypes: AliasPlaceholderType[] = new Array();
 
   creationActive: boolean = false;
@@ -44,7 +47,7 @@ export class TypeConstructionKitComponent implements OnInit {
   /*
   Typedefs
   */
-  private typeDefinitions: Map<string, AbstractType> = new Map();
+  private typeDefinitions: TypeDefinitionTable = new Map();
   public isAliasAvailableCallback = (alias: string) => {
     const found = this.typeDefinitions.get(alias);
     return !found
@@ -109,10 +112,7 @@ export class TypeConstructionKitComponent implements OnInit {
     } else {
       this.aliasTypes.push(new AliasPlaceholderType(alias));
     }
-  }
-
-  getTypedefsAsTable(): string[][] {
-    return Array.from(this.typeDefinitions.entries()).map(tup => [tup[0], tup[1].toString()]);
+    this.typeDefs_extern.emit(this.typeDefinitions);
   }
 
 }

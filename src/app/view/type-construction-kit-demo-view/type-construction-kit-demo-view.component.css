@@ -1,0 +1,11 @@
+.left-panel-wrapper {
+    border-right: solid 1px lightgrey;
+    height: 86vh;
+}
+
+.right-panel-wrapper {
+}
+
+.typedef-wrapper {
+    margin: 5px;
+}

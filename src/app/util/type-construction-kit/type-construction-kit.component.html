@@ -1,86 +1,83 @@
 <div class="wrapper">
-    <div class="bubble-container">
-        <app-base-type-bubble *ngFor="let bt of baseTypes" [type]="bt" [state]="creationActive ? 1 : 0"
-            (onClickCreateTypedef)="onClickCreateTypedef($event)"
-            (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-base-type-bubble>
-        <app-constructed-type-bubble *ngFor="let ct of constructedTypes" [type]="ct" [state]="creationActive ? 1 : 0"
-            (onClickCreateTypedef)="onClickCreateTypedef($event)"
-            (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-constructed-type-bubble>
-
-        <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)"
-            (onCancelCreation)="onCancelCreation()">
-        </app-create-pointer-type-bubble>
-        <app-create-array-type-bubble #createArrayBubble (onApplyCreation)="onApplyCreation($event)"
-            (onCancelCreation)="onCancelCreation()">
-        </app-create-array-type-bubble>
-        <app-create-struct-type-bubble #createStructBubble (onApplyCreation)="onApplyCreation($event)"
-            (onCancelCreation)="onCancelCreation()">
-        </app-create-struct-type-bubble>
-        <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)"
-            (onCancelCreation)="onCancelCreation()">
-        </app-create-function-type-bubble>
-        <app-create-alias-type-bubble #createAliasBubble [isAliasAvailableCallback]="isAliasAvailableCallback"
-            (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
-        </app-create-alias-type-bubble>
-
-        <div *ngIf="!creationActive">
-            <button class="createTypeButton" mat-icon-button [matMenuTriggerFor]="menu">+</button>
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="onClickStartCreation(createPointerBubble)">
-                    <span class="construtor-option-icon"><b>*</b></span>
-                    <span>Pointer</span>
-                </button>
-                <button mat-menu-item (click)="onClickStartCreation(createArrayBubble)">
-                    <span class="construtor-option-icon"><b>[ ]</b></span>
-                    <span>Array</span>
-                </button>
-                <button mat-menu-item (click)="onClickStartCreation(createStructBubble)">
-                    <span class="construtor-option-icon"><b>{{ '{ }' }}</b></span>
-                    <span>Struct</span>
-                </button>
-                <button mat-menu-item (click)="onClickStartCreation(createFunctionBubble)">
-                    <span class="construtor-option-icon"><b>{{ '( )' }}</b></span>
-                    <span>Function</span>
-                </button>
-                <button mat-menu-item (click)="onClickStartCreation(createAliasBubble)">
-                    <span class="construtor-option-icon"><b>@</b></span>
-                    <span>Alias</span>
-                </button>
-            </mat-menu>
+    <div class="bubble-creation-row">
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="bubble-container">
+                    <app-base-type-bubble *ngFor="let bt of baseTypes" [type]="bt" [state]="creationActive ? 1 : 0"
+                        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+                        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-base-type-bubble>
+                    <app-constructed-type-bubble *ngFor="let ct of constructedTypes" [type]="ct" [state]="creationActive ? 1 : 0"
+                        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+                        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-constructed-type-bubble>
+            
+                    <app-create-pointer-type-bubble #createPointerBubble (onApplyCreation)="onApplyCreation($event)"
+                        (onCancelCreation)="onCancelCreation()">
+                    </app-create-pointer-type-bubble>
+                    <app-create-array-type-bubble #createArrayBubble (onApplyCreation)="onApplyCreation($event)"
+                        (onCancelCreation)="onCancelCreation()">
+                    </app-create-array-type-bubble>
+                    <app-create-struct-type-bubble #createStructBubble (onApplyCreation)="onApplyCreation($event)"
+                        (onCancelCreation)="onCancelCreation()">
+                    </app-create-struct-type-bubble>
+                    <app-create-function-type-bubble #createFunctionBubble (onApplyCreation)="onApplyCreation($event)"
+                        (onCancelCreation)="onCancelCreation()">
+                    </app-create-function-type-bubble>
+                    <app-create-alias-type-bubble #createAliasBubble [isAliasAvailableCallback]="isAliasAvailableCallback"
+                        (onApplyCreation)="onApplyCreation($event)" (onCancelCreation)="onCancelCreation()">
+                    </app-create-alias-type-bubble>
+            
+                    <div *ngIf="!creationActive">
+                        <button class="createTypeButton" mat-icon-button [matMenuTriggerFor]="menu">+</button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="onClickStartCreation(createPointerBubble)">
+                                <span class="construtor-option-icon"><b>*</b></span>
+                                <span>Pointer</span>
+                            </button>
+                            <button mat-menu-item (click)="onClickStartCreation(createArrayBubble)">
+                                <span class="construtor-option-icon"><b>[ ]</b></span>
+                                <span>Array</span>
+                            </button>
+                            <button mat-menu-item (click)="onClickStartCreation(createStructBubble)">
+                                <span class="construtor-option-icon"><b>{{ '{ }' }}</b></span>
+                                <span>Struct</span>
+                            </button>
+                            <button mat-menu-item (click)="onClickStartCreation(createFunctionBubble)">
+                                <span class="construtor-option-icon"><b>{{ '( )' }}</b></span>
+                                <span>Function</span>
+                            </button>
+                            <button mat-menu-item (click)="onClickStartCreation(createAliasBubble)">
+                                <span class="construtor-option-icon"><b>@</b></span>
+                                <span>Alias</span>
+                            </button>
+                        </mat-menu>
+                    </div>
+            
+                    <app-alias-type-bubble *ngFor="let at of aliasTypes" [type]="at" [state]="creationActive ? 1 : 0"
+                        (onClickCreateTypedef)="onClickCreateTypedef($event)"
+                        (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-alias-type-bubble>
+            
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="creation-active-explanation-wrapper">
+                    <table *ngIf="creationActive" class="creation-active-explanation">
+                        <tr>
+                            <td class="explanation-tag">
+                                <img src="/assets/icons/enter.png" class="explanation-icon">
+                                <span class="explanation-text">Apply</span>
+                            </td>
+                            <td class="explanation-tag">
+                                <img src="/assets/icons/escape.png" class="explanation-icon">
+                                <span class="explanation-text">Cancel</span>
+                            </td>
+                            <td class="explanation-tag">
+                                <img src="/assets/icons/left-click.png" class="explanation-icon">
+                                <span class="explanation-text">Reference types</span>
+                            </td>
+                        </tr>
+                    </table>
+            </div>
+            </div>
         </div>
-
-        <app-alias-type-bubble *ngFor="let at of aliasTypes" [type]="at" [state]="creationActive ? 1 : 0"
-            (onClickCreateTypedef)="onClickCreateTypedef($event)"
-            (onClickCreateDeclaration)="onClickCreateDeclaration($event)"></app-alias-type-bubble>
-
-    </div>
-    <div class="creation-active-explanation-wrapper">
-
-            <table *ngIf="creationActive" class="creation-active-explanation">
-                <tr>
-                    <td class="explanation-tag">
-                        <img src="/assets/icons/enter.png" class="explanation-icon">
-                        <span class="explanation-text">Apply</span>
-                    </td>
-                    <td class="explanation-tag">
-                        <img src="/assets/icons/escape.png" class="explanation-icon">
-                        <span class="explanation-text">Cancel</span>
-                    </td>
-                    <td class="explanation-tag">
-                        <img src="/assets/icons/left-click.png" class="explanation-icon">
-                        <span class="explanation-text">Reference types</span>
-                    </td>
-                </tr>
-            </table>
-    </div>
-    <div class="typedef-wrapper">
-        <table>
-            <tr *ngFor="let row of getTypedefsAsTable()">
-                <td style="padding-right: 10px; color: #2469B3">typedef</td>
-                <td style="padding-right: 10px;">{{row[1]}}</td>
-                <td>{{row[0]}}</td>
-                <td>;</td>
-            </tr>
-        </table>
     </div>
 </div>

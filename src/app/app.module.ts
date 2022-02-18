@@ -32,6 +32,7 @@ import { CreateTypedefDialogComponent } from './util/type-construction-kit/dialo
 import { CreateDeclarationDialogComponent } from './util/type-construction-kit/dialogs/create-declaration-dialog/create-declaration-dialog.component';
 import { AliasTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/alias-type-bubble/alias-type-bubble.component';
 import { CreateAliasTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-alias-type-bubble/create-alias-type-bubble.component';
+import { TypedefTableComponent } from './util/typedef-table/typedef-table.component';
 
 
 const routes: Routes = [
@@ -66,6 +67,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CreateDeclarationDialogComponent,
     AliasTypeBubbleComponent,
     CreateAliasTypeBubbleComponent,
+    TypedefTableComponent,
   ],
   imports: [
     BrowserModule,

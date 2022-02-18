@@ -30,9 +30,9 @@ export class TypeEnvironment {
     private symbolTable: SymbolTable;
     private typeDefs: TypeDefinitionTable; // better than storing TypeDefStatement array for lower cohesion
 
-    constructor() {
-        this.symbolTable = new SymbolTable();
-        this.typeDefs = new Map();
+    constructor(typeDefs: TypeDefinitionTable = new Map(), symbolTable: SymbolTable = new SymbolTable()) {
+        this.symbolTable = symbolTable;
+        this.typeDefs = typeDefs;
     }
 
     /**
