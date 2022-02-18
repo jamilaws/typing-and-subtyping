@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AbstractType } from 'src/app/model/typing/types/abstract-type';
 
 export interface CreateDeclarationDialogData {
+  identifier: string;
   type: AbstractType
 }
 
@@ -25,10 +26,10 @@ export class CreateDeclarationDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  onClickCreate(name: string): void {
-    if(!name) return;
+  onClickCreate(identifier: string): void {
+    if(!identifier) return;
     this.dialogRef.close({
-      name: name,
+      identifier: identifier,
       type: this.data.type
     });
   }

@@ -1,5 +1,5 @@
 import { TypeDefStatement } from "../ast/ast-nodes/type-def-statement";
-import { Declaration, SymbolTable } from "./symbol-table";
+import { Declaration, ISymbolTable, SymbolTable } from "./symbol-table";
 import { TypeDefinitionTable, TypeDefinitionTableUiData } from "./type-definition-table";
 import { AbstractType } from "./types/abstract-type";
 import { CharType } from "./types/base-types/char-type";
@@ -27,10 +27,10 @@ export interface SymbolTableUiData {
  */
 export class TypeEnvironment {
 
-    private symbolTable: SymbolTable;
+    private symbolTable: ISymbolTable;
     private typeDefs: TypeDefinitionTable; // better than storing TypeDefStatement array for lower cohesion
 
-    constructor(typeDefs: TypeDefinitionTable = new Map(), symbolTable: SymbolTable = new SymbolTable()) {
+    constructor(typeDefs: TypeDefinitionTable = new Map(), symbolTable: ISymbolTable = new SymbolTable()) {
         this.symbolTable = symbolTable;
         this.typeDefs = typeDefs;
     }
@@ -96,7 +96,7 @@ export class TypeEnvironment {
      * Needed to update and keep track of declarations during abstract-synthax-tree-traversal
      * @returns {SymbolTable}
      */
-    public getSymbolTable(): SymbolTable {
+    public getSymbolTable(): ISymbolTable {
         return this.symbolTable;
     }
 

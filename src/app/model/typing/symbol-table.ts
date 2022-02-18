@@ -1,5 +1,13 @@
 import { AbstractType } from "./types/abstract-type";
 
+export interface ISymbolTable {
+    insert(identifier: string, declaration: Declaration): void
+    lookup(identifier: string): Declaration
+    enterNewScope(): void
+    leaveScope(): void
+    toUiData(): SymbolTableUiData[]
+}
+
 export interface SymbolTableUiData {
     identifier: string;
     declarations: {
@@ -49,7 +57,7 @@ export class Stack<T> {
 /**
  * Class for management of declarations during ast traversal.
  */
-export class SymbolTable {
+export class SymbolTable implements ISymbolTable{
 
     private declarationStacks: Map<string, Stack<Declaration>>;
 

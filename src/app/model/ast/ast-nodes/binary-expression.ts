@@ -63,16 +63,15 @@ export class BinaryExpression extends AstNode {
         const t_1 = this.left.performTypeCheck(t);
         const t_2 = this.right.performTypeCheck(t);
 
-        console.log("t1: " + t_1.toString());
-        console.log("t1: " + t_2.toString());
-
+        const typedefs = t.getTypeDefinitions();
 
         if (this.operator === BinaryOperator.EQ) {
-            const isSubtype = t_1.isStrutcturalSubtypeOf(t_2, t.getTypeDefinitions());
+            const isSubtype = t_1.isStrutcturalSubtypeOf(t_2, typedefs);
             if (!isSubtype) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         } else {
-            if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
+            if (!(t_1.isStrutcturalSubtypeOf(t_2, typedefs) || t_2.isStrutcturalSubtypeOf(t_1, typedefs))) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
+            //if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
             return this.type = t_1;
         }
     }

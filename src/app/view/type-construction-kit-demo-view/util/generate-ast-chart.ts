@@ -5,7 +5,15 @@ import { DisplayedGraph, generateDisplayedGraph } from "src/app/model/common/gra
 import { Graph } from "src/app/model/common/graph/_module";
 import { IncompleteAstWrapperException } from "src/app/service/parsing.service";
 
-const NODE_SIZE: number = 20;
+const NODE_SIZE: number = 30;
+const NODE_COLOR: string = "#2469B3";
+
+const NODE_TEXT_COLOR_HIGHLIGHTED: string = "blue"
+const NODE_TEXT_COLOR: string = "white"
+
+const NODE_TEXT_POSITION = "inside";
+
+const LINE_CURVENESS: number = 0; //0.1;
 
 export function generateAstChart(ast: AbstractSyntaxTree): EChartsOption {
     try {
@@ -37,7 +45,7 @@ export function generateAstChart(ast: AbstractSyntaxTree): EChartsOption {
 
 function updateGraphOptions(displayedGraph: DisplayedGraph): EChartsOption {
     return {
-      color: "#2469B3",
+      color: NODE_COLOR,
       //layout: "",
       // label: {
       //   show: true
@@ -52,7 +60,7 @@ function updateGraphOptions(displayedGraph: DisplayedGraph): EChartsOption {
           symbolSize: NODE_SIZE,
           roam: true, // Graph position movable
           lineStyle: {
-            curveness: 0.1
+            curveness: LINE_CURVENESS
           },
           edgeSymbol: ['circle', 'arrow'],
           edgeSymbolSize: [4, 10],
@@ -71,9 +79,9 @@ function updateGraphOptions(displayedGraph: DisplayedGraph): EChartsOption {
               astNodeIndex: node.astNodeIndex,
               label: {
                 show: true,
-                position: 'top',
+                position: NODE_TEXT_POSITION,
                 textStyle: {
-                  color: node.highlighted ? "blue" : "darkgrey",
+                  color: node.highlighted ? NODE_TEXT_COLOR_HIGHLIGHTED : NODE_TEXT_COLOR,
                 }
               },
               tooltip: {

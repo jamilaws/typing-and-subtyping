@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Declaration } from 'src/app/model/typing/symbol-table';
 import { TypeDefinitionTable } from 'src/app/model/typing/type-definition-table';
 import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { BaseType } from 'src/app/model/typing/types/base-type';
@@ -8,6 +9,7 @@ import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
+import { DeclarationAdapter } from 'src/app/view/type-construction-kit-demo-view/adapter/declaration-adapter';
 import { AbstractCreateTypeBubble } from './create-type-bubbles/abstract-create-type-bubble';
 import { CreateArrayTypeBubbleComponent } from './create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
 import { CreateFunctionTypeBubbleComponent } from './create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
@@ -29,7 +31,8 @@ export class TypeConstructionKitComponent implements OnInit {
   @ViewChild('createStructBubble') createStructBubble: CreateStructTypeBubbleComponent;
   @ViewChild('createFunctionBubble') createFunctionBubble: CreateFunctionTypeBubbleComponent;
 
-  @Output('typeDefs') typeDefs_extern = new EventEmitter<TypeDefinitionTable>();
+  @Output('onTypedefsChange') typeDefs_extern = new EventEmitter<TypeDefinitionTable>();
+  @Output('onDeclarationsChange') declarations_extern = new EventEmitter<Declaration[]>();
 
   /*
   Type bubbles
@@ -52,6 +55,11 @@ export class TypeConstructionKitComponent implements OnInit {
     const found = this.typeDefinitions.get(alias);
     return !found
   }; 
+
+  /*
+  Declarations
+  */
+  private declarations: Declaration[] = new Array();
 
   constructor(public dialog: MatDialog) { }
 
@@ -99,8 +107,8 @@ export class TypeConstructionKitComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(!result) return;
-      alert(result.type.toString() + " " + result.name + ";");
-      // TODO
+      //alert(result.type.toString() + " " + result.name + ";");
+      this.addDelaration(result.identifier, result.type);
     });
   }
 
@@ -113,6 +121,12 @@ export class TypeConstructionKitComponent implements OnInit {
       this.aliasTypes.push(new AliasPlaceholderType(alias));
     }
     this.typeDefs_extern.emit(this.typeDefinitions);
+  }
+
+  private addDelaration(identifier: string, type: AbstractType): void {
+    const newDecl = new DeclarationAdapter(identifier, type);
+    this.declarations.push(newDecl);
+    this.declarations_extern.next(this.declarations);
   }
 
 }

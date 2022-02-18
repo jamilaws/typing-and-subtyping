@@ -29,12 +29,20 @@ export class AbstractSyntaxTree implements TypeCheckable {
         return this.type = new NoTypePlaceholder();
     }
 
+    /**
+     * 
+     * @returns type of first element of roots
+     */
     public getType(): AbstractType {
-        return this.type;
+        return this.getRoots()[0].getType();
     }
 
+    /**
+     * 
+     * @returns typing tree of first element of roots
+     */
     public getTypingTree(): TypingTree {
-        // TODO: Do not throw an error. Think of sensible implementation instead.
-        throw new Error("Method getTypingTree() of AbstractSyntaxTree object has been called, what is not expected. Call the method on an AstNode instance instead.");
+        return this.getRoots()[0].getTypingTree();
+        //throw new Error("Method getTypingTree() of AbstractSyntaxTree object has been called, what is not expected. Call the method on an AstNode instance instead.");
     }
 }

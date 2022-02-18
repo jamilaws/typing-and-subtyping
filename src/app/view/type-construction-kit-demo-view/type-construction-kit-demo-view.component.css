@@ -1,5 +1,9 @@
+.content-wrapper {
+    border-top: solid 1px darkgrey;
+}
+
 .left-panel-wrapper {
-    border-right: solid 1px lightgrey;
+    border-right: solid 1px darkgrey;
     height: 86vh;
 }
 
@@ -8,4 +12,23 @@
 
 .typedef-wrapper {
     margin: 5px;
+}
+
+.expression-input-wrapper {
+    margin: 5px;
+    width: 100%;
+    padding-right: 15px;
+
+}
+
+.expression-input {
+    width: 100%;
+}
+
+.ast-wrapper {
+
+}
+
+.typing-tree-wrapper {
+    margin-top: 50px;
 }
