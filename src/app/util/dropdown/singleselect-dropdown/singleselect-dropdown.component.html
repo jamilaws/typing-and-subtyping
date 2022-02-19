@@ -1,7 +1,7 @@
 <div #dropdown mat-icon-button [matMenuTriggerFor]="menu" (menuClosed)="isMenuOpen = false" (menuOpened)="isMenuOpen = true" class="selectDiv panel">
     <div class="dropdownSelectedContent">
   <!--     <mat-icon style="color: red; padding-top: 2px;" [inline]="true">circle</mat-icon> -->
-      <span style="padding-left: 15px;">{{options[selectedIndex].name}}</span>
+      <span style="padding-left: 15px;">{{optionToName(options[selectedIndex])}}</span>
     </div>
     <div class="dropdownIcon">
       <div *ngIf="isMenuOpen; then openIcon else closedIcon"></div>
@@ -17,7 +17,7 @@
     <div mat-menu-item *ngFor="let option of options; let i = index" (click)="_onSelect(i)">
       <div class="option">
   <!--       <mat-icon style="color: red;" [inline]="true">circle</mat-icon> -->
-        <span>{{option.name}}</span>
+        <span>{{optionToName(option)}}</span>
       </div>
     </div>
   </mat-menu>

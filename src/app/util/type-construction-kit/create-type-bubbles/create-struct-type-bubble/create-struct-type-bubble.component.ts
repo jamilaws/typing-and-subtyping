@@ -74,4 +74,13 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
     return AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.currentTypeSelection.toString();
   }
 
+  getInputPrefix(): string {
+    const semicolon = this.members.length > 0 ? ";" : "";
+    return "struct { " + this.members.map(m => m.getType().toString() + " " + m.getName()).join("; ") + semicolon;
+  }
+
+  getInputSuffix(): string {
+    return " }";
+  }
+
 }

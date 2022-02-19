@@ -20,6 +20,7 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   @ViewChild("inputExpression") inputExpression: ElementRef;
 
+  public availableTypes: AbstractType[] = new Array();
   public typeDefs: TypeDefinitionTable = new Map();
   public declarations: Declaration[] = new Array();
 
@@ -70,12 +71,30 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   }
 
+  public onClickCheckSubtyping(type1: AbstractType, type2: AbstractType) {
+    alert(type1.toString() + "<=" + type2.toString());
+  }
+
+  public onTypesChange(types: AbstractType[]) {
+    console.log(types);
+    
+    this.availableTypes = types;
+  }
   public onTypedefsChange(typeDefs: TypeDefinitionTable) {
     this.typeDefs = typeDefs;
   }
 
   public onDeclarationsChange(declarations: Declaration[]) {
     this.declarations = declarations;
+  }
+
+  /*
+   * Helpers 
+   */
+
+  public typeToName(type: AbstractType){
+
+    return type.toString();
   }
   
 }

@@ -31,6 +31,7 @@ export class TypeConstructionKitComponent implements OnInit {
   @ViewChild('createStructBubble') createStructBubble: CreateStructTypeBubbleComponent;
   @ViewChild('createFunctionBubble') createFunctionBubble: CreateFunctionTypeBubbleComponent;
 
+  @Output('onTypesChange') types_extern = new EventEmitter<AbstractType[]>();
   @Output('onTypedefsChange') typeDefs_extern = new EventEmitter<TypeDefinitionTable>();
   @Output('onDeclarationsChange') declarations_extern = new EventEmitter<Declaration[]>();
 
@@ -63,7 +64,13 @@ export class TypeConstructionKitComponent implements OnInit {
 
   constructor(public dialog: MatDialog) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.types_extern.next(this.getAllTypes());
+  }
+
+  public getAllTypes(): AbstractType[] {
+    return (<AbstractType[]> this.baseTypes).concat(this.constructedTypes).concat(this.aliasTypes);
+  }
 
   public onClickStartCreation(creationBubble: AbstractCreateTypeBubble) {
     creationBubble.activate();
@@ -77,6 +84,8 @@ export class TypeConstructionKitComponent implements OnInit {
       this.constructedTypes.push(type);
     }
     this.creationActive = false;
+
+    this.types_extern.next(this.getAllTypes());
   }
 
   onCancelCreation(): void {

@@ -1,5 +1,5 @@
 export interface Selectable {
     _id?: string;
-    name: string;
+    name?: string;
     // action: () => void;
 }

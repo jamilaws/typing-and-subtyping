@@ -10,15 +10,21 @@
 .right-panel-wrapper {
 }
 
-.typedef-wrapper {
-    margin: 5px;
+.menu-wrapper{
+    overflow: hidden;
+    margin: 5px
+}
+
+.typedef-wrapper {}
+
+.type-env-data-wrapper{
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .expression-input-wrapper {
-    margin: 5px;
     width: 100%;
     padding-right: 15px;
-
 }
 
 .expression-input {
@@ -31,4 +37,11 @@
 
 .typing-tree-wrapper {
     margin-top: 50px;
+}
+
+.subtyping-symbol {
+    text-align: center;
+}
+
+.type-dropdown {
 }

@@ -9,19 +9,15 @@
     color: black;
 }
 
-.member-table {
-    margin-left: 10px;
-}
-
 .input-member-name {
+    height: 26px;
     width: 50px;
     border: none;
-    border-bottom: solid 1px black;
+    /* border-bottom: solid 1px black; */
     outline: none;
 }
 
 .add-member-button {
     outline: none;
     border: none;
-
 }

@@ -19,9 +19,9 @@ import { TypeConstructionKitComponent } from './util/type-construction-kit/type-
 import { TypeConstructionKitDemoViewComponent } from './view/type-construction-kit-demo-view/type-construction-kit-demo-view.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatMenuModule } from '@angular/material/menu';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { SingleselectDropdownComponent } from './util/dropdown/singleselect-dropdown/singleselect-dropdown.component';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { BaseTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/base-type-bubble/base-type-bubble.component';
 import { ConstructedTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/constructed-type-bubble/constructed-type-bubble.component';
 import { CreateArrayTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
@@ -34,6 +34,8 @@ import { AliasTypeBubbleComponent } from './util/type-construction-kit/type-bubb
 import { CreateAliasTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-alias-type-bubble/create-alias-type-bubble.component';
 import { TypedefTableComponent } from './util/typedef-table/typedef-table.component';
 import { DeclarationsTableComponent } from './util/declarations-table/declarations-table.component';
+import { MatTabsModule } from '@angular/material/tabs';
+
 
 
 const routes: Routes = [
@@ -85,7 +87,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatChipsModule,
     MatMenuModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

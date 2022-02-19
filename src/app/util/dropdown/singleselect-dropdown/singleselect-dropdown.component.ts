@@ -1,7 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Selectable } from '../selectable';
-
-export { Selectable };
 
 @Component({
   selector: 'app-singleselect-dropdown',
@@ -10,18 +7,19 @@ export { Selectable };
 })
 export class SingleselectDropdownComponent implements OnInit {
   
-  @Input('options') options : Selectable[];
+  @Input('options') options : any[];
+  @Input('optionToName') optionToName: (options: any) => string = (option) => option.name;
   @Input('icons') icons : String[] = null;
   public selectedIndex : number = 0;
 
-  @Output('onSelectEvent') onSelectEvent = new EventEmitter<Selectable>();
-  value: Selectable;
+  @Output('onSelectEvent') onSelectEvent = new EventEmitter<any>();
+  value: any;
 
   isMenuOpen : boolean = false;
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     if (this.icons !== null) {
       // Icons available -> check if dimensions match
       if (this.options.length !== this.icons.length) {
@@ -29,12 +27,14 @@ export class SingleselectDropdownComponent implements OnInit {
       }
     }
     if(!this.options || this.options.length === 0){
-      const dummy: Selectable = {
+      const dummy: any = {
         _id: "1",
         name: "No data available"
       }
       this.options = [dummy];
     } else {
+      if(!this.optionToName(this.options[0])) throw new Error("Either pass options with 'name' field or specify suitable optionToName function")
+
       // Add _id fields if not defined
       if(!this.options[0]._id){
         this.options = this.options.map((o, index) => {
@@ -54,7 +54,7 @@ export class SingleselectDropdownComponent implements OnInit {
 
   }
 
-  public getSelectedOption(): Selectable {
+  public getSelectedOption(): any {
     return this.value;
   }
 

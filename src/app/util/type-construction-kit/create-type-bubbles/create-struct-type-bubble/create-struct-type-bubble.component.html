@@ -1,35 +1,15 @@
 <div class="constructed-type-ui" [ngStyle]="{'display': isVisible() ? undefined : 'none'}">
-    <div class="row">
-        <div class="col-sm-12">
-            {{ 'struct {' }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <table class="member-table">
-                <tr *ngFor="let m of members">
-                    <td>{{m.getType().toString()}}</td>
-                    <td>{{m.getName() + ';'}}</td>
-                </tr>
-                <tr>
-                    <td>
-                        <span style="width: 50px;">
-                            {{getSelectionText()}}
-                        </span>
-                    </td>
-                    <td>
-                        <input #nameInput type="text" class="input-member-name">
-                    </td>
-                    <td>
-                        <button #addMemberButton class="add-member-button" (click)="onClickAddMember(nameInput.value)">+</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            {{ '}' }}
-        </div>
-    </div>
+    <span>
+        {{getInputPrefix()}}
+    </span>
+    <span class="member-input-wrapper">
+        <span style="width: 50px;">
+            {{getSelectionText()}}
+        </span>
+        <input #nameInput type="text" class="input-member-name">
+        <button #addMemberButton class="add-member-button" (click)="onClickAddMember(nameInput.value)">+</button>
+    </span>
+    <span>
+        {{getInputSuffix()}}
+    </span>
 </div>
