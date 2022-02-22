@@ -28,7 +28,7 @@
 }
 
 .expression-input {
-    width: 100%;
+    width: 80%;
 }
 
 .ast-wrapper {
@@ -44,4 +44,9 @@
 }
 
 .type-dropdown {
+}
+
+.check-button {
+    background-color: #2469B3;
+    color: white;
 }

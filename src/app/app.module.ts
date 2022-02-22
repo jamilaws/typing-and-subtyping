@@ -39,9 +39,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 
 const routes: Routes = [
-  { path: '', component: MainViewComponent },
-  { path: 'subtyping-demo', component: DummySubtypingTestComponent },
-  { path: 'type-construction-kit-demo', component: TypeConstructionKitDemoViewComponent },
+  { path: '', component: TypeConstructionKitDemoViewComponent },
+  //{ path: '', component: MainViewComponent },
+  //{ path: 'subtyping-demo', component: DummySubtypingTestComponent },
+  //{ path: 'type-construction-kit-demo', component: TypeConstructionKitDemoViewComponent },
 ]
 
 const monacoConfig: NgxMonacoEditorConfig = {

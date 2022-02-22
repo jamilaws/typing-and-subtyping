@@ -130,6 +130,8 @@ export class TypeConstructionKitComponent implements OnInit {
       this.aliasTypes.push(new AliasPlaceholderType(alias));
     }
     this.typeDefs_extern.emit(this.typeDefinitions);
+    this.types_extern.next(this.getAllTypes());
+
   }
 
   private addDelaration(identifier: string, type: AbstractType): void {

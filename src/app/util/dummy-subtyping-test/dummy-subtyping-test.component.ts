@@ -1,7 +1,8 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { DisplayGraphEdge, DisplayGraphNode, generateDisplayedGraph } from 'src/app/model/common/graph/displayed-graph';
 import { Graph, Node } from 'src/app/model/common/graph/_module';
+import { TypeDefinitionTable } from 'src/app/model/typing/type-definition-table';
 import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { CharType } from 'src/app/model/typing/types/base-types/char-type';
 import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
@@ -17,12 +18,6 @@ import { StructType } from 'src/app/model/typing/types/type-constructors/struct-
 
 const NODE_SIZE: number = 60;
 
-interface DummyRow {
-  t1: AbstractType;
-  t2: AbstractType;
-  input?: string;
-  output?: StructuralSubtypingQueryResult;
-}
 @Component({
   selector: 'app-dummy-subtyping-test',
   templateUrl: './dummy-subtyping-test.component.html',
@@ -30,101 +25,27 @@ interface DummyRow {
 })
 export class DummySubtypingTestComponent implements OnInit {
 
+  private data: StructuralSubtypingQueryResult;
+
+  @Input('structuralSubtypingQueryResult')
+  public set structuralSubtypingQueryResult(value: StructuralSubtypingQueryResult) {
+    this.data = value;
+    this.update();
+  }
+
   public _graphOptions: EChartsOption;
   private graphNodes: DisplayGraphNode[] = new Array<DisplayGraphNode>();
   private graphEdges: DisplayGraphEdge[] = new Array<DisplayGraphEdge>();
 
-
-  public dummyData: DummyRow[];
-  public typeDefTable: string[][];
-  private typeDefinitions: Map<string, AbstractType>;
-
   constructor() { }
 
   ngOnInit(): void {
-    this.initDummyData();
+    this.update();
   }
 
-  public initDummyData(): void {
-
-    const aliasTargetX = new IntType();
-
-    const aliasTargetA = new StructType(undefined, [
-      new Definition("info", new IntType()),
-      new Definition("next", new PointerType(new AliasPlaceholderType("A"))),
-    ]);
-
-    const aliasTargetB = new StructType(undefined, [
-      new Definition("info", new IntType()),
-      new Definition("next", new PointerType(new StructType(undefined, [
-        new Definition("info", new IntType()),
-        new Definition("next", new PointerType(new AliasPlaceholderType("B"))),
-      ]))),
-    ]);
-
-    this.typeDefinitions = new Map();
-    this.typeDefinitions.set("X", aliasTargetX);
-    this.typeDefinitions.set("A", aliasTargetA);
-    this.typeDefinitions.set("B", aliasTargetB);
-
-    this.dummyData = [
-      {
-        t1: new FloatType(),
-        t2: new IntType()
-      },
-      {
-        t1: new ArrayType(new IntType()),
-        t2: new ArrayType(new FloatType())
-      },
-      {
-        t1: new StructType("T1", [new Definition("x", new IntType()), new Definition("y", new CharType()), new Definition("z", new IntType())]),
-        t2: new StructType("T2", [new Definition("x", new FloatType()), new Definition("y", new CharType())])
-      },
-      {
-        t1: new StructType("T1", [new Definition("x", new PointerType(new AliasPlaceholderType("X")))]),
-        t2: new StructType("T1", [new Definition("x", new PointerType(new FloatType()))]),
-      },
-      {
-        t1: new FunctionType([new FloatType(), new CharType()], new IntType()),
-        t2: new FunctionType([new IntType(), new CharType()], new FloatType())
-      },
-      {
-        t1: new FunctionType([new IntType()], new IntType()),
-        t2: new FunctionType([new FloatType()], new FloatType())
-      },
-      {
-        t1: new AliasPlaceholderType("X"),
-        t2: new IntType()
-      },
-      {
-        t1: new IntType(),
-        t2: new AliasPlaceholderType("X")
-      },
-      {
-        t1: new AliasPlaceholderType("A"),
-        t2: new AliasPlaceholderType("B"),
-      }
-    ];
-
-    this.dummyData = this.dummyData.map(d => {
-
-      const str = `${d.t1.toString()} <= ${d.t2.toString()}`;
-      const result = d.t1.isStrutcturalSubtypeOf(d.t2, this.typeDefinitions);
-
-      console.log(str);
-      console.log(result);
-
-      d.input = str;
-      d.output = result;
-
-      return d;
-    });
-
-    this.typeDefTable = Array.from(this.typeDefinitions.entries()).map(tup => [tup[0], tup[1].toString()]);
-  }
-
-  public clickDummyRow(row: DummyRow) {
-    this.updateGraph(row.output.queryGraph.getGraph().getRoot(), row.output.queryGraph);
+  private update(): void {
+    if(!this.data) return;
+    this.updateGraph(this.data.queryGraph.getGraph().getRoot(), this.data.queryGraph);
     this.updateGraphOptions();
   }
 

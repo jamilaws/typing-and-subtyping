@@ -9,6 +9,8 @@ import { ParsingService } from 'src/app/service/parsing.service';
 import { SymbolTableAdapter } from './adapter/symbol-table-adapter';
 import { generateAstChart } from './util/generate-ast-chart';
 import { TypeError } from "src/app/model/typing/type-error";
+import { StructuralSubtypingQueryResult } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query-result';
+import { SingleselectDropdownComponent } from 'src/app/util/dropdown/singleselect-dropdown/singleselect-dropdown.component';
 
 
 @Component({
@@ -19,6 +21,9 @@ import { TypeError } from "src/app/model/typing/type-error";
 export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   @ViewChild("inputExpression") inputExpression: ElementRef;
+  
+  @ViewChild("typeOneDropdown") typeOneDropdown: SingleselectDropdownComponent;
+  @ViewChild("typeTwoDropdown") typeTwoDropdown: SingleselectDropdownComponent;
 
   public availableTypes: AbstractType[] = new Array();
   public typeDefs: TypeDefinitionTable = new Map();
@@ -30,6 +35,12 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   typingTree: TypingTree = null;
   typingErrorMessage: string = null;
 
+  /*
+  Tab 'Structural Subtyping'
+  */
+
+  public structuralSubtypingQueryResult: StructuralSubtypingQueryResult;
+
   constructor(private parsingService: ParsingService) { }
 
   ngOnInit(): void {
@@ -38,6 +49,14 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   public onChangeExpression(): void {
 
     const code = this.inputExpression.nativeElement.value;
+
+    if(!code) {
+      // Reset
+      this._graphOptions = null;
+      this.isAstValid = false;
+      
+      return;
+    }
     
     // Parse code and generate AST
 
@@ -65,27 +84,37 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
       this.typingTree = null;
       if(e instanceof TypeError) {
         this.typingErrorMessage = e.message;
+      } else {
+        throw e;
       }
-      throw e;
     }
 
   }
 
-  public onClickCheckSubtyping(type1: AbstractType, type2: AbstractType) {
-    alert(type1.toString() + "<=" + type2.toString());
+  public onClickCheckSubtyping() {
+    const type1 = this.typeOneDropdown.value;
+    const type2 = this.typeTwoDropdown.value;
+    //alert(type1.toString() + " <= " + type2.toString());
+    this.structuralSubtypingQueryResult = type1.isStrutcturalSubtypeOf(type2, this.typeDefs);
   }
 
   public onTypesChange(types: AbstractType[]) {
-    console.log(types);
-    
     this.availableTypes = types;
+    this.updateTrees();
   }
   public onTypedefsChange(typeDefs: TypeDefinitionTable) {
     this.typeDefs = typeDefs;
+    this.updateTrees();
   }
 
   public onDeclarationsChange(declarations: Declaration[]) {
     this.declarations = declarations;
+    this.updateTrees();
+  }
+
+  private updateTrees(): void {
+    if(this.inputExpression) this.onChangeExpression();
+    if(this.typeOneDropdown && this.typeTwoDropdown) this.onClickCheckSubtyping();
   }
 
   /*

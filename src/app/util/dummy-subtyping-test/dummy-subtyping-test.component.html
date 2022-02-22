@@ -1,37 +1,3 @@
 <div class="wrapper" style="padding: 10px;">
-    <app-type-construction-kit></app-type-construction-kit>
-    <div class="row">
-        <div class="col-sm-6">
-            <table>
-                <tr *ngFor="let row of typeDefTable">
-                    <td style="padding-right: 20px;">typedef</td>
-                    <td style="padding-right: 20px;">{{row[1]}}</td>
-                    <td>{{row[0]}}</td>
-                </tr>
-            </table>
-            <br>
-            <table style="border: solid 1px lightgray;">
-                <tr>
-                    <th style="padding: 5px; border: solid 1px grey;">Structural Subtyping Query</th>
-                    <th style="padding: 5px; border: solid 1px grey;">Result</th>
-                    <th style="padding: 5px; border: solid 1px grey;">Options</th>
-                </tr>
-                <tr *ngFor="let row of dummyData">
-                    <td style="padding: 5px; border: solid 1px grey;">{{row.input}}</td>
-                    <td style="padding: 5px; border: solid 1px grey;">{{row.output.value}}</td>
-                    <td style="padding: 5px; border: solid 1px grey;">
-                        <button (click)="clickDummyRow(row)">Show Graph</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-sm-6">
-            <div echarts [options]="_graphOptions" (chartClick)="onClickGraph($event)"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <a [routerLink]="'/'">Back to Tool</a>
-        </div>
-    </div>
+    <div echarts [options]="_graphOptions" (chartClick)="onClickGraph($event)"></div>
 </div>

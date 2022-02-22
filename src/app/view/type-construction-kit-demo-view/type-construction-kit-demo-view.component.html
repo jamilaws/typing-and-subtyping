@@ -9,7 +9,7 @@
         <div class="col-sm-3">
             <div class="left-panel-wrapper">
                 <mat-tab-group mat-align-tabs="center" animationDuration="0ms">
-                    <mat-tab label="Typing">
+                    <mat-tab #typingTab label="Typing">
                         <div class="menu-wrapper typing-menu-wrapper">
                             <div class="type-env-data-wrapper">
                                 <div class="typedef-wrapper">
@@ -20,8 +20,9 @@
                                 </div>
                             </div>
                             <div class="expression-input-wrapper">
-                                <input class="expression-input" #inputExpression type="text"
-                                    placeholder="Enter expression" (change)="onChangeExpression()">
+                                <input class="expression-input" #inputExpression type="text" placeholder="Enter expression" (change)="onChangeExpression()">
+                                <button class="check-button" (click)="onChangeExpression()">Check</button>
+
                             </div>
                             <div class="ast-wrapper">
                                 <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
@@ -34,37 +35,34 @@
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Structural Subtyping">
+                    <mat-tab #subtypingTab label="Structural Subtyping">
                         <div class="menu-wrapper subtyping-menu-wrapper">
                             <div class="type-env-data-wrapper">
                                 <div class="typedef-wrapper">
                                     <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
                                 </div>
-                                <div class="declarations-wrapper">
-                                    <app-declarations-table [declarations]="declarations"></app-declarations-table>
-                                </div>
                             </div>
-
-
                             <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes" [optionToName]="typeToName"></app-singleselect-dropdown>
                             <br>
                             <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown" [options]="availableTypes" [optionToName]="typeToName"></app-singleselect-dropdown>
                             <br>
-                            <button (click)="onClickCheckSubtyping(typeOneDropdown.value, typeTwoDropdown.value)">Check</button>
-
+                            <button class="check-button" (click)="onClickCheckSubtyping()">Check</button>
                         </div>
                     </mat-tab>
                 </mat-tab-group>
             </div>
         </div>
         <div class="col-sm-9">
-            <div class="right-panel-wrapper">
+            <div class="right-panel-wrapper" *ngIf="typingTab.isActive">
                 <div class="typing-tree-wrapper" *ngIf="isAstValid && !typingErrorMessage">
                     <app-typing-tree [typingTree]="typingTree"></app-typing-tree>
                 </div>
                 <div *ngIf="typingErrorMessage">
                     {{typingErrorMessage}}
                 </div>
+            </div>
+            <div class="right-panel-wrapper" *ngIf="subtypingTab.isActive">
+                <app-dummy-subtyping-test [structuralSubtypingQueryResult]="structuralSubtypingQueryResult"></app-dummy-subtyping-test>
             </div>
         </div>
     </div>
