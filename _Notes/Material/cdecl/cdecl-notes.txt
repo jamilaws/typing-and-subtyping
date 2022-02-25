@@ -1,0 +1,28 @@
+A. Toughts: 
+    - Relevant: English-->C (english can be easily mapped to our type structure)
+    - Take cdgram.y file and reduce by removing
+        * irrelevant rules (like CAST, EXPLAIN, SET,...)
+        * Debug statements
+    - Subset of English needed for our project:
+        POINTER TO
+        ARRAY OF
+
+
+
+1. AbstractType
+
+export interface CdeclHalves { 
+    left: string;
+    right: string;
+    type: string;
+}
+
+public cdeclToString(): string {
+        const tuple = this.cdeclToStringImpl();
+        return tuple.left + tuple.right + tuple.type;
+    }
+
+protected abstract cdeclToStringImpl(): CdeclHalves;
+
+
+2. Default case?

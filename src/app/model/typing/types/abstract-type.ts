@@ -3,6 +3,8 @@ import { StructuralSubtypingQueryContext } from "./common/structural-subtyping/s
 import { StructuralSubtypingQuery } from "./common/structural-subtyping/structural-subtyping-query";
 import { StructuralSubtypingQueryResult } from "./common/structural-subtyping/structural-subtyping-query-result";
 import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from './common/structural-subtyping/structural-subtyping-query-graph';
+import { Triple } from './common/triple';
+import { CdeclHalves } from './common/cdecl-halves';
 //import { otherAliasReplaced } from "./structural-subtyping/decorators/replace-alias";
 
 /*
@@ -192,6 +194,19 @@ export abstract class AbstractType {
      */
     protected isQueryGraphNodeHighlighted(): boolean {
         return false;
+    }
+
+    public cdeclToString(): string {
+        const tuple = this.cdeclToStringImpl({ prev: null });
+        return tuple.left + tuple.right + tuple.type;
+    }
+
+    public cdeclToStringImpl(context: { prev: string }): CdeclHalves {
+        return {
+            left: "",
+            right: "",
+            type: this.toString() // CHECK IF THIS IS OK!
+        }
     }
 }
 

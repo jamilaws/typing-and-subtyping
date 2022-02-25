@@ -4,6 +4,7 @@ import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 import { Graph, Node, Edge } from '../../../common/graph/_module';
+import { CdeclHalves } from "../common/cdecl-halves";
 
 
 function zip<X, Y>(xs: X[], ys: Y[]): [X, Y][] {
@@ -87,5 +88,33 @@ export class FunctionType extends AbstractType {
 
     public getReturnType(): AbstractType {
         return this.returnType;
+    }
+
+    /* YACC RULE:
+
+    adecl: FUNCTION '(' adecllist ')' RETURNING adecl
+			{
+			if (prev == 'f')
+				unsupp("Function returning function",
+				       "function returning pointer to function");
+			else if (prev=='A' || prev=='a')
+				unsupp("Function returning array",
+				       "function returning pointer");
+			$$.left = $6.left;
+			$$.right = cat(ds("("),$3,ds(")"),$6.right,NullCP);
+			$$.type = $6.type;
+			prev = 'f';
+			}
+
+    */
+    public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
+
+        context.prev = 'f'; // Check if this is ok
+        
+        return {
+            left: this.getReturnType().cdeclToStringImpl(context).left,
+            right: '(' + this.getParameters().map(p => p.cdeclToStringImpl(context)) + ')' + this.getReturnType().cdeclToStringImpl(context).right, 
+            type: this.getReturnType().cdeclToStringImpl(context).type
+        }
     }
 }

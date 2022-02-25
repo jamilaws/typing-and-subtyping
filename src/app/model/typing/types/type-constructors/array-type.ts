@@ -3,6 +3,7 @@ import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 import { Graph, Node, Edge } from '../../../common/graph/_module';
+import { CdeclHalves } from "../common/cdecl-halves";
 
 
 export class ArrayType extends AbstractType {
@@ -47,4 +48,50 @@ export class ArrayType extends AbstractType {
 
         return out;
     }
+
+    /*
+
+    | ARRAY adims OF adecl
+			{
+			if (prev == 'f')
+				unsupp("Array of function",
+				       "array of pointer to function");
+			else if (prev == 'a')
+				unsupp("Inner array of unspecified size",
+				       "array of pointer");
+			else if (prev == 'v')
+				unsupp("Array of void",
+				       "pointer to void");
+			if (arbdims)
+				prev = 'a';
+			else
+				prev = 'A';
+			$$.left = $4.left;
+			$$.right = cat($2,$4.right,NullCP);
+			$$.type = $4.type;
+			}
+    adims		: //empty
+			{
+                arbdims = 1;
+                $$ = ds("[]");
+                }
+    
+            | NUMBER
+                {
+                arbdims = 0;
+                $$ = cat(ds("["),$1,ds("]"),NullCP);
+                }
+            ;
+    */
+   public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
+       // Note: Ignore array dimension
+
+       context.prev = 'A';
+
+       return {
+           left: this.getBaseType().cdeclToStringImpl(context).left,
+           right: "[ ]" + this.getBaseType().cdeclToStringImpl(context).right,
+           type: this.getBaseType().cdeclToStringImpl(context).type
+       };
+   }
 }

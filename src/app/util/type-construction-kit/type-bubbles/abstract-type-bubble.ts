@@ -44,4 +44,7 @@ export abstract class AbstractTypeBubble {
         this.onClickCreateDeclaration.emit(this.getType());
     }
 
+    public onClickTestCdecl(): void {
+        alert(this.type.cdeclToString());
+    }
 }
