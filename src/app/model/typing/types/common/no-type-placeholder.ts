@@ -1,5 +1,6 @@
 import { AbstractType } from "../abstract-type";
 import { StructuralSubtypingQueryContext } from "./structural-subtyping/structural-subtyping-query-context";
+import { StructuralSubtypingQueryGraph } from "./structural-subtyping/structural-subtyping-query-graph";
 import { StructuralSubtypingQueryResult } from "./structural-subtyping/structural-subtyping-query-result";
 
 /**
@@ -11,7 +12,11 @@ export class NoTypePlaceholder extends AbstractType {
         return "No Type.";
     }
 
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        throw new Error("Method call unexpected.");
+    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        throw new Error("Unexpected method call.");
+    }
+    
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+        throw new Error("Unexpected method call.");
     }
 }

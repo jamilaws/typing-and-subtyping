@@ -12,5 +12,5 @@ export enum StructuralSubtypingQueryResultMessage {
 export interface StructuralSubtypingQueryResult {
     value: boolean;
     //message?: StructuralSubtypingQueryResultMessage;
-    queryGraph?: StructuralSubtypingQueryGraph;
+    queryGraph: StructuralSubtypingQueryGraph;
 }

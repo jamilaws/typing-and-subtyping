@@ -1,4 +1,4 @@
-import { AbstractType, otherAliasReplaced } from "../abstract-type";
+import { AbstractType, otherAliasReplaced, StructuralSubtypingBuffer } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralSubtypingQuery } from "../common/structural-subtyping/structural-subtyping-query";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
@@ -11,13 +11,16 @@ export class StructType extends AbstractType {
     private name: string;
     private members: Definition[];
 
-    private subtypingRelevantMembers_buffer: Definition[];
-
+    // Specialization of structuralSubtypingBuffer holding an additional field for members relevant for structural subtyping
+    protected override structuralSubtypingBuffer: StructuralSubtypingBuffer & { relevantMembers: Definition[] };
+    
     constructor(name: string, members: Definition[]) {
         super();
         this.name = name;
         this.members = members;
-        this.resetSubtypingBuffer();
+
+        // Init buffer
+        this.structuralSubtypingBuffer.relevantMembers = new Array();
     }
 
     public toString(): string {
@@ -32,26 +35,17 @@ export class StructType extends AbstractType {
         return this.members;
     }
 
-    private resetSubtypingBuffer() {
-        this.subtypingRelevantMembers_buffer = new Array();
-    }
+    /* Structural Subtyping */
 
-    @otherAliasReplaced()
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
-        if (basicCheckResult.value) { return basicCheckResult; };
-
-        // Cleanup
-        this.resetSubtypingBuffer();
-
+    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if (other instanceof StructType) {
-            const isSubtype = other.members.every(d2 => {
+            return other.members.every(d2 => {
                 return this.members.some(d1 => {
                     if (d1.getName() === d2.getName()) {
                         // Name match...
-                        this.subtypingRelevantMembers_buffer.push(d1);
+                        this.structuralSubtypingBuffer.relevantMembers.push(d1);
                         
-                        if (d1.getType().isStrutcturalSubtypeOf_Impl(d2.getType(), context).value) {
+                        if (d1.getType().performStructuralSubtypingCheck(d2.getType(), context)) {
                             // ...and type match
                             return true;
                         }
@@ -61,40 +55,27 @@ export class StructType extends AbstractType {
                     }
                 });
             });
-            // TODO: Check if this is ok!!!
-            return { value: isSubtype };
         } else {
-            return {
-                value: false
-            };
+            return false;
         }
     }
-
-    /**
-     * Forks graph into branches for each member.
-     * @param currentQuery 
-     * @param context 
-     */
-    public override buildQueryGraph(): StructuralSubtypingQueryGraph {
-        let out = super.buildQueryGraph();
-        let root = out.getGraph().getRoot();
-
-        if(this.loopDetectedBuffer) return out;
-
-        this.subtypingRelevantMembers_buffer.map(m => {
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+        this.structuralSubtypingBuffer.relevantMembers.map(m => {
             return {
-                out: m.getType().buildQueryGraph(),
+                subgraph: m.getType().buildQueryGraph(),
                 name: m.getName()
             };
         }).forEach(e => {
-            out.merge(e.out);
-            out.getGraph().addEdge(new Edge(root, e.out.getGraph().getRoot(), e.name));
+            graph.merge(e.subgraph);
+            graph.getGraph().addEdge(new Edge(graph.getGraph().getRoot(), e.subgraph.getGraph().getRoot(), e.name));
         });
 
-        return out;
+        return graph;
     }
 
-    protected override isQueryGraphNodeHighlighted(): boolean {
-        return this.loopDetectedBuffer;
+    protected override buildQueryGraph_step_resetBuffer(): void {
+        super.buildQueryGraph_step_resetBuffer();
+        this.structuralSubtypingBuffer.relevantMembers = new Array();
     }
+
 }

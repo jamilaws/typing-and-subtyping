@@ -1,1 +1,2 @@
 - array dim needed in type?
+- subtyping check between pointers and arrays?

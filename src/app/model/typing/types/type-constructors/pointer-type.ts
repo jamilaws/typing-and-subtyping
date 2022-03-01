@@ -15,30 +15,24 @@ export class PointerType extends AbstractType {
         this.baseType = baseType;
     }
 
-    @otherAliasReplaced()
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
-        if (basicCheckResult.value) return basicCheckResult;
+    /* Structural Subtyping */
+
+    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if(other instanceof PointerType) {
-            return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, context);
+            return this.baseType.performStructuralSubtypingCheck(other.baseType, context);
         } else {
-            return { value: false };
+            return false;
         }
     }
 
-    public override buildQueryGraph(): StructuralSubtypingQueryGraph {
-        let out = super.buildQueryGraph();
-        const root = out.getGraph().getRoot();
-
-        if(this.loopDetectedBuffer) return out;
-
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
         const targetOut = this.baseType.buildQueryGraph();
-        const newEdge = new Edge(root, targetOut.getGraph().getRoot(), "");
+        const newEdge = new Edge(graph.getGraph().getRoot(), targetOut.getGraph().getRoot(), "");
 
-        out.merge(targetOut);
-        out.getGraph().addEdge(newEdge);
+        graph.merge(targetOut);
+        graph.getGraph().addEdge(newEdge);
 
-        return out;
+        return graph;
     }
 
     public toString(): string {
@@ -53,24 +47,24 @@ export class PointerType extends AbstractType {
     /*
 
     | opt_constvol_list POINTER TO adecl
-			{
-			char *op = "", *cp = "", *sp = "";
+            {
+            char *op = "", *cp = "", *sp = "";
 
-			if (prev == 'a')
-				unsupp("Pointer to array of unspecified dimension",
-				       "pointer to object");
-			if (prev=='a' || prev=='A' || prev=='f') {
-				op = "(";
-				cp = ")";
-			}
-			if (strlen($1) != 0)
-				sp = " ";
-			$$.left = cat($4.left,ds(op),ds("*"),
-				       ds(sp),$1,ds(sp),NullCP);
-			$$.right = cat(ds(cp),$4.right,NullCP);
-			$$.type = $4.type;
-			prev = 'p';
-			}
+            if (prev == 'a')
+                unsupp("Pointer to array of unspecified dimension",
+                       "pointer to object");
+            if (prev=='a' || prev=='A' || prev=='f') {
+                op = "(";
+                cp = ")";
+            }
+            if (strlen($1) != 0)
+                sp = " ";
+            $$.left = cat($4.left,ds(op),ds("*"),
+                       ds(sp),$1,ds(sp),NullCP);
+            $$.right = cat(ds(cp),$4.right,NullCP);
+            $$.type = $4.type;
+            prev = 'p';
+            }
 
     */
     public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
@@ -82,12 +76,12 @@ export class PointerType extends AbstractType {
         let sp: string = "";
 
         // TODO!
-        if (context.prev=='a' || context.prev=='A' || context.prev=='f') {
+        if (context.prev == 'a' || context.prev == 'A' || context.prev == 'f') {
             op = "(";
             cp = ")";
         }
         if (opt_constvol_list_out) {
-			sp = " ";
+            sp = " ";
         }
 
         context.prev = 'p'; // Check if this is ok

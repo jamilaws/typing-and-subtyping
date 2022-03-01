@@ -1,4 +1,4 @@
-import { AbstractType, otherAliasReplaced } from "../abstract-type";
+import { AbstractType, otherAliasReplaced, StructuralSubtypingBuffer } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
@@ -17,65 +17,48 @@ export class FunctionType extends AbstractType {
     private parameterTypes: AbstractType[];
     private returnType: AbstractType;
 
-    private isSubtype_buffer: boolean = false;
-
     constructor(parameterTypes: AbstractType[], returnType: AbstractType) {
         super();
         this.parameterTypes = parameterTypes;
         this.returnType = returnType;
     }
 
-    @otherAliasReplaced()
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
-        if (basicCheckResult.value) {
-            this.isSubtype_buffer = basicCheckResult.value;
-            return basicCheckResult;
-        }
+    /* Structural Subtyping */
 
+    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if (other instanceof FunctionType) {
             if (this.parameterTypes.length !== other.parameterTypes.length) {
-                this.isSubtype_buffer = false;
-                return { value: false };
+                return false;
             }
             // co-variance of the return type
-            const returnTypesCheck = this.returnType.isStrutcturalSubtypeOf_Impl(other.returnType, context);
-            // contra-variance of the parameter types
+            const returnTypesCheck = this.returnType.performStructuralSubtypingCheck(other.returnType, context);
             const parameterTypesCheck = zip(this.parameterTypes, other.parameterTypes).every(tup2 => {
-                const pass = tup2[1].isStrutcturalSubtypeOf_Impl(tup2[0], context);
-                return pass.value;
+                // contra-variance of the parameter types
+                return tup2[1].performStructuralSubtypingCheck(tup2[0], context);
             });
 
-            // TODO Check if this is ok !!! Handle message somehow?
-            this.isSubtype_buffer = returnTypesCheck && parameterTypesCheck;
-            return { value: this.isSubtype_buffer };
+            return returnTypesCheck && parameterTypesCheck;
         } else {
-            this.isSubtype_buffer = false;
-            return { value: false };
+            return false;
         }
     }
-
-    public override buildQueryGraph(): StructuralSubtypingQueryGraph {
-        let out = super.buildQueryGraph();
-        const root = out.getGraph().getRoot();
-
-        if(this.loopDetectedBuffer) return out;
-        //if(!this.isSubtype_buffer) return out; // Do not extend the basic query graph in case of query result false
-
-        // Contra
-        const parameterOuts = (<FunctionType>this.subtypingQueryBuffer.b).getParameters().map(p => p.buildQueryGraph());
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+        
+        const root = graph.getGraph().getRoot();
+        
+        const parameterOuts = (<FunctionType>this.structuralSubtypingBuffer.currentQuery.b).getParameters().map(p => p.buildQueryGraph());
         const parameterEdges = parameterOuts.map((sg, index) => new Edge(root, sg.getGraph().getRoot(), "param" + index));
 
         const returnOut = this.returnType.buildQueryGraph();
         const returnEdge = new Edge(root, returnOut.getGraph().getRoot(), "return");
 
-        parameterOuts.forEach(po => out.merge(po));
-        parameterEdges.forEach(e => out.getGraph().addEdge(e));
+        parameterOuts.forEach(po => graph.merge(po));
+        parameterEdges.forEach(e => graph.getGraph().addEdge(e));
 
-        out.merge(returnOut);   
-        out.getGraph().addEdge(returnEdge);
+        graph.merge(returnOut);   
+        graph.getGraph().addEdge(returnEdge);
 
-        return out;
+        return graph;
     }
 
     public toString(): string {
@@ -93,27 +76,27 @@ export class FunctionType extends AbstractType {
     /* YACC RULE:
 
     adecl: FUNCTION '(' adecllist ')' RETURNING adecl
-			{
-			if (prev == 'f')
-				unsupp("Function returning function",
-				       "function returning pointer to function");
-			else if (prev=='A' || prev=='a')
-				unsupp("Function returning array",
-				       "function returning pointer");
-			$$.left = $6.left;
-			$$.right = cat(ds("("),$3,ds(")"),$6.right,NullCP);
-			$$.type = $6.type;
-			prev = 'f';
-			}
+            {
+            if (prev == 'f')
+                unsupp("Function returning function",
+                       "function returning pointer to function");
+            else if (prev=='A' || prev=='a')
+                unsupp("Function returning array",
+                       "function returning pointer");
+            $$.left = $6.left;
+            $$.right = cat(ds("("),$3,ds(")"),$6.right,NullCP);
+            $$.type = $6.type;
+            prev = 'f';
+            }
 
     */
     public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
 
         context.prev = 'f'; // Check if this is ok
-        
+
         return {
             left: this.getReturnType().cdeclToStringImpl(context).left,
-            right: '(' + this.getParameters().map(p => p.cdeclToStringImpl(context)) + ')' + this.getReturnType().cdeclToStringImpl(context).right, 
+            right: '(' + this.getParameters().map(p => p.cdeclToStringImpl(context)) + ')' + this.getReturnType().cdeclToStringImpl(context).right,
             type: this.getReturnType().cdeclToStringImpl(context).type
         }
     }

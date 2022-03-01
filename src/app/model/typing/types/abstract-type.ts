@@ -3,66 +3,7 @@ import { StructuralSubtypingQueryContext } from "./common/structural-subtyping/s
 import { StructuralSubtypingQuery } from "./common/structural-subtyping/structural-subtyping-query";
 import { StructuralSubtypingQueryResult } from "./common/structural-subtyping/structural-subtyping-query-result";
 import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from './common/structural-subtyping/structural-subtyping-query-graph';
-import { Triple } from './common/triple';
 import { CdeclHalves } from './common/cdecl-halves';
-//import { otherAliasReplaced } from "./structural-subtyping/decorators/replace-alias";
-
-/*
-export const DEPRECATED_queryGraphUpdated = () => {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        const originalMethod = descriptor.value;
-        descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
-
-            let newNode = new Node(new StructuralSubtypingQuery(<AbstractType>this, other));
-            let newGraph = new Graph<StructuralSubtypingQuery, string>([newNode]);
-
-            if (context.accumulator.queryGraphRoot) {
-                // Query graph empty so far
-                newGraph = context.accumulator.queryGraph.merge(newGraph);
-                const newEdge = new Edge(context.accumulator.queryGraphRoot, newNode, "test");
-                newGraph.addEdge(newEdge);
-            }
-
-            context.accumulator.queryGraph = newGraph;
-
-            // Update queryGraphRoot
-            context.accumulator.queryGraphRoot = newNode;
-
-
-            return originalMethod.apply(this, [other, context]);
-        };
-    };
-}
-*/
-
-/*
-export const queryLoopChecked = () => {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        const originalMethod = descriptor.value;
-        descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
-
-            const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
-
-            if (context.queryHistory.some(q => q.equals(newQuery))) {
-                // Query loop in history detected. Resolve structural subtyping query with true.
-
-                // Add current query to history (Not relevant anymore, but for the sake of completeness)
-                context.queryHistory.push(newQuery);
-
-                console.log("Subtyping query results true due to query loop! History:");
-                console.log(context.queryHistory);
-
-                return { value: true };
-
-            } else {
-                // Add current query to history
-                context.queryHistory.push(newQuery);
-                return originalMethod.apply(this, [other, context]);
-            }
-        };
-    };
-};
-*/
 
 export const otherAliasReplaced = () => {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -84,11 +25,26 @@ export const otherAliasReplaced = () => {
     };
 };
 
+export interface StructuralSubtypingBuffer {
+    result: boolean;
+    loopDetected: boolean,
+    currentQuery: StructuralSubtypingQuery
+}
+
 export abstract class AbstractType {
 
-    protected subtypingQueryBuffer: StructuralSubtypingQuery = null;
-    protected loopDetectedBuffer: boolean = false;
-    protected loopPairBuffer: StructuralSubtypingQuery;
+    /**
+     * Buffer for chaching all necessary data needed for buildQueryGraph method during performStructuralSubtypingCheck() call.
+     */
+    protected structuralSubtypingBuffer: StructuralSubtypingBuffer;
+
+    constructor() {
+        this.structuralSubtypingBuffer = {
+            result: false,
+            loopDetected: false,
+            currentQuery: null
+        };
+    }
 
     abstract toString(): string;
 
@@ -103,89 +59,180 @@ export abstract class AbstractType {
         return this.toString() === other.toString();
     }
 
+    /**
+     * Performs a structural type check and builds a corresponding graph for visualization purpose.
+     * 
+     * @param other 
+     * @param typeDefs 
+     * @returns 
+     */
     public isStrutcturalSubtypeOf(other: AbstractType, typeDefs: Map<string, AbstractType>): StructuralSubtypingQueryResult {
-        
+
         const context: StructuralSubtypingQueryContext = {
             typeDefinitions: typeDefs,
             queryHistory: new Array()
         };
 
-        const out = this.isStrutcturalSubtypeOf_Impl(other, context);
+        const check: boolean = this.performStructuralSubtypingCheck(other, context);
+        const graph: StructuralSubtypingQueryGraph = this.buildQueryGraph();
 
-        out.queryGraph = this.buildQueryGraph();
+
+        const out: StructuralSubtypingQueryResult = {
+            value: check,
+            queryGraph: graph
+        }
 
         return out;
     }
 
     /**
-     * TODO: Return only boolean instead?
+     * Override this method to add more complex structural subtyping checks.
      * 
-     * Performs a basic subtyping check by:
-     * - In case other is an AliasPlaceholderType, replace it by its target
-     * - Check for loops in the query history
-     * - Finally, check for equallity by calling equals method
-     * 
-     * Override this method if needed and call it to preserve basic subtyping check.
+     * @param other Type this gets compared to during isStrutcturalSubtypeOf_Impl call.
+     * @returns if this is a structural subtype of other
      */
-    //@queryGraphUpdated() @queryLoopChecked()
-    @otherAliasReplaced()
-    public isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
-        // Check for query loop
-        const found = context.queryHistory.find(q => q.equals(newQuery))
-        if (found) {
-            // Loop deteced
-            this.loopDetectedBuffer = true;
-            this.loopPairBuffer = found;
+    public performStructuralSubtypingCheck(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory);
 
-            // Add current query to history (Not relevant anymore, but for the sake of completeness)
-            this.storeNewQuery(newQuery, context);
+        this.performStructuralSubtypingCheck_step_updateBuffer(false, loopDetected, newQuery);
 
-            return { 
-                value: true
-            };
+        if (loopDetected) {
+            this.performStructuralSubtypingCheck_step_updateBuffer(true, loopDetected, newQuery);
+            return true;
         }
-        // Add current query to history
-        this.storeNewQuery(newQuery, context);
-        return {
-            value: this.equals(other)
-        };
-    }
 
-    private storeNewQuery(query: StructuralSubtypingQuery, context: StructuralSubtypingQueryContext): void {
-        context.queryHistory.push(query);
-        this.subtypingQueryBuffer = query;
+        if (this.performStructuralSubtypingCheck_step_checkEquality(other, context)) {
+            this.performStructuralSubtypingCheck_step_updateBuffer(true, loopDetected, newQuery);
+            return true;
+        }
+
+        // TODO: Handle case other instanceof AliasPlaceholderType
+
+        const result = this.performStructuralSubtypingCheck_step_realSubtypingRelation(other, context);
+        this.performStructuralSubtypingCheck_step_updateBuffer(result, loopDetected, newQuery);
+
+        return result;
     }
 
     /**
-     * Returns a graph holding only one node representing the current StructuralSubtypingQuery
-     * Override this method for more complex query graph building
+     * Creates new StructuralSubtypingQuery object an adds it to the history.
+     * @param other Type this gets compared to during isStrutcturalSubtypeOf_Impl call.
+     * @param history current list of queries that have already been performed
+     * @returns if a query loop has been detected and the new query that has been added to the history
+     */
+    protected performStructuralSubtypingCheck_step_manageQueryHistory(other: AbstractType, history: StructuralSubtypingQuery[]): { loopDetected: boolean, newQuery: StructuralSubtypingQuery } {
+        const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
+        // Check for query loop
+        const loopDetected = !!history.find(q => q.equals(newQuery))
+        history.push(newQuery);
+
+        return { loopDetected: loopDetected, newQuery: newQuery };
+    }
+
+    /**
+     * Updates the structuralSubtypingBuffer so query graph can be built properly in an upcoming step.
+     * @param result 
+     * @param loopDetected 
      * @param currentQuery 
+     */
+    protected performStructuralSubtypingCheck_step_updateBuffer(result: boolean, loopDetected: boolean, currentQuery: StructuralSubtypingQuery): void {
+        this.structuralSubtypingBuffer.result = result;
+        this.structuralSubtypingBuffer.loopDetected = loopDetected;
+        this.structuralSubtypingBuffer.currentQuery = currentQuery;
+    }
+
+    /**
+     * Checks for structural equality as a subset of structural subtyping relation.
+     * @param other 
      * @param context 
      */
+    protected performStructuralSubtypingCheck_step_checkEquality(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        return this.equals(other); // TODO: Check if this is ok.
+    }
+
+    /**
+     * Override this method for more complex queries, i.e. by making recursive calls to child types.
+     * 
+     * Preconditions: all previous steps have been performed already, i.e.:
+     * - query history has been extended; no loop has been detected
+     * - structuralSubtypingBuffer has been updated
+     * - type equality does NOT hold
+     * 
+     * @param other 
+     * @param context 
+     */
+    protected abstract performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean;
+
+    /**
+     * Builds a graph visualizing structural subtyping check cached in structuralSubtypingBuffer.
+     * Precondition: performStructuralSubtypingCheck method has been called before
+     * @returns complete graph
+     */
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
-        if (!this.subtypingQueryBuffer) throw new Error("Must perform structural subtyping check before calling buildQueryGraph");
-        
-        // Build basic graph with node belonging to this
+        let graph = this.buildQueryGraph_step_basicGraph();
+
+        graph = this.buildQueryGraph_step_handleLoop(graph);
+        graph = this.buildQueryGraph_step_extendGraph(graph);
+
+        this.buildQueryGraph_step_resetBuffer();
+
+        return graph;
+    }
+
+    /**
+     * This implementation returns a graph holding only one node representing the current query.
+     * 
+     * @param loopDetected if loop has been detected by previous step
+     * @param currentQuery current query 
+     * @returns basic graph
+     */
+    protected buildQueryGraph_step_basicGraph(): StructuralSubtypingQueryGraph {
+        if (!this.structuralSubtypingBuffer.currentQuery) throw new Error("Cannot build query graph with empty buffer.");
+
+        // Build basic graph with single node representing query in this.structuralSubtypingBuffer
         let newNode = new Node({
-            query: this.subtypingQueryBuffer,
+            query: this.structuralSubtypingBuffer.currentQuery,
             highlight: this.isQueryGraphNodeHighlighted()
         });
 
         let graph = new Graph<QueryGraphNodeData, string>([newNode]);
         graph.setRoot(newNode);
 
+        return new StructuralSubtypingQueryGraph(graph, []);
+    }
+
+    protected buildQueryGraph_step_handleLoop(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+
         // Add loop edge if needed
         let loopPairs = new Array();
-        if(this.loopDetectedBuffer){
-            const pair = {
-                first: this.subtypingQueryBuffer,
-                second: this.loopPairBuffer
-            };
-            loopPairs.push(pair);
+        if (this.structuralSubtypingBuffer.loopDetected) {
+            // TODO: Implement adding edges representing query loops!
         }
 
-        return new StructuralSubtypingQueryGraph(graph, loopPairs);
+        graph.setLoopPairs(loopPairs);
+
+        return graph;
+    }
+
+    /**
+     * Override this method to build more complex query graphs, i.e. by making recursive calls to child types.
+     * 
+     * Preconditions: all previous steps have been performed already, i.e.:
+     * - param graph is representing the current query cached in structuralSubtypingBuffer
+     * - NO query loop has been detected
+     * 
+     * @param graph in basic form, see buildQueryGraph_step_basicGraph method
+     * @returns extended graph
+     */
+    protected abstract buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph;
+    
+    /**
+     * Cleans up buffer. Override this method if this.structuralSubtypingBuffer has been overridden in order to extend it.
+     * @param graph 
+     */
+    protected buildQueryGraph_step_resetBuffer(): void {
+        this.structuralSubtypingBuffer.loopDetected = false;
+        this.structuralSubtypingBuffer.currentQuery = null;
     }
 
     /**
@@ -210,15 +257,21 @@ export abstract class AbstractType {
     }
 }
 
+
+/* 
+ *  TODO: Solve import (circular dependency) issue and move this class in separate file! 
+ */
+
 export class AliasPlaceholderType extends AbstractType {
+
+    // Specialization of structuralSubtypingBuffer holding an additional field for target
+    protected override structuralSubtypingBuffer: StructuralSubtypingBuffer & { target: AbstractType };
 
     private alias: string;
 
-    // FIFO
-    private target_buffer: AbstractType[] = new Array();
-
     constructor(alias: string) {
         super();
+        this.structuralSubtypingBuffer.target = null;
 
         this.alias = alias;
     }
@@ -231,36 +284,35 @@ export class AliasPlaceholderType extends AbstractType {
         return this.alias;
     }
 
-    @otherAliasReplaced()
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
-        if (basicCheckResult.value) return basicCheckResult;
+    /* Structural Subtyping */
 
+    protected override performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         const target = context.typeDefinitions.get(this.getAlias());
         if (!target) throw new Error("No type definition exists for " + this.getAlias());
-
-        this.target_buffer.push(target);
-
-        return target.isStrutcturalSubtypeOf_Impl(other, context);
+        // Add found target to cache so it can be used when building the query graph
+        this.structuralSubtypingBuffer.target = target;
+        // Delegate
+        return target.performStructuralSubtypingCheck(other, context);
     }
 
-    public override buildQueryGraph(): StructuralSubtypingQueryGraph {
-        let out = super.buildQueryGraph();
-        const root = out.getGraph().getRoot();
+    protected override buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+        const target = this.structuralSubtypingBuffer.target;
+        if (!target) throw new Error("Unexpected: structuralSubtypingBuffer does not contain target.");
 
-        if(this.loopDetectedBuffer) return out;
-        
-        const target = this.target_buffer.shift();
-        if(!target) throw new Error("Must call isStrutcturalSubtypeOf_Impl before buildQueryGraph");
+        const targetGraph = target.buildQueryGraph(); // Recursive call
+        const newEdge = new Edge(graph.getGraph().getRoot(), targetGraph.getGraph().getRoot(), "");
 
-        const targetOut = target.buildQueryGraph();
-        const newEdge = new Edge(root, targetOut.getGraph().getRoot(), "");
+        graph.merge(targetGraph);
+        graph.getGraph().addEdge(newEdge);
 
-        out.merge(targetOut);
-        out.getGraph().addEdge(newEdge);
-
-        return out;
+        return graph;
     }
+
+    protected override buildQueryGraph_step_resetBuffer(): void {
+        super.buildQueryGraph_step_resetBuffer();
+        this.structuralSubtypingBuffer.target = null;
+    }
+    
 }
 
 

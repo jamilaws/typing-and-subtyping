@@ -23,30 +23,24 @@ export class ArrayType extends AbstractType {
         return this.baseType;
     }
 
-    @otherAliasReplaced()
-    public override isStrutcturalSubtypeOf_Impl(other: AbstractType, context: StructuralSubtypingQueryContext): StructuralSubtypingQueryResult {
-        const basicCheckResult = super.isStrutcturalSubtypeOf_Impl(other, context);
-        if (basicCheckResult.value) return basicCheckResult;
+    /* Structural Subtyping */
+
+    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if(other instanceof ArrayType) {
-            return this.baseType.isStrutcturalSubtypeOf_Impl(other.baseType, context);
+            return this.baseType.performStructuralSubtypingCheck(other.baseType, context);
         } else {
-            return { value: false };
+            return false;
         }
     }
 
-    public override buildQueryGraph(): StructuralSubtypingQueryGraph {
-        let out = super.buildQueryGraph();
-        const root = out.getGraph().getRoot();
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+        const targetOut = this.baseType.buildQueryGraph();
+        const newEdge = new Edge(graph.getGraph().getRoot(), targetOut.getGraph().getRoot(), "");
 
-        if(this.loopDetectedBuffer) return out;
+        graph.merge(targetOut);
+        graph.getGraph().addEdge(newEdge);
 
-        const targetOu = this.baseType.buildQueryGraph();
-        const newEdge = new Edge(root, targetOu.getGraph().getRoot(), "");
-
-        out.merge(targetOu);
-        out.getGraph().addEdge(newEdge);
-
-        return out;
+        return graph;
     }
 
     /*

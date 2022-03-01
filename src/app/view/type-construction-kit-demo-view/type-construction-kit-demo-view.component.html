@@ -1,8 +1,6 @@
 <div class="type-construction-kit-wrapper">
-    <app-type-construction-kit
-    (onTypesChange)="onTypesChange($event)"
-    (onTypedefsChange)="onTypedefsChange($event)"
-    (onDeclarationsChange)="onDeclarationsChange($event)"></app-type-construction-kit>
+    <app-type-construction-kit (onTypesChange)="onTypesChange($event)" (onTypedefsChange)="onTypedefsChange($event)"
+        (onDeclarationsChange)="onDeclarationsChange($event)"></app-type-construction-kit>
 </div>
 <div class="content-wrapper">
     <div class="row">
@@ -20,7 +18,8 @@
                                 </div>
                             </div>
                             <div class="expression-input-wrapper">
-                                <input class="expression-input" #inputExpression type="text" placeholder="Enter expression" (change)="onChangeExpression()">
+                                <input class="expression-input" #inputExpression type="text"
+                                    placeholder="Enter expression" (change)="onChangeExpression()">
                                 <button class="check-button" (click)="onChangeExpression()">Check</button>
 
                             </div>
@@ -42,11 +41,24 @@
                                     <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
                                 </div>
                             </div>
-                            <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes" [optionToName]="typeToName"></app-singleselect-dropdown>
+                            <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes"
+                                [optionToName]="typeToName"></app-singleselect-dropdown>
                             <br>
-                            <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown" [options]="availableTypes" [optionToName]="typeToName"></app-singleselect-dropdown>
+                            <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown" [options]="availableTypes"
+                                [optionToName]="typeToName"></app-singleselect-dropdown>
                             <br>
                             <button class="check-button" (click)="onClickCheckSubtyping()">Check</button>
+                            <br>
+
+                            <div *ngIf="structuralSubtypingQueryResult">
+                                <div *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse"></div>
+                                <ng-template #subtypingResultMsgTrue>
+                                    <span>True</span>
+                                </ng-template>
+                                <ng-template #subtypingResultMsgFalse>
+                                    <span>False</span>
+                                </ng-template>
+                            </div>
                         </div>
                     </mat-tab>
                 </mat-tab-group>
@@ -62,7 +74,8 @@
                 </div>
             </div>
             <div class="right-panel-wrapper" *ngIf="subtypingTab.isActive">
-                <app-dummy-subtyping-test [structuralSubtypingQueryResult]="structuralSubtypingQueryResult"></app-dummy-subtyping-test>
+                <app-dummy-subtyping-test [structuralSubtypingQueryResult]="structuralSubtypingQueryResult">
+                </app-dummy-subtyping-test>
             </div>
         </div>
     </div>

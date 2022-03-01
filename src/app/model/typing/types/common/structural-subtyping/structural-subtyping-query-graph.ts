@@ -39,4 +39,10 @@ export class StructuralSubtypingQueryGraph {
     public getLoopPairs() {
         return this.loopPairs;
     }
+
+    
+    public setLoopPairs(v : LoopPair[]) {
+        this.loopPairs = v;
+    }
+    
 }
