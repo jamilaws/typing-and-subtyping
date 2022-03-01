@@ -1,11 +1,8 @@
-import { AbstractType, otherAliasReplaced, StructuralSubtypingBuffer } from "../abstract-type";
-import { Definition } from "../common/definition";
+import { AbstractType, StructuralSubtypingBuffer } from "../abstract-type";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
-import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
 import { Graph, Node, Edge } from '../../../common/graph/_module';
 import { CdeclHalves } from "../common/cdecl-halves";
-
 
 function zip<X, Y>(xs: X[], ys: Y[]): [X, Y][] {
     if (xs.length !== ys.length) throw new Error("Cannot zip arrays of unequal length");
@@ -16,6 +13,9 @@ export class FunctionType extends AbstractType {
 
     private parameterTypes: AbstractType[];
     private returnType: AbstractType;
+
+    // Specialization of structuralSubtypingBuffer holding an additional field for members relevant for structural subtyping
+    protected override structuralSubtypingBuffer: StructuralSubtypingBuffer & { parameterNumberMissmatch: boolean };
 
     constructor(parameterTypes: AbstractType[], returnType: AbstractType) {
         super();
@@ -28,6 +28,7 @@ export class FunctionType extends AbstractType {
     protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if (other instanceof FunctionType) {
             if (this.parameterTypes.length !== other.parameterTypes.length) {
+                this.structuralSubtypingBuffer.parameterNumberMissmatch = true;
                 return false;
             }
             // co-variance of the return type
@@ -42,11 +43,16 @@ export class FunctionType extends AbstractType {
             return false;
         }
     }
+
     protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+
+        if(this.structuralSubtypingBuffer.parameterNumberMissmatch) return graph; // Do not visualize child types  
         
         const root = graph.getGraph().getRoot();
         
+        // Note: These are the parameters of the other function type cached in the query buffer
         const parameterOuts = (<FunctionType>this.structuralSubtypingBuffer.currentQuery.b).getParameters().map(p => p.buildQueryGraph());
+        
         const parameterEdges = parameterOuts.map((sg, index) => new Edge(root, sg.getGraph().getRoot(), "param" + index));
 
         const returnOut = this.returnType.buildQueryGraph();
@@ -60,6 +66,17 @@ export class FunctionType extends AbstractType {
 
         return graph;
     }
+
+    protected override buildQueryGraph_step_resetBuffer(): void {
+        super.buildQueryGraph_step_resetBuffer();
+        this.structuralSubtypingBuffer.parameterNumberMissmatch = false;
+    }
+
+    protected override isQueryGraphNodeHighlighted(): boolean {
+        return this.structuralSubtypingBuffer.parameterNumberMissmatch;
+    }
+
+    /* --- */
 
     public toString(): string {
         return `${this.returnType.toString()}(${this.parameterTypes.map(p => p.toString()).join(", ")})`;

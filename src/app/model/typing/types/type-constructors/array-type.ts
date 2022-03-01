@@ -43,6 +43,8 @@ export class ArrayType extends AbstractType {
         return graph;
     }
 
+    /* --- */
+
     /*
 
     | ARRAY adims OF adecl

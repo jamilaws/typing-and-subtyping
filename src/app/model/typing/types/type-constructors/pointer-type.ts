@@ -35,6 +35,8 @@ export class PointerType extends AbstractType {
         return graph;
     }
 
+    /* --- */
+
     public toString(): string {
         return this.baseType.toString() + "*";
     }

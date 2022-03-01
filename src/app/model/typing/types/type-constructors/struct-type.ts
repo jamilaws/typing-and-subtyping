@@ -78,4 +78,6 @@ export class StructType extends AbstractType {
         this.structuralSubtypingBuffer.relevantMembers = new Array();
     }
 
+    /* --- */
+
 }

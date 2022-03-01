@@ -28,6 +28,7 @@ export const otherAliasReplaced = () => {
 export interface StructuralSubtypingBuffer {
     result: boolean;
     loopDetected: boolean,
+    equalityDetected: boolean,
     currentQuery: StructuralSubtypingQuery
 }
 
@@ -42,6 +43,7 @@ export abstract class AbstractType {
         this.structuralSubtypingBuffer = {
             result: false,
             loopDetected: false,
+            equalityDetected: false,
             currentQuery: null
         };
     }
@@ -94,22 +96,22 @@ export abstract class AbstractType {
     public performStructuralSubtypingCheck(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory);
 
-        this.performStructuralSubtypingCheck_step_updateBuffer(false, loopDetected, newQuery);
+        this.performStructuralSubtypingCheck_step_updateBuffer(false, loopDetected, false, newQuery);
 
         if (loopDetected) {
-            this.performStructuralSubtypingCheck_step_updateBuffer(true, loopDetected, newQuery);
+            this.performStructuralSubtypingCheck_step_updateBuffer(true, loopDetected, false, newQuery);
             return true;
         }
 
         if (this.performStructuralSubtypingCheck_step_checkEquality(other, context)) {
-            this.performStructuralSubtypingCheck_step_updateBuffer(true, loopDetected, newQuery);
+            this.performStructuralSubtypingCheck_step_updateBuffer(true, loopDetected, true, newQuery);
             return true;
         }
 
         // TODO: Handle case other instanceof AliasPlaceholderType
 
         const result = this.performStructuralSubtypingCheck_step_realSubtypingRelation(other, context);
-        this.performStructuralSubtypingCheck_step_updateBuffer(result, loopDetected, newQuery);
+        this.performStructuralSubtypingCheck_step_updateBuffer(result, loopDetected, false, newQuery);
 
         return result;
     }
@@ -135,10 +137,11 @@ export abstract class AbstractType {
      * @param loopDetected 
      * @param currentQuery 
      */
-    protected performStructuralSubtypingCheck_step_updateBuffer(result: boolean, loopDetected: boolean, currentQuery: StructuralSubtypingQuery): void {
-        this.structuralSubtypingBuffer.result = result;
-        this.structuralSubtypingBuffer.loopDetected = loopDetected;
-        this.structuralSubtypingBuffer.currentQuery = currentQuery;
+    protected performStructuralSubtypingCheck_step_updateBuffer(result: boolean, loopDetected: boolean, equalityDetected: boolean, currentQuery: StructuralSubtypingQuery): void {
+        this.structuralSubtypingBuffer.result           = result;
+        this.structuralSubtypingBuffer.loopDetected     = loopDetected;
+        this.structuralSubtypingBuffer.equalityDetected = equalityDetected;
+        this.structuralSubtypingBuffer.currentQuery     = currentQuery;
     }
 
     /**
@@ -169,10 +172,14 @@ export abstract class AbstractType {
      * @returns complete graph
      */
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
+
         let graph = this.buildQueryGraph_step_basicGraph();
 
         graph = this.buildQueryGraph_step_handleLoop(graph);
-        graph = this.buildQueryGraph_step_extendGraph(graph);
+
+        if(!this.structuralSubtypingBuffer.loopDetected && !this.structuralSubtypingBuffer.equalityDetected) {
+            graph = this.buildQueryGraph_step_extendGraph(graph);
+        }
 
         this.buildQueryGraph_step_resetBuffer();
 
@@ -218,8 +225,9 @@ export abstract class AbstractType {
      * Override this method to build more complex query graphs, i.e. by making recursive calls to child types.
      * 
      * Preconditions: all previous steps have been performed already, i.e.:
-     * - param graph is representing the current query cached in structuralSubtypingBuffer
+     * - param graph holds a single node representing the current query cached in structuralSubtypingBuffer
      * - NO query loop has been detected
+     * - NO type equality has been detected
      * 
      * @param graph in basic form, see buildQueryGraph_step_basicGraph method
      * @returns extended graph
