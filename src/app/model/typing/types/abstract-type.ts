@@ -4,48 +4,34 @@ import { StructuralSubtypingQuery } from "./common/structural-subtyping/structur
 import { StructuralSubtypingQueryResult } from "./common/structural-subtyping/structural-subtyping-query-result";
 import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from './common/structural-subtyping/structural-subtyping-query-graph';
 import { CdeclHalves } from './common/cdecl-halves';
+import { Stack } from './common/stack';
 
-export const otherAliasReplaced = () => {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        const originalMethod = descriptor.value;
-        descriptor.value = function (other: AbstractType, context: StructuralSubtypingQueryContext) {
-
-            // TODO: Fix error with instanceof operator!!!
-            if (other.constructor.name === "AliasPlaceholderType") {
-                // Replace 'other' by its target type
-                const alias = (<AliasPlaceholderType>other).getAlias();
-                const target = context.typeDefinitions.get(alias);
-                if (!target) throw new Error("No type definition exists for " + alias);
-                return originalMethod.apply(this, [target, context]);
-            } else {
-                // Simply delegate method call without any modification
-                return originalMethod.apply(this, [other, context]);
-            }
-        };
-    };
-};
-
-export interface StructuralSubtypingBuffer {
+export interface StructuralSubtypingBufferFrame {
     result: boolean;
-    loopDetected: boolean,
-    equalityDetected: boolean,
-    currentQuery: StructuralSubtypingQuery
+
+    loopDetected: boolean;
+    equalityDetected: boolean;
+
+    currentQuery: StructuralSubtypingQuery;
+
+    didReplaceOtherAlias: boolean;
+    aliasName: string;
+
+    appendix: any; // TODO: Change this!
 }
 
+/**
+ * T is an optional type parameter for the appendix field with a StructuralSubtypingBufferFrame object
+ */
 export abstract class AbstractType {
 
     /**
      * Buffer for chaching all necessary data needed for buildQueryGraph method during performStructuralSubtypingCheck() call.
      */
-    protected structuralSubtypingBuffer: StructuralSubtypingBuffer;
+    private structuralSubtypingBuffer: Stack<StructuralSubtypingBufferFrame>;
 
     constructor() {
-        this.structuralSubtypingBuffer = {
-            result: false,
-            loopDetected: false,
-            equalityDetected: false,
-            currentQuery: null
-        };
+        this.structuralSubtypingBuffer = new Stack();
     }
 
     abstract toString(): string;
@@ -94,6 +80,27 @@ export abstract class AbstractType {
      * @returns if this is a structural subtype of other
      */
     public performStructuralSubtypingCheck(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        this.performStructuralSubtypingCheck_step_openNewBufferFrame();
+
+        /*
+
+        TODO: Uncommment and finish
+
+        if (other instanceof AliasPlaceholderType) {
+            const alias = (<AliasPlaceholderType>other).getAlias();
+            const target = context.typeDefinitions.get(alias);
+            if (!target) throw new Error("No type definition exists for " + alias);
+
+            // Cache relevant data about alias replacement in cache
+            this.getCurrentStructuralSubtypingBufferFrame().didReplaceOtherAlias = true;
+            this.getCurrentStructuralSubtypingBufferFrame().aliasName = alias;
+
+            // Repeat call with other being replaced by its target
+            return this.performStructuralSubtypingCheck(target, context);
+        }
+
+        */
+
         const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory);
 
         this.performStructuralSubtypingCheck_step_updateBuffer(false, loopDetected, false, newQuery);
@@ -117,13 +124,31 @@ export abstract class AbstractType {
     }
 
     /**
+     * Creates new buffer frame for a performStructuralSubtypingCheck call and pushes it to the buffer stack.
+     * Each opened frame should be closed when consumed.
+     * @param graph 
+     */
+    protected performStructuralSubtypingCheck_step_openNewBufferFrame(): void {
+        const frame: StructuralSubtypingBufferFrame = {
+            result: false,
+            loopDetected: false,
+            equalityDetected: false,
+            currentQuery: null,
+            didReplaceOtherAlias: false,
+            aliasName: null,
+            appendix: {}
+        };
+        this.structuralSubtypingBuffer.push(frame);
+    }
+
+    /**
      * Creates new StructuralSubtypingQuery object an adds it to the history.
      * @param other Type this gets compared to during isStrutcturalSubtypeOf_Impl call.
      * @param history current list of queries that have already been performed
      * @returns if a query loop has been detected and the new query that has been added to the history
      */
     protected performStructuralSubtypingCheck_step_manageQueryHistory(other: AbstractType, history: StructuralSubtypingQuery[]): { loopDetected: boolean, newQuery: StructuralSubtypingQuery } {
-        const newQuery = new StructuralSubtypingQuery(<AbstractType>this, other);
+        const newQuery = new StructuralSubtypingQuery(this, other);
         // Check for query loop
         const loopDetected = !!history.find(q => q.equals(newQuery))
         history.push(newQuery);
@@ -138,10 +163,10 @@ export abstract class AbstractType {
      * @param currentQuery 
      */
     protected performStructuralSubtypingCheck_step_updateBuffer(result: boolean, loopDetected: boolean, equalityDetected: boolean, currentQuery: StructuralSubtypingQuery): void {
-        this.structuralSubtypingBuffer.result           = result;
-        this.structuralSubtypingBuffer.loopDetected     = loopDetected;
-        this.structuralSubtypingBuffer.equalityDetected = equalityDetected;
-        this.structuralSubtypingBuffer.currentQuery     = currentQuery;
+        this.structuralSubtypingBuffer.getTopElement().result = result;
+        this.structuralSubtypingBuffer.getTopElement().loopDetected = loopDetected;
+        this.structuralSubtypingBuffer.getTopElement().equalityDetected = equalityDetected;
+        this.structuralSubtypingBuffer.getTopElement().currentQuery = currentQuery;
     }
 
     /**
@@ -172,16 +197,18 @@ export abstract class AbstractType {
      * @returns complete graph
      */
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
+        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
 
         let graph = this.buildQueryGraph_step_basicGraph();
 
         graph = this.buildQueryGraph_step_handleLoop(graph);
 
-        if(!this.structuralSubtypingBuffer.loopDetected && !this.structuralSubtypingBuffer.equalityDetected) {
+        if (!buffer.loopDetected && !buffer.equalityDetected) {
             graph = this.buildQueryGraph_step_extendGraph(graph);
         }
 
-        this.buildQueryGraph_step_resetBuffer();
+        // Buffer frame consumed --> remove it from the stack
+        this.buildQueryGraph_step_closeBufferFrame();
 
         return graph;
     }
@@ -194,11 +221,13 @@ export abstract class AbstractType {
      * @returns basic graph
      */
     protected buildQueryGraph_step_basicGraph(): StructuralSubtypingQueryGraph {
-        if (!this.structuralSubtypingBuffer.currentQuery) throw new Error("Cannot build query graph with empty buffer.");
+        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
+
+        if (!buffer.currentQuery) throw new Error("Cannot build query graph with empty buffer.");
 
         // Build basic graph with single node representing query in this.structuralSubtypingBuffer
         let newNode = new Node({
-            query: this.structuralSubtypingBuffer.currentQuery,
+            query: buffer.currentQuery,
             highlight: this.isQueryGraphNodeHighlighted()
         });
 
@@ -209,10 +238,11 @@ export abstract class AbstractType {
     }
 
     protected buildQueryGraph_step_handleLoop(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
 
         // Add loop edge if needed
         let loopPairs = new Array();
-        if (this.structuralSubtypingBuffer.loopDetected) {
+        if (buffer.loopDetected) {
             // TODO: Implement adding edges representing query loops!
         }
 
@@ -233,14 +263,13 @@ export abstract class AbstractType {
      * @returns extended graph
      */
     protected abstract buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph;
-    
+
     /**
      * Cleans up buffer. Override this method if this.structuralSubtypingBuffer has been overridden in order to extend it.
      * @param graph 
      */
-    protected buildQueryGraph_step_resetBuffer(): void {
-        this.structuralSubtypingBuffer.loopDetected = false;
-        this.structuralSubtypingBuffer.currentQuery = null;
+    protected buildQueryGraph_step_closeBufferFrame(): void {
+        this.structuralSubtypingBuffer.pop(); // Remove topmost element
     }
 
     /**
@@ -250,6 +279,14 @@ export abstract class AbstractType {
     protected isQueryGraphNodeHighlighted(): boolean {
         return false;
     }
+
+    protected getCurrentStructuralSubtypingBufferFrame(): StructuralSubtypingBufferFrame {
+        const out = this.structuralSubtypingBuffer.getTopElement();
+        if (!out) throw new Error("Empty structural subtyping buffer.");
+        return out;
+    }
+
+    /* --- */
 
     public cdeclToString(): string {
         const tuple = this.cdeclToStringImpl({ prev: null });
@@ -272,14 +309,10 @@ export abstract class AbstractType {
 
 export class AliasPlaceholderType extends AbstractType {
 
-    // Specialization of structuralSubtypingBuffer holding an additional field for target
-    protected override structuralSubtypingBuffer: StructuralSubtypingBuffer & { target: AbstractType };
-
     private alias: string;
 
     constructor(alias: string) {
         super();
-        this.structuralSubtypingBuffer.target = null;
 
         this.alias = alias;
     }
@@ -298,13 +331,13 @@ export class AliasPlaceholderType extends AbstractType {
         const target = context.typeDefinitions.get(this.getAlias());
         if (!target) throw new Error("No type definition exists for " + this.getAlias());
         // Add found target to cache so it can be used when building the query graph
-        this.structuralSubtypingBuffer.target = target;
+        this.getCurrentStructuralSubtypingBufferFrame().appendix.target = target;
         // Delegate
         return target.performStructuralSubtypingCheck(other, context);
     }
 
     protected override buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
-        const target = this.structuralSubtypingBuffer.target;
+        const target = this.getCurrentStructuralSubtypingBufferFrame().appendix.target;
         if (!target) throw new Error("Unexpected: structuralSubtypingBuffer does not contain target.");
 
         const targetGraph = target.buildQueryGraph(); // Recursive call
@@ -316,11 +349,6 @@ export class AliasPlaceholderType extends AbstractType {
         return graph;
     }
 
-    protected override buildQueryGraph_step_resetBuffer(): void {
-        super.buildQueryGraph_step_resetBuffer();
-        this.structuralSubtypingBuffer.target = null;
-    }
-    
 }
 
 

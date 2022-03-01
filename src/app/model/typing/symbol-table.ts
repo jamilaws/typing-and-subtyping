@@ -1,4 +1,5 @@
 import { AbstractType } from "./types/abstract-type";
+import { Stack } from "./types/common/stack";
 
 export interface ISymbolTable {
     insert(identifier: string, declaration: Declaration): void
@@ -24,34 +25,6 @@ export interface Declaration {
     getDeclarationIdentifier(): string;
     getDeclarationType(): AbstractType;
     getCodeLine(): number;
-}
-
-/**
- * Simple array based stack
- */
-export class Stack<T> {
-
-    private array: T[];
-
-    constructor(initValues: Array<T> = []){
-        this.array = initValues;
-    }
-
-    public push(element: T): void {
-        this.array.push(element);
-    }
-
-    public pop(): T {
-        return this.array.pop();
-    }
-
-    public getTopElement(): T {
-        return this.array[this.array.length - 1];
-    }
-
-    public toArray(): T[] {
-        return this.array;
-    }
 }
 
 /**

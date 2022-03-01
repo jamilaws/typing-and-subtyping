@@ -1,4 +1,4 @@
-import { AbstractType, otherAliasReplaced } from "../abstract-type";
+import { AbstractType } from "../abstract-type";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
