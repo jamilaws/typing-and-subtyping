@@ -15,7 +15,7 @@ export interface StructuralSubtypingBufferFrame {
     currentQuery: StructuralSubtypingQuery;
 
     didReplaceOtherAlias: boolean;
-    aliasName: string;
+    aliasQuery: StructuralSubtypingQuery;
 
     appendix: any; // TODO: Change this!
 }
@@ -108,8 +108,10 @@ export abstract class AbstractType {
      */
     public performStructuralSubtypingCheck(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
 
+        this.performStructuralSubtypingCheck_step_openNewBufferFrame();
+        const bufferFrame = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
+
         /* --- */
-        // TODO: Move under 133!!
         if (other instanceof AliasPlaceholderType) {
 
             const alias = other.getAlias();
@@ -117,21 +119,15 @@ export abstract class AbstractType {
 
             if (!target) throw new Error("No type definition exists for " + alias);
 
-            /* TODO: Uncomment!
             // Cache relevant data about alias replacement
             bufferFrame.didReplaceOtherAlias = true;
-            bufferFrame.aliasName = alias;
-            bufferFrame.currentQuery = new StructuralSubtypingQuery(this, other);
-            */
+            bufferFrame.aliasQuery = new StructuralSubtypingQuery(this, other);
 
             // Repeat call with other being replaced by its target
-            return this.performStructuralSubtypingCheck(target, context);
+            //return this.performStructuralSubtypingCheck(target, context);
+            other = target;
         }
         /* --- */
-
-        this.performStructuralSubtypingCheck_step_openNewBufferFrame();
-        const bufferFrame = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
-
 
         const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory);
 
@@ -168,7 +164,7 @@ export abstract class AbstractType {
             equalityDetected: false,
             currentQuery: null,
             didReplaceOtherAlias: false,
-            aliasName: null,
+            aliasQuery: null,
             appendix: {}
         };
         this.structuralSubtypingBuffer.enqueue(frame);
@@ -224,15 +220,16 @@ export abstract class AbstractType {
         const bufferFrame = this.buildQueryGraph_step_dequeueBufferFrame();
 
         let graph = this.buildQueryGraph_step_basicGraph(bufferFrame);
+        const root = graph.getGraph().getRoot();
 
-        graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph, bufferFrame);
-
-        // TODO: Uncomment!
-        //graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
+        graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
 
         if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
             graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
         }
+
+        graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph, root, bufferFrame);
+
 
         // Buffer frame consumed --> remove it from the stack
         //this.buildQueryGraph_step_closeBufferFrame();
@@ -262,17 +259,17 @@ export abstract class AbstractType {
         return new StructuralSubtypingQueryGraph(graph, []);
     }
 
-    protected buildQueryGraph_step_handleCaseOtherBeingAlias(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
+    protected buildQueryGraph_step_handleCaseOtherBeingAlias(graph: StructuralSubtypingQueryGraph, targetNode: Node<QueryGraphNodeData>, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
 
         if (bufferFrame.didReplaceOtherAlias) {
             alert("ALIAS in GRAPH");
 
             const newNode = new Node<QueryGraphNodeData>({
-                query: bufferFrame.currentQuery,
+                query: bufferFrame.aliasQuery,
                 highlight: false // A node right before an alias replacement should never be highlighted
             });
 
-            const newEdge = new Edge(newNode, graph.getGraph().getRoot(), "alias");
+            const newEdge = new Edge(newNode, targetNode, "alias");
 
             graph.getGraph().addNode(newNode)
             graph.getGraph().addEdge(newEdge);
@@ -375,7 +372,7 @@ export class AliasPlaceholderType extends AbstractType {
         if (!target) throw new Error("Unexpected: structuralSubtypingBuffer does not contain target.");
 
         const targetGraph = target.buildQueryGraph(); // Recursive call
-        const newEdge = new Edge(graph.getGraph().getRoot(), targetGraph.getGraph().getRoot(), "");
+        const newEdge = new Edge(graph.getGraph().getRoot(), targetGraph.getGraph().getRoot(), "alias");
 
         graph.merge(targetGraph);
         graph.getGraph().addEdge(newEdge);
