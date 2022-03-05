@@ -114,7 +114,7 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   private updateTrees(): void {
     if(this.inputExpression) this.onChangeExpression();
-    if(this.typeOneDropdown && this.typeTwoDropdown) this.onClickCheckSubtyping();
+    //if(this.typeOneDropdown && this.typeTwoDropdown) this.onClickCheckSubtyping(); //TODO: Uncomment!
   }
 
   /*

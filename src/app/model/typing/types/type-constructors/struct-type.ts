@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, StructuralSubtypingBufferFrame } from "../abstract-type";
 import { Definition } from "../common/definition";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { Graph, Node, Edge } from '../../../common/graph/_module';
@@ -30,7 +30,7 @@ export class StructType extends AbstractType {
     /* Structural Subtyping */
 
     protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
-        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
+        const buffer = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
         buffer.appendix.relevantMembers = new Array<Definition>();
 
         if (other instanceof StructType) {
@@ -54,10 +54,11 @@ export class StructType extends AbstractType {
             return false;
         }
     }
-    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
-        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
 
-        buffer.appendix.relevantMembers.map((m: Definition) => {
+        if(!bufferFrame.appendix.relevantMembers) throw new Error("Unexpected: Relevant memebers not found in cache.");
+
+        bufferFrame.appendix.relevantMembers.map((m: Definition) => {
             return {
                 subgraph: m.getType().buildQueryGraph(),
                 name: m.getName()

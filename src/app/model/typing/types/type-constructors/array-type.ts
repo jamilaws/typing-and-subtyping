@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, StructuralSubtypingBufferFrame } from "../abstract-type";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
@@ -33,7 +33,7 @@ export class ArrayType extends AbstractType {
         }
     }
 
-    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+    protected override buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
         const targetOut = this.baseType.buildQueryGraph();
         const newEdge = new Edge(graph.getGraph().getRoot(), targetOut.getGraph().getRoot(), "");
 

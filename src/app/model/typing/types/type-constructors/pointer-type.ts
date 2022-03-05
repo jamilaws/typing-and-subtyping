@@ -1,5 +1,5 @@
 import { Edge } from "src/app/model/common/graph/_module";
-import { AbstractType } from "../abstract-type";
+import { AbstractType, StructuralSubtypingBufferFrame } from "../abstract-type";
 import { CdeclHalves } from "../common/cdecl-halves";
 import { StructuralSubtypingQuery } from "../common/structural-subtyping/structural-subtyping-query";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
@@ -25,7 +25,7 @@ export class PointerType extends AbstractType {
         }
     }
 
-    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
         const targetOut = this.baseType.buildQueryGraph();
         const newEdge = new Edge(graph.getGraph().getRoot(), targetOut.getGraph().getRoot(), "");
 

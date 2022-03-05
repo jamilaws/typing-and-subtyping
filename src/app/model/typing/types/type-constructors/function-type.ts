@@ -1,4 +1,4 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, StructuralSubtypingBufferFrame } from "../abstract-type";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 import { Graph, Node, Edge } from '../../../common/graph/_module';
@@ -23,7 +23,7 @@ export class FunctionType extends AbstractType {
     /* Structural Subtyping */
 
     protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
-        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
+        const buffer = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
 
         if (other instanceof FunctionType) {
             if (this.parameterTypes.length !== other.parameterTypes.length) {
@@ -43,15 +43,14 @@ export class FunctionType extends AbstractType {
         }
     }
 
-    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
-        const buffer = this.getCurrentStructuralSubtypingBufferFrame();
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
 
-        if(buffer.appendix.parameterNumberMissmatch) return graph; // Do not visualize child types  
+        if(bufferFrame.appendix.parameterNumberMissmatch) return graph; // Do not visualize child types  
         
         const root = graph.getGraph().getRoot();
         
         // Note: These are the parameters of the other function type cached in the query buffer
-        const parameterOuts = (<FunctionType>buffer.currentQuery.b).getParameters().map(p => p.buildQueryGraph());
+        const parameterOuts = (<FunctionType>bufferFrame.currentQuery.b).getParameters().map(p => p.buildQueryGraph());
         
         const parameterEdges = parameterOuts.map((sg, index) => new Edge(root, sg.getGraph().getRoot(), "param" + index));
 
@@ -67,8 +66,8 @@ export class FunctionType extends AbstractType {
         return graph;
     }
 
-    protected override isQueryGraphNodeHighlighted(): boolean {
-        return this.getCurrentStructuralSubtypingBufferFrame().appendix.parameterNumberMissmatch;
+    protected override isQueryGraphNodeHighlighted(bufferFrame: StructuralSubtypingBufferFrame): boolean {
+        return bufferFrame.appendix.parameterNumberMissmatch;
     }
 
     /* --- */
