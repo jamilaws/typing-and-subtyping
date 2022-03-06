@@ -19,6 +19,10 @@ export class ArrayType extends AbstractType {
         return this.baseType.toString() + "[ ]";
     }
 
+    public toCdeclEnglish(): string {
+        return "array of " + this.baseType.toCdeclEnglish();
+    }
+
     public getBaseType(): AbstractType {
         return this.baseType;
     }

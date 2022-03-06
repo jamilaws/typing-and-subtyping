@@ -12,6 +12,10 @@ export class NoTypePlaceholder extends AbstractType {
         return "No Type.";
     }
 
+    public toCdeclEnglish(): string {
+        throw new Error('Method not implemented.');
+    }
+
     protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         throw new Error("Unexpected method call.");
     }

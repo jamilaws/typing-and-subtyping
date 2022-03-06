@@ -11,4 +11,8 @@ export class IntType extends BaseType {
     public toString(): string {        
         return "int";
     }
+
+    public toCdeclEnglish(): string {
+        return "int";
+    }
 }

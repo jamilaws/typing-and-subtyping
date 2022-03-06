@@ -7,5 +7,8 @@ export class FloatType extends BaseType {
     public toString(): string {
         return "float";
     }
-   
+
+    public toCdeclEnglish(): string {
+        return "float";
+    }
 }

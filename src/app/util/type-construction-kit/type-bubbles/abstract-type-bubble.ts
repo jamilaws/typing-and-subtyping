@@ -1,6 +1,7 @@
 import { Directive, EventEmitter, HostListener, Input, Output, ViewChild } from "@angular/core";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { AbstractType } from "src/app/model/typing/types/abstract-type";
+import { CdeclService } from "src/app/service/cdecl.service";
 import { BubbleSelectionService, TypeBubble } from "../service/bubble-selection.service";
 import { TypeBubbleState } from "./type-bubble-state";
 
@@ -15,8 +16,7 @@ export abstract class AbstractTypeBubble {
 
     @ViewChild("menuTrigger") menuTrigger: MatMenuTrigger;
 
-    constructor(protected bubbleSelectionService: BubbleSelectionService) {
-    }
+    constructor(protected bubbleSelectionService: BubbleSelectionService, protected cdeclService: CdeclService) {}
 
     public onClick(): void {
         switch (this.state) {

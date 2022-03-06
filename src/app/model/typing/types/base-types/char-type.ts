@@ -7,4 +7,8 @@ export class CharType extends BaseType {
     public toString(): string {
         return "char";
     }
+
+    public toCdeclEnglish(): string {
+        return "char";
+    }
 }

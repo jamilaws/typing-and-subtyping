@@ -9,6 +9,15 @@ import { AbstractTypeBubble } from '../abstract-type-bubble';
 })
 export class ConstructedTypeBubbleComponent extends AbstractTypeBubble implements OnInit, TypeBubble {
 
+  public cdeclC: string;
+
   ngOnInit(): void {
+    this.initCdeclC();
+  }
+
+  private initCdeclC(): void {
+    this.cdeclService.englishToC(this.type.toCdeclEnglish()).then(c => {
+      this.cdeclC = c;
+    });
   }
 }

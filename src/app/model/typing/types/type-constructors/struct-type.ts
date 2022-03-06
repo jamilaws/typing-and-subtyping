@@ -19,6 +19,10 @@ export class StructType extends AbstractType {
         return "struct { " + this.members.map(m => m.toString() + "; ").join("") + "}";
     }
 
+    public toCdeclEnglish(): string {
+        throw new Error('Method not implemented.');
+    }
+
     public getName(): string {
         return this.name;
     }

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 import { RouterModule, Routes } from '@angular/router';
 
@@ -35,6 +36,8 @@ import { CreateAliasTypeBubbleComponent } from './util/type-construction-kit/cre
 import { TypedefTableComponent } from './util/typedef-table/typedef-table.component';
 import { DeclarationsTableComponent } from './util/declarations-table/declarations-table.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 
 
@@ -77,6 +80,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
+    HttpClientModule,
     FormsModule,
     MonacoEditorModule.forRoot(),
     BrowserAnimationsModule,
@@ -89,7 +93,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatMenuModule,
     MatIconModule,
     MatDialogModule,
-    MatTabsModule
+    MatTabsModule,
+    MatTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

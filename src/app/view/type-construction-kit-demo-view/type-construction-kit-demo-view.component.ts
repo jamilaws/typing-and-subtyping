@@ -11,6 +11,7 @@ import { generateAstChart } from './util/generate-ast-chart';
 import { TypeError } from "src/app/model/typing/type-error";
 import { StructuralSubtypingQueryResult } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query-result';
 import { SingleselectDropdownComponent } from 'src/app/util/dropdown/singleselect-dropdown/singleselect-dropdown.component';
+import { CdeclService } from 'src/app/service/cdecl.service';
 
 
 @Component({
@@ -41,9 +42,10 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   public structuralSubtypingQueryResult: StructuralSubtypingQueryResult;
 
-  constructor(private parsingService: ParsingService) { }
+  constructor(private parsingService: ParsingService, private cdeclService: CdeclService) { }
 
   ngOnInit(): void {
+    this.cdeclService.englishToC("pointer to char").then(str => alert(str));
   }
 
   public onChangeExpression(): void {

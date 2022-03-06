@@ -7,4 +7,8 @@ export class VoidType extends BaseType {
     public toString(): string {
         return "void";
     }
+
+    public toCdeclEnglish(): string {
+        return "void";
+    }
 }

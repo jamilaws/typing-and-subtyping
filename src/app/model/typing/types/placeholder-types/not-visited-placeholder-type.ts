@@ -8,6 +8,10 @@ export class NotVisitedPlaceholderType extends AbstractType {
         return "t";
     }
 
+    public toCdeclEnglish(): string {
+        throw new Error('Method not implemented.');
+    }
+
     protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         throw new Error("Unexpected method call.");
     }

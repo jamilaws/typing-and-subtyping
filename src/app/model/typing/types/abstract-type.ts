@@ -5,6 +5,7 @@ import { StructuralSubtypingQueryResult } from "./common/structural-subtyping/st
 import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from './common/structural-subtyping/structural-subtyping-query-graph';
 import { CdeclHalves } from './common/cdecl-halves';
 import { Stack } from './common/stack';
+import { CdeclService } from 'src/app/service/cdecl.service';
 
 export interface StructuralSubtypingBufferFrame {
     result: boolean;
@@ -61,7 +62,9 @@ export abstract class AbstractType {
         this.structuralSubtypingBuffer = new Queue();
     }
 
-    abstract toString(): string;
+    public abstract toString(): string;
+
+    public abstract toCdeclEnglish(): string;
 
     /**
      * TODO:
@@ -354,6 +357,10 @@ export class AliasPlaceholderType extends AbstractType {
 
     public toString(): string {
         return this.alias;
+    }
+
+    public toCdeclEnglish(): string {
+        throw new Error('Method not implemented.');
     }
 
     /* Structural Subtyping */

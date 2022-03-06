@@ -41,6 +41,10 @@ export class PointerType extends AbstractType {
         return this.baseType.toString() + "*";
     }
 
+    public toCdeclEnglish(): string {
+        return "pointer to " + this.baseType.toCdeclEnglish();
+    }
+
     public getBaseType(): AbstractType {
         return this.baseType;
     }

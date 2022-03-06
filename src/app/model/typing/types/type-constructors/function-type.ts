@@ -76,6 +76,10 @@ export class FunctionType extends AbstractType {
         return `${this.returnType.toString()}(${this.parameterTypes.map(p => p.toString()).join(", ")})`;
     }
 
+    public toCdeclEnglish(): string {
+        return `function (${this.parameterTypes.map(pt => pt.toCdeclEnglish()).join(",")}) returning ${this.returnType.toCdeclEnglish()}`;
+    }
+
     public getParameters(): AbstractType[] {
         return this.parameterTypes;
     }
