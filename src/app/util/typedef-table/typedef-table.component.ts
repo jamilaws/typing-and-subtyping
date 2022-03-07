@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, DoCheck, Input, IterableDiffers, OnChanges, OnInit } from '@angular/core';
 import { TypeDefinitionTable } from 'src/app/model/typing/type-definition-table';
+import { AbstractType } from 'src/app/model/typing/types/abstract-type';
+import { CdeclService } from 'src/app/service/cdecl.service';
 
 @Component({
   selector: 'app-typedef-table',
@@ -9,8 +11,6 @@ import { TypeDefinitionTable } from 'src/app/model/typing/type-definition-table'
 export class TypedefTableComponent implements OnInit {
 
   @Input("typeDefs") typeDefs: TypeDefinitionTable = new Map();
-
-  constructor() { }
 
   ngOnInit(): void {
   }

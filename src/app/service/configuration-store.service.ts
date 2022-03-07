@@ -25,47 +25,40 @@ export interface Configuration {
 })
 export class ConfigurationStoreService {
 
-  public DEFAULT_CONFIG_NAME: string = "DEFAULT";
+  private defaultConfig: Configuration = {
+    // Types
+    baseTypes: [
+      new IntType(),
+      new FloatType(),
+      new CharType()
+    ],
+    constructedTypes: [
+      new ArrayType(new IntType()),
+      new PointerType(new CharType())
+    ],
+    aliasTypes: [
+
+    ],
+    // Typedefs
+    typeDefinitions: new Map(),
+    // Declarations
+    declarations: [
+
+    ]
+  }
 
   constructor() {
-    const config: Configuration = {
-      // Types
-      baseTypes: [
-        new IntType(),
-        new FloatType(),
-        new CharType()
-      ],
-      constructedTypes: [
-        new ArrayType(new IntType()),
-        new PointerType(new CharType())
-      ],
-      aliasTypes: [
-
-      ],
-      // Typedefs
-      typeDefinitions: new Map(),
-      // Declarations
-      declarations: [
-
-      ]
-    }
-    this.storeConfiguration(this.DEFAULT_CONFIG_NAME, config);
   }
 
-  public storeConfiguration(name: string, configuration: Configuration): void {
-    localStorage.setItem(name, JSON.stringify(configuration));
-  }
+  // public storeConfiguration(name: string, configuration: Configuration): void {
+  //   localStorage.setItem(name, JSON.stringify(configuration));
+  // }
 
-  public loadConfiguration(name: string): Configuration {
-    return <Configuration>JSON.parse(localStorage.getItem(name));
-  }
+  // public loadConfiguration(name: string): Configuration {
+  //   return <Configuration>JSON.parse(localStorage.getItem(name));
+  // }
 
   public getDefaultConfiguration(): Configuration {
-    const out = this.loadConfiguration(this.DEFAULT_CONFIG_NAME);
-    
-    console.log("out:");
-    console.log(out);
-
-    return out;
+    return this.defaultConfig;
   }
 }
