@@ -9,6 +9,7 @@ import { FloatType } from 'src/app/model/typing/types/base-types/float-type';
 import { IntType } from 'src/app/model/typing/types/base-types/int-type';
 import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-type';
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
+import { ConfigurationStoreService } from 'src/app/service/configuration-store.service';
 import { DeclarationAdapter } from 'src/app/view/type-construction-kit-demo-view/adapter/declaration-adapter';
 import { AbstractCreateTypeBubble } from './create-type-bubbles/abstract-create-type-bubble';
 import { CreateArrayTypeBubbleComponent } from './create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
@@ -39,11 +40,8 @@ export class TypeConstructionKitComponent implements OnInit {
   Type bubbles
   */
 
-  baseTypes: BaseType[] = [new IntType(), new CharType(), new FloatType()];
-  constructedTypes: AbstractType[] = [ // Predefined constructed types
-    new ArrayType(new IntType()),
-    new PointerType(new CharType()),
-  ];
+  baseTypes: BaseType[];
+  constructedTypes: AbstractType[];
   aliasTypes: AliasPlaceholderType[] = new Array();
 
   creationActive: boolean = false;
@@ -55,21 +53,33 @@ export class TypeConstructionKitComponent implements OnInit {
   public isAliasAvailableCallback = (alias: string) => {
     const found = this.typeDefinitions.get(alias);
     return !found
-  }; 
+  };
 
   /*
   Declarations
   */
   private declarations: Declaration[] = new Array();
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private configurationStoreService: ConfigurationStoreService) { }
 
   ngOnInit(): void {
-    this.types_extern.next(this.getAllTypes());
+    this.initConfiguration();
+  }
+
+  private initConfiguration() {
+    const config = this.configurationStoreService.getDefaultConfiguration();
+
+    this.baseTypes = config.baseTypes;
+    this.constructedTypes = config.constructedTypes;
+    this.aliasTypes = config.aliasTypes;
+    this.declarations = config.declarations;
+    this.typeDefinitions = config.typeDefinitions;
+
+    this.outputConfiguration();
   }
 
   public getAllTypes(): AbstractType[] {
-    return (<AbstractType[]> this.baseTypes).concat(this.constructedTypes).concat(this.aliasTypes);
+    return (<AbstractType[]>this.baseTypes).concat(this.constructedTypes).concat(this.aliasTypes);
   }
 
   public onClickStartCreation(creationBubble: AbstractCreateTypeBubble) {
@@ -78,14 +88,14 @@ export class TypeConstructionKitComponent implements OnInit {
   }
 
   onApplyCreation(type: AbstractType) {
-    if(type instanceof AliasPlaceholderType) {
+    if (type instanceof AliasPlaceholderType) {
       this.aliasTypes.unshift(type);
     } else {
       this.constructedTypes.push(type);
     }
     this.creationActive = false;
 
-    this.types_extern.next(this.getAllTypes());
+    this.outputTypes();
   }
 
   onCancelCreation(): void {
@@ -101,7 +111,7 @@ export class TypeConstructionKitComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(!result) return;
+      if (!result) return;
       this.addTypedef(result.alias, result.type)
     });
   }
@@ -115,7 +125,7 @@ export class TypeConstructionKitComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(!result) return;
+      if (!result) return;
       //alert(result.type.toString() + " " + result.name + ";");
       this.addDelaration(result.identifier, result.type);
     });
@@ -123,21 +133,37 @@ export class TypeConstructionKitComponent implements OnInit {
 
   private addTypedef(alias: string, type: AbstractType): void {
     this.typeDefinitions.set(alias, type);
-    if(this.aliasTypes.some(at => at.getAlias() === alias)) {
+    if (this.aliasTypes.some(at => at.getAlias() === alias)) {
       // AliasPlaceholderType has already been added without typdef
       alert("Info: Alias " + alias + " now covered by typedef.");
     } else {
       this.aliasTypes.push(new AliasPlaceholderType(alias));
     }
     this.typeDefs_extern.emit(this.typeDefinitions);
-    this.types_extern.next(this.getAllTypes());
-
+    this.outputTypes();
   }
 
   private addDelaration(identifier: string, type: AbstractType): void {
     const newDecl = new DeclarationAdapter(identifier, type);
     this.declarations.push(newDecl);
-    this.declarations_extern.next(this.declarations);
+    this.outputDeclarations();
+  }
+
+  private outputTypes(): void {
+    this.types_extern.emit(this.getAllTypes());
+  }
+
+  private outputTypedefs(): void {
+    this.typeDefs_extern.emit(this.typeDefinitions);
+  }
+  private outputDeclarations(): void {
+    this.declarations_extern.emit(this.declarations);
+  }
+
+  private outputConfiguration(): void {
+    this.outputTypes();
+    this.outputTypedefs();
+    this.outputDeclarations();
   }
 
 }

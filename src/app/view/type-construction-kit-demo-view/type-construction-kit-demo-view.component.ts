@@ -44,9 +44,7 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   constructor(private parsingService: ParsingService, private cdeclService: CdeclService) { }
 
-  ngOnInit(): void {
-    this.cdeclService.englishToC("pointer to char").then(str => alert(str));
-  }
+  ngOnInit(): void {}
 
   public onChangeExpression(): void {
 
