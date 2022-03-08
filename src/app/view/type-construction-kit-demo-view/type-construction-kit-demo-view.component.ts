@@ -12,6 +12,7 @@ import { TypeError } from "src/app/model/typing/type-error";
 import { StructuralSubtypingQueryResult } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query-result';
 import { SingleselectDropdownComponent } from 'src/app/util/dropdown/singleselect-dropdown/singleselect-dropdown.component';
 import { CdeclService } from 'src/app/service/cdecl.service';
+import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
 
 
 @Component({
@@ -29,6 +30,9 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   public availableTypes: AbstractType[] = new Array();
   public typeDefs: TypeDefinitionTable = new Map();
   public declarations: Declaration[] = new Array();
+
+  private _typedefsCode: string = "";
+  private _declarationsCode: string = "";
 
   isAstValid: boolean = false;
   _graphOptions: EChartsOption;
@@ -58,17 +62,19 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
       return;
     }
     
-    // Parse code and generate AST
+    let ast: AbstractSyntaxTree;
 
-    const ast = this.parsingService.parseExpression(code);
+    try {
 
-    // Map AST to displayable graph
-
-    try{
+      // Parse code and generate AST
+      ast = this.parsingService.parseExpression(code);
+      // Map AST to displayable graph
       this._graphOptions = generateAstChart(ast);
+
       this.isAstValid = true;
     } catch(e) {
       this.isAstValid = false;
+      return;
     }
 
     // Perform type check on AST (with adapter symbol table) and get typing tree
@@ -104,17 +110,31 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   }
   public onTypedefsChange(typeDefs: TypeDefinitionTable) {
     this.typeDefs = typeDefs;
+
+    const arr = Array.from(typeDefs.entries());
+
+    Promise.all(arr.map(tup => this.cdeclService.typedefToString(tup[0], tup[1]))).then(ts => {
+      this._typedefsCode = ts.join(";\n");
+      if(this._typedefsCode.length > 0) this._typedefsCode += ";";      
+    });
+
     this.updateTrees();
   }
 
   public onDeclarationsChange(declarations: Declaration[]) {
     this.declarations = declarations;
+
+    Promise.all(declarations.map(d => this.cdeclService.declarationToString(d.getDeclarationIdentifier(), d.getDeclarationType()))).then(ds => {
+      this._declarationsCode = ds.join(";\n");
+      if(this._declarationsCode.length > 0) this._declarationsCode += ";";      
+    });
+    
     this.updateTrees();
   }
 
   private updateTrees(): void {
     if(this.inputExpression) this.onChangeExpression();
-    //if(this.typeOneDropdown && this.typeTwoDropdown) this.onClickCheckSubtyping(); //TODO: Uncomment!
+    if(this.typeOneDropdown && this.typeTwoDropdown) this.onClickCheckSubtyping();
   }
 
   /*
@@ -124,6 +144,16 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   public typeToName(type: AbstractType){
 
     return type.toString();
+  }
+
+  public getCode(): string {
+    const separation = this._typedefsCode.length > 0 && this._declarationsCode.length > 0 ? "\n\n" : "";
+    const out = this._typedefsCode + separation + this._declarationsCode;
+    if(out.length > separation.length) {
+      return out;
+    } else {
+      return "/*\nAdd typedefs and declarations\nby clicking on the types above\n*/";
+    }
   }
   
 }

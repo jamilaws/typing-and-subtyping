@@ -66,8 +66,8 @@ export class ParsingService {
   private parseImpl(code: string): AstNode[] {
     const parsedRaw: any[] = parse(code);
 
-    console.log("Parsed raw:");
-    console.log(parsedRaw);
+    //console.log("Parsed raw:");
+    //console.log(parsedRaw);
 
     const roots = parsedRaw.map(x => this.rawToAstNode(x));
 

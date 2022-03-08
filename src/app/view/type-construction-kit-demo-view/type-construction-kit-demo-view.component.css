@@ -3,7 +3,7 @@
 }
 
 .left-panel-wrapper {
-    border-right: solid 1px darkgrey;
+    border-right: solid 1px lightgrey;
     height: 86vh;
 }
 
@@ -12,7 +12,8 @@
 
 .menu-wrapper{
     overflow: hidden;
-    margin: 5px
+    margin: 10px;
+    margin-top: 20px
 }
 
 .typedef-wrapper {}
@@ -28,7 +29,7 @@
 }
 
 .expression-input {
-    width: 80%;
+    width: 100%;
 }
 
 .ast-wrapper {
@@ -49,4 +50,13 @@
 .check-button {
     background-color: #2469B3;
     color: white;
+}
+
+.code-editor-wrapper {
+    height: 120px;
+    margin-left: -22px;
+}
+
+.tabs-wrapper {
+    border-top: solid 1px lightgrey;
 }

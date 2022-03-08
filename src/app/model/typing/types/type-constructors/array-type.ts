@@ -9,10 +9,12 @@ import { CdeclHalves } from "../common/cdecl-halves";
 export class ArrayType extends AbstractType {
 
     private baseType: AbstractType;
+    private dimension: number;
 
-    constructor(baseType: AbstractType){
+    constructor(baseType: AbstractType, dimension: number = null){
         super();
         this.baseType = baseType;
+        this.dimension = dimension;
     }
 
     public toString(): string {
@@ -20,7 +22,8 @@ export class ArrayType extends AbstractType {
     }
 
     public toCdeclEnglish(): string {
-        return "array of " + this.baseType.toCdeclEnglish();
+        const dimTxt = this.dimension === null ? "" : this.dimension + " ";
+        return "array " + dimTxt + "of " + this.baseType.toCdeclEnglish();
     }
 
     public getBaseType(): AbstractType {

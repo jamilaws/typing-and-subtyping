@@ -6,62 +6,71 @@
     <div class="row">
         <div class="col-sm-3">
             <div class="left-panel-wrapper">
-                <mat-tab-group mat-align-tabs="center" animationDuration="0ms">
-                    <mat-tab #typingTab label="Typing">
-                        <div class="menu-wrapper typing-menu-wrapper">
-                            <div class="type-env-data-wrapper">
-                                <div class="typedef-wrapper">
-                                    <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
+                <div class="code-editor-wrapper">
+                    <app-code-editor style="height: 100%" [code]="getCode()" [readOnly]="true"></app-code-editor>
+                </div>
+                <div class="tabs-wrapper">
+                    <mat-tab-group mat-align-tabs="center" animationDuration="0ms">
+                        <mat-tab #typingTab label="Typing">
+                            <div class="menu-wrapper typing-menu-wrapper">
+                                <!-- <div class="type-env-data-wrapper">
+                                    <div class="typedef-wrapper">
+                                        <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
+                                    </div>
+                                    <div class="declarations-wrapper">
+                                        <app-declarations-table [declarations]="declarationStrings"></app-declarations-table>
+                                    </div>
+                                </div> -->
+                                <div class="expression-input-wrapper">
+                                    <input #inputExpression class="expression-input" type="text"
+                                        placeholder="Enter expression" (keyup)="onChangeExpression()">
+                                    <!-- <button class="check-button" (click)="onChangeExpression()">Check</button> -->
                                 </div>
-                                <div class="declarations-wrapper">
-                                    <app-declarations-table [declarations]="declarations"></app-declarations-table>
+                                <div class="ast-wrapper">
+                                    <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
+                                    <ng-template #astValidBlock>
+                                        <div echarts [options]="_graphOptions"></div>
+                                    </ng-template>
+                                    <ng-template #astInvalidBlock>
+                                        <div *ngIf="inputExpression.value.length > 0; then expressionInvalid else expressionEmpty"></div>
+                                        <ng-template #expressionInvalid>
+                                            <span>Invalid expression</span>
+                                        </ng-template>
+                                        <ng-template #expressionEmpty>
+                                            <!-- Intentionally left blank -->
+                                        </ng-template>
+                                    </ng-template>
                                 </div>
                             </div>
-                            <div class="expression-input-wrapper">
-                                <input class="expression-input" #inputExpression type="text"
-                                    placeholder="Enter expression" (change)="onChangeExpression()">
-                                <button class="check-button" (click)="onChangeExpression()">Check</button>
-
-                            </div>
-                            <div class="ast-wrapper">
-                                <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
-                                <ng-template #astValidBlock>
-                                    <div echarts [options]="_graphOptions"></div>
-                                </ng-template>
-                                <ng-template #astInvalidBlock>
-                                    <!-- Intentionally left blank -->
-                                </ng-template>
-                            </div>
-                        </div>
-                    </mat-tab>
-                    <mat-tab #subtypingTab label="Structural Subtyping">
-                        <div class="menu-wrapper subtyping-menu-wrapper">
-                            <div class="type-env-data-wrapper">
-                                <div class="typedef-wrapper">
-                                    <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
+                        </mat-tab>
+                        <mat-tab #subtypingTab label="Structural Subtyping">
+                            <div class="menu-wrapper subtyping-menu-wrapper">
+                                <!-- <div class="type-env-data-wrapper">
+                                    <div class="typedef-wrapper">
+                                        <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
+                                    </div>
+                                </div> -->
+                                <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes"
+                                    [optionToName]="typeToName" (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
+                                <br>
+                                <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown" [options]="availableTypes"
+                                    [optionToName]="typeToName" (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
+                                <br>
+                                <div *ngIf="structuralSubtypingQueryResult">
+                                    <div
+                                        *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse">
+                                    </div>
+                                    <ng-template #subtypingResultMsgTrue>
+                                        <span>True</span>
+                                    </ng-template>
+                                    <ng-template #subtypingResultMsgFalse>
+                                        <span>False</span>
+                                    </ng-template>
                                 </div>
                             </div>
-                            <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes"
-                                [optionToName]="typeToName"></app-singleselect-dropdown>
-                            <br>
-                            <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown" [options]="availableTypes"
-                                [optionToName]="typeToName"></app-singleselect-dropdown>
-                            <br>
-                            <button class="check-button" (click)="onClickCheckSubtyping()">Check</button>
-                            <br>
-
-                            <div *ngIf="structuralSubtypingQueryResult">
-                                <div *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse"></div>
-                                <ng-template #subtypingResultMsgTrue>
-                                    <span>True</span>
-                                </ng-template>
-                                <ng-template #subtypingResultMsgFalse>
-                                    <span>False</span>
-                                </ng-template>
-                            </div>
-                        </div>
-                    </mat-tab>
-                </mat-tab-group>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
             </div>
         </div>
         <div class="col-sm-9">

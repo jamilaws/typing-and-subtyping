@@ -15,3 +15,13 @@
 .title {
     padding-left: 20px;
 }
+
+.source-code-url-wrapper{
+    width: 100%;
+    text-align: right;
+}
+
+.source-code-url{
+    color: white;
+    font-size: 14px;
+}

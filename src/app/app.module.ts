@@ -50,7 +50,9 @@ const routes: Routes = [
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'app-name/assets', // configure base path cotaining monaco-editor directory after build default: './assets'
-  defaultOptions: { scrollBeyondLastLine: false }, // pass default options to be used
+  defaultOptions: { 
+    scrollBeyondLastLine: false,
+   }, // pass default options to be used
   onMonacoLoad: () => { console.log((<any>window).monaco); } // here monaco object will be available as window.monaco use this function to extend monaco editor functionalities.
 };
 

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DiffEditorModel } from 'ngx-monaco-editor';
 
 export interface Position {
   lineNumber: number;
@@ -14,9 +13,18 @@ export interface Position {
 export class CodeEditorComponent implements OnInit {
 
   @Input('code') _code: string = "";
-  @Input('editorOptions') editorOptions = {theme: 'vs-light', language: 'c'};
+  @Input('readOnly') readOnly: boolean = false;
   @Output('onCodeChange') onCodeChange = new EventEmitter<string>();
   @Output('onPositionChange') onPositionChange = new EventEmitter<Position>();
+
+  public editorOptions = {
+    theme: 'vs-light',
+    language: 'c',
+    readOnly: true,
+    minimap: {
+      enabled: false
+    }
+  };
 
   private _editor: any;
   

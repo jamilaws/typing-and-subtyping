@@ -23,9 +23,9 @@ C. Development Progress
     * Refactorings (Abstractions etc.)
         - Better display size allocation for TypingTree visualization (Add node width depending on number of children; add screenshots)
 D. Outlook
+	* Proxy Pattern for cdecl calls
 	* Typing Tree History
 	* Configuration store (localstorage, serialize/deserialize)
-	* 
 
 _________________________________________________________
 Not yet positioned:
