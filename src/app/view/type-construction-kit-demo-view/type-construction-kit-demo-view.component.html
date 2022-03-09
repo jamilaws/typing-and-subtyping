@@ -10,7 +10,7 @@
                     <app-code-editor style="height: 100%" [code]="getCode()" [readOnly]="true"></app-code-editor>
                 </div>
                 <div class="tabs-wrapper">
-                    <mat-tab-group mat-align-tabs="center" animationDuration="0ms">
+                    <mat-tab-group #matTabGroup mat-align-tabs="center" animationDuration="0ms">
                         <mat-tab #typingTab label="Typing">
                             <div class="menu-wrapper typing-menu-wrapper">
                                 <!-- <div class="type-env-data-wrapper">

@@ -58,9 +58,9 @@ export class SingleselectDropdownComponent implements OnInit {
     return this.value;
   }
 
-  public setSelectedOption(id: string): void {
-    let option = this.options.find(o => o._id === id);
-    if(!option) throw new Error("setSelectedOption called with invalid id");
+  public setSelectedOption(pred: (option: any) => boolean): void {
+    let option = this.options.find((o: any) => pred(o));
+    if(!option) throw new Error("option not found");
     this.selectedIndex = this.options.indexOf(option);
     this.value = option;
   }

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { StructuralSubtypingQuery } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query';
 import { TypeErrorPlaceholderType } from 'src/app/model/typing/types/placeholder-types/type-error-placeholder-type';
 import { TypingTree } from 'src/app/model/typing/typing-tree/typing-tree';
+import { ComponentInterconnectionService } from 'src/app/service/component-interconnection.service';
 
 @Component({
   selector: 'app-typing-tree',
@@ -14,7 +15,7 @@ export class TypingTreeComponent implements OnInit {
 
   public _color: string;
 
-  constructor() { }
+  constructor(private componentInterconnectionService: ComponentInterconnectionService) { }
 
   ngOnInit(): void {
     this.initColor();
@@ -36,7 +37,7 @@ export class TypingTreeComponent implements OnInit {
   }
 
   public _onClickSubtypingQuery(query: StructuralSubtypingQuery): void {
-    alert(query.toString());
+    this.componentInterconnectionService.onClickSubtypingQuery(query);
   }
 
 }

@@ -13,6 +13,8 @@ import { StructuralSubtypingQueryResult } from 'src/app/model/typing/types/commo
 import { SingleselectDropdownComponent } from 'src/app/util/dropdown/singleselect-dropdown/singleselect-dropdown.component';
 import { CdeclService } from 'src/app/service/cdecl.service';
 import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
+import { ComponentInterconnectionService } from 'src/app/service/component-interconnection.service';
+import { MatTabGroup } from '@angular/material/tabs';
 
 
 @Component({
@@ -21,6 +23,10 @@ import { AbstractSyntaxTree } from 'src/app/model/ast/abstract-syntax-tree';
   styleUrls: ['./type-construction-kit-demo-view.component.css']
 })
 export class TypeConstructionKitDemoViewComponent implements OnInit {
+
+  private MAT_TAB_SUBTYPING_INDEX: number = 1;
+
+  @ViewChild("matTabGroup") matTabGroup: MatTabGroup;
 
   @ViewChild("inputExpression") inputExpression: ElementRef;
   
@@ -46,9 +52,19 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
   public structuralSubtypingQueryResult: StructuralSubtypingQueryResult;
 
-  constructor(private parsingService: ParsingService, private cdeclService: CdeclService) { }
+  constructor(private parsingService: ParsingService, private componentInterconnectionService: ComponentInterconnectionService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.componentInterconnectionService.clickedStructuralSubtypingQuery.subscribe(query => {
+      // Update dropdowns
+      this.typeOneDropdown.setSelectedOption((o) => o.toString() === query.a.toString());
+      this.typeTwoDropdown.setSelectedOption((o) => o.toString() === query.b.toString());
+      // Navigate to Tab "Structural Subtyping"
+      this.matTabGroup.selectedIndex = this.MAT_TAB_SUBTYPING_INDEX;
+      // Update
+      this.onClickCheckSubtyping();
+    });
+  }
 
   public onChangeExpression(): void {
 
