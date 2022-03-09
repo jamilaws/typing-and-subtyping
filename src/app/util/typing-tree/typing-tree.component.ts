@@ -14,12 +14,12 @@ export class TypingTreeComponent implements OnInit {
   @Input("typingTree") typingTree: TypingTree;
 
   public _color: string;
+  public _subtypingInfoTooltip: string = "Click to view structural subtyping queries"
 
   constructor(private componentInterconnectionService: ComponentInterconnectionService) { }
 
   ngOnInit(): void {
     this.initColor();
-    this.initSubtypingLink();
   }
 
   private initColor(): void {
@@ -27,12 +27,6 @@ export class TypingTreeComponent implements OnInit {
       this._color = "red";
     } else {
       this._color = "black";
-    }
-  }
-
-  private initSubtypingLink(): void {
-    if(this.typingTree.structuralSubtypingQuery){
-
     }
   }
 

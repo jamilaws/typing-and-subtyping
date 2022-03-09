@@ -76,7 +76,7 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
 
   getInputPrefix(): string {
     const semicolon = this.members.length > 0 ? ";" : "";
-    return "struct { " + this.members.map(m => m.getType().toString() + " " + m.getName()).join("; ") + semicolon;
+    return "struct { " + this.members.map(m => m.getType().toCdeclC(m.getName())).join("; ") + semicolon;
   }
 
   getInputSuffix(): string {

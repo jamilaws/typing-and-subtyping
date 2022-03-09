@@ -4,11 +4,12 @@ import { Edge, Graph } from "../../common/graph/_module";
 import { Identifier } from "./identifier";
 
 import { TypeEnvironment } from "../../typing/type-environment";
-import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { FunctionType } from "../../typing/types/type-constructors/function-type";
 import { TypeError } from "../../typing/type-error";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
+import { StructuralSubtypingQuery } from "../../typing/types/common/structural-subtyping/structural-subtyping-query";
 
 export class CallExpression extends AstNode {
 
@@ -16,6 +17,9 @@ export class CallExpression extends AstNode {
     // TODO: Base does not necessarily be of type Identifier! Could be some more complex expression!
     public base: Identifier;
     public args: AstNode[]; // TODO: Change to concrete subclass, Definition?
+
+    // Buffer written in 'performTypeCheck' / read in 'getTypingTree'
+    private subtypingQueryBuffer: StructuralSubtypingQuery[] = null;
 
     constructor(codeLine: number, base: Identifier, args: AstNode[]) {
         super(codeLine);
@@ -47,11 +51,8 @@ export class CallExpression extends AstNode {
         return newGraph;
     }
 
-    /**
-     * TODO: SUBTYPING
-     */
-    public performTypeCheck(t: TypeEnvironment): AbstractType_ {        
-        const functionType: AbstractType_ = this.base.performTypeCheck(t);
+    public performTypeCheck(t: TypeEnvironment): AbstractType {        
+        const functionType: AbstractType = this.base.performTypeCheck(t);
 
         if(functionType instanceof FunctionType){
 
@@ -60,9 +61,17 @@ export class CallExpression extends AstNode {
 
             const returnType = functionType.getReturnType();
 
-            // TODO: Check subtyping!
-            if(declarationParamTypes.length !== callParamTypes.length) throw new TypeError(`Expected ${declarationParamTypes.length} parameters, but got ${callParamTypes.length}`);
-            if(!declarationParamTypes.every((value, index) => value.equals(callParamTypes[index]))){
+            if(declarationParamTypes.length !== callParamTypes.length){
+                // TODO!
+                const msg = `Expected ${declarationParamTypes.length} parameters, but got ${callParamTypes.length}`;
+                return this.failTypeCheck(msg, returnType);
+            }
+
+            // Check if call params are subtypes of the declaration param types (per index)
+            const subtypingChecks = declarationParamTypes.map((pt, index) => callParamTypes[index].isStrutcturalSubtypeOf(pt, t.getTypeDefinitions()));
+            this.subtypingQueryBuffer = subtypingChecks.map(check => check.getQuery());
+
+            if(!subtypingChecks.every(check => check.value)){
                 const msg = `Function parameter missmatch. Cannot apply [${callParamTypes}] to [${declarationParamTypes}]`;
                 return this.failTypeCheck(msg, returnType);
             }
@@ -74,12 +83,16 @@ export class CallExpression extends AstNode {
         }
     }
 
-    public getType(): AbstractType_ {
+    public getType(): AbstractType {
         return this.type;
     }
 
     public getTypingTree(): TypingTree {
         const children = [this.base.getTypingTree()].concat(this.args.map(arg => arg.getTypingTree()));
-        return new TypingTree(TypingTreeNodeLabel.APP, this, children);
+
+        let subtypingQueryBuffer = this.subtypingQueryBuffer; // Could be null
+        this.subtypingQueryBuffer = null; // Consume buffer
+
+        return new TypingTree(TypingTreeNodeLabel.APP, this, children, subtypingQueryBuffer);
     }
 }

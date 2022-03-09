@@ -98,13 +98,7 @@ export abstract class AbstractType {
         const check: boolean = this.performStructuralSubtypingCheck(other, context);
         const graph: StructuralSubtypingQueryGraph = this.buildQueryGraph();
 
-
-        const out: StructuralSubtypingQueryResult = {
-            value: check,
-            queryGraph: graph
-        }
-
-        return out;
+        return new StructuralSubtypingQueryResult(check, graph);
     }
 
     /**

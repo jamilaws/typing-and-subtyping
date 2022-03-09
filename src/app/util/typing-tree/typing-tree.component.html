@@ -16,16 +16,16 @@
             <div class="divider" [ngStyle]="{'border-top': 'solid 1.5px ' + _color}"></div>
             <div class="text" [ngStyle]="{'color': _color}">
                 {{typingTree.text}}
-                <div *ngIf="typingTree.structuralSubtypingQuery; then showSubtypingLink"></div>
+                <div *ngIf="typingTree.structuralSubtypingQueries; then showSubtypingLink"></div>
             </div>
         </div>
     </div>
 </ng-template>
 <ng-template #showSubtypingLink>
-    <button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">{{"<="}}</button>
+    <mat-icon #menuTrigger="matMenuTrigger" class="subtypingInfoButton" [matMenuTriggerFor]="menu" [matTooltip]="_subtypingInfoTooltip">info</mat-icon>
     <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="_onClickSubtypingQuery(typingTree.structuralSubtypingQuery)">
-            <span>{{typingTree.structuralSubtypingQuery.toString()}}</span>
+        <button *ngFor="let query of typingTree.structuralSubtypingQueries" mat-menu-item (click)="_onClickSubtypingQuery(query)">
+            <span>{{query.toString()}}</span>
         </button>
     </mat-menu>
 </ng-template>

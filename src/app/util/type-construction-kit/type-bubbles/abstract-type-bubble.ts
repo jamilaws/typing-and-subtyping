@@ -43,8 +43,4 @@ export abstract class AbstractTypeBubble {
         if (!(this.state === TypeBubbleState.ACTION)) throw new Error("Unexpectedly called onClickAddDeclaration while being in state " + this.state);
         this.onClickCreateDeclaration.emit(this.getType());
     }
-
-    public onClickTestCdecl(): void {
-        alert(this.type.toCdeclC());
-    }
 }

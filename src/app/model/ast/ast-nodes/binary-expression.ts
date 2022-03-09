@@ -26,7 +26,7 @@ export class BinaryExpression extends AstNode {
     public right: AstNode;
 
     // Buffer written in 'performTypeCheck' / read in 'getTypingTree'
-    private subtypingQueryBuffer: StructuralSubtypingQuery = null;
+    private subtypingQueryBuffer: StructuralSubtypingQuery[] = null;
 
     constructor(codeLine: number, operator: BinaryOperator, left: AstNode, right: AstNode) {
         super(codeLine);
@@ -74,15 +74,27 @@ export class BinaryExpression extends AstNode {
 
         if (this.operator === BinaryOperator.EQ) {
             const subtypingResult = t_2.isStrutcturalSubtypeOf(t_1, typedefs);
-            this.subtypingQueryBuffer = subtypingResult.queryGraph.getGraph().getRoot().getData().query; // TODO: Write method for this!
-            if (!subtypingResult.value){
+
+            // TODO: Write method for this!
+            this.subtypingQueryBuffer = [subtypingResult.getQuery()];
+
+            if (!subtypingResult.value) {
                 const msg = `Cannot assign value of type ${t_2.toString()} to ${t_1.toString()}`;
                 return this.failTypeCheck(msg, t_1);
             } else {
                 return this.type = t_1;
             }
         } else {
-            if (!t_1.isStrutcturalSubtypeOf(t_2, typedefs).value && !t_2.isStrutcturalSubtypeOf(t_1, typedefs).value){
+            const subtypingResult1 = t_1.isStrutcturalSubtypeOf(t_2, typedefs);
+            const subtypingResult2 = t_2.isStrutcturalSubtypeOf(t_1, typedefs);
+
+            // TODO: Write method for this!
+            this.subtypingQueryBuffer = [
+                subtypingResult1.getQuery(),
+                subtypingResult2.getQuery(),
+            ];
+
+            if (!subtypingResult1.value && !subtypingResult2.value) {
                 const msg = `Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`;
                 return this.failTypeCheck(msg, t_1);
             } else {
@@ -99,11 +111,8 @@ export class BinaryExpression extends AstNode {
         const left = this.left.getTypingTree();
         const right = this.right.getTypingTree();
 
-        let subtypingQueryBuffer = null;
-        if(this.subtypingQueryBuffer){
-            subtypingQueryBuffer = this.subtypingQueryBuffer;
-            this.subtypingQueryBuffer = null; // Consume buffer
-        }
+        let subtypingQueryBuffer = this.subtypingQueryBuffer; // Could be null
+        this.subtypingQueryBuffer = null; // Consume buffer
 
         return new TypingTree(TypingTreeNodeLabel.OP, this, [left, right], subtypingQueryBuffer);
     }

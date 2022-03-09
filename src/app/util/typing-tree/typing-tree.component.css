@@ -6,7 +6,7 @@
 .labelWrapper {
     margin-top: auto;
     transform: translate(0px, -12px);
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .bodyWrapper {
@@ -43,5 +43,11 @@
 
 .text {
     text-align: center;
-    font-size: 12px;
+    font-size: 14px;
+}
+
+.subtypingInfoButton {
+    color: #2469B3;
+    cursor: pointer;
+    font-size: 14px;
 }

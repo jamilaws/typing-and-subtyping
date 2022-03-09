@@ -9,8 +9,17 @@ export enum StructuralSubtypingQueryResultMessage {
     TYPE_MISSMATCH = "TYPE_MISSMATCH",
 };
 
-export interface StructuralSubtypingQueryResult {
+export class StructuralSubtypingQueryResult {
     value: boolean;
     //message?: StructuralSubtypingQueryResultMessage;
     queryGraph: StructuralSubtypingQueryGraph;
+
+    constructor(value: boolean, queryGraph: StructuralSubtypingQueryGraph) {
+        this.value = value;
+        this.queryGraph = queryGraph;
+    }
+
+    public getQuery(): StructuralSubtypingQuery {
+        return this.queryGraph.getGraph().getRoot().getData().query;
+    }
 }
