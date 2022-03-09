@@ -113,11 +113,13 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
     const arr = Array.from(typeDefs.entries());
 
-    // TODO: DO NOT USE cdeclService here!
-    Promise.all(arr.map(tup => this.cdeclService.typedefToString(tup[0], tup[1]))).then(ts => {
-      this._typedefsCode = ts.join(";\n");
-      if(this._typedefsCode.length > 0) this._typedefsCode += ";";      
-    });
+    // TODO: Refactor this to declaration class implementing this logic!
+    this._typedefsCode = arr.map(tup => {
+      const identifier = tup[0];
+      const type = tup[1];
+      return "typedef " + type.toCdeclC(identifier);
+    }).join(";\n");
+    if(this._typedefsCode.length > 0) this._typedefsCode += ";";
 
     this.updateTrees();
   }
@@ -125,11 +127,13 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   public onDeclarationsChange(declarations: Declaration[]) {
     this.declarations = declarations;
 
-    // TODO: DO NOT USE cdeclService here!
-    Promise.all(declarations.map(d => this.cdeclService.declarationToString(d.getDeclarationIdentifier(), d.getDeclarationType()))).then(ds => {
-      this._declarationsCode = ds.join(";\n");
-      if(this._declarationsCode.length > 0) this._declarationsCode += ";";      
-    });
+    // TODO: Refactor this to declaration class implementing this logic!
+    this._declarationsCode = declarations.map(d => {
+      const identifier = d.getDeclarationIdentifier();
+      const type = d.getDeclarationType();
+      return type.toCdeclC(identifier);
+    }).join(";\n");
+    if(this._declarationsCode.length > 0) this._declarationsCode += ";";
     
     this.updateTrees();
   }

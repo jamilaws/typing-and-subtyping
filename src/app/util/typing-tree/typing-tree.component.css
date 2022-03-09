@@ -6,7 +6,7 @@
 .labelWrapper {
     margin-top: auto;
     transform: translate(0px, -12px);
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .bodyWrapper {
@@ -39,7 +39,6 @@
 
 .divider {
     width: 100%;
-    border-top: solid 1px black;
 }
 
 .text {

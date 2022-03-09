@@ -48,6 +48,7 @@ export class StructAccessExpression extends AstNode {
         .merge(memberGraph);
     }
 
+    // TODO: Wildcard/Joker/?
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const structType = this.struct.performTypeCheck(t);
         if(structType instanceof StructType) {
@@ -68,7 +69,7 @@ export class StructAccessExpression extends AstNode {
         const structTree = this.struct.getTypingTree();
         //const memberTree = this.member.getTypingTree();
 
-        return new TypingTree(TypingTreeNodeLabel.STRUCT, this.getCode(), this.getType().toString(), [structTree]);
+        return new TypingTree(TypingTreeNodeLabel.STRUCT, this, [structTree]);
     }
 
 }

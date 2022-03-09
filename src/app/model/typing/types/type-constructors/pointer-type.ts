@@ -29,6 +29,8 @@ export class PointerType extends AbstractType {
 
     protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
         const targetOut = this.baseType.buildQueryGraph();
+        if(!targetOut) return graph; 
+
         const newEdge = new Edge(graph.getGraph().getRoot(), targetOut.getGraph().getRoot(), "");
 
         graph.merge(targetOut);

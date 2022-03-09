@@ -4,6 +4,7 @@ import { AbstractType } from "../typing/types/abstract-type";
 import { NotVisitedPlaceholderType } from "../typing/types/placeholder-types/not-visited-placeholder-type";
 import { TypingTree } from "../typing/typing-tree/typing-tree";
 import { Graph, Node } from 'src/app/model/common/graph/_module';
+import { TypeErrorPlaceholderType } from "../typing/types/placeholder-types/type-error-placeholder-type";
 
 
 export enum NodeType {
@@ -33,7 +34,7 @@ export enum NodeType {
 
 export abstract class AstNode implements TypeCheckable {
 
-    protected codeLine: number; //{ file: string, line: number };
+    protected codeLine: number;
 
     // Will be initialized as soon as requested
     private graphNode: Node<AstNode> = null;
@@ -66,6 +67,23 @@ export abstract class AstNode implements TypeCheckable {
     public getGraphNode(): Node<AstNode> {
         if(!this.graphNode) this.graphNode = new Node(this);
         return this.graphNode;
+    }
+
+    /**
+     * Sets this.type to a new TypeErrorPlaceholderType object holding the passed errorMessage and some additional information about the recoveryType. 
+     * @param errorMessage explanation to the user about the reason for the failure. 
+     * @param recoveryType Type that actually should have been computed during performTypeCheck() call without the occured failure.
+     * @returns recoveryType
+     */
+    protected failTypeCheck(errorMessage: string, recoveryType: AbstractType): AbstractType {
+        const messageSuffix = " [Recovery Type: " + recoveryType.toString() + "]"
+
+        const error = new TypeError(errorMessage + messageSuffix);
+        const errorType = new TypeErrorPlaceholderType(error);
+
+        this.type = errorType;
+
+        return recoveryType;
     }
 
    

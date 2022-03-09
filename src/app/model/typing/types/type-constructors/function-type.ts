@@ -51,10 +51,13 @@ export class FunctionType extends AbstractType {
         
         // Note: These are the parameters of the other function type cached in the query buffer
         const parameterOuts = (<FunctionType>bufferFrame.currentQuery.b).getParameters().map(p => p.buildQueryGraph());
+        if(parameterOuts.some(p => !p)) return graph; // Cancel if any param type did not return a valid query graph
         
         const parameterEdges = parameterOuts.map((sg, index) => new Edge(root, sg.getGraph().getRoot(), "param" + index));
 
         const returnOut = this.returnType.buildQueryGraph();
+        if(!returnOut) return graph; // Cancel if return type did not return a valid query graph
+
         const returnEdge = new Edge(root, returnOut.getGraph().getRoot(), "return");
 
         parameterOuts.forEach(po => graph.merge(po));

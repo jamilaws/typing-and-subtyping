@@ -11,7 +11,10 @@ import { Definition as Definition_ } from "../../typing/types/common/definition"
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 
-// TODO: Why does this implement Declaration?!
+
+/**
+ * TODO: CHECK IF THIS CLASS IS REALLY NECESSARY 
+ * */
 export class StructDefinition extends AstNode {
 
     name: string;
@@ -42,7 +45,6 @@ export class StructDefinition extends AstNode {
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
-        //t.declare(this);
         const members = this.member.map(m => new Definition_(m.name, m.defType.performTypeCheck(t)));
         this.type = new StructType(this.name, members);
 
@@ -55,7 +57,7 @@ export class StructDefinition extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        throw new Error("Method not implemented.");
     }
 
     /*

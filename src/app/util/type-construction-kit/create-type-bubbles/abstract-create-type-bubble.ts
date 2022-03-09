@@ -18,7 +18,7 @@ export abstract class AbstractCreateTypeBubble {
     @Output('onApplyCreation') onApplyCreation_extern = new EventEmitter<AbstractType>();
     @Output('onCancelCreation') onCancelCreation_extern = new EventEmitter<void>();
 
-    protected static SELECTION_EMPTY_PLACEHOLDER: string = "_";
+    protected static SELECTION_EMPTY_PLACEHOLDER: string = "?";
 
     private active: boolean = false;
 

@@ -35,7 +35,7 @@ export class Identifier extends AstNode {
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const type = t.getTypeOfIdentifier(this.value);
-        if (!type) throw new Error("Found undeclared identifier: " + this.value);
+        if (!type) throw new Error("Found undeclared identifier: " + this.value); // TODO: Wildcard/Joker/?
         
         return this.type = type;
     }
@@ -45,7 +45,7 @@ export class Identifier extends AstNode {
     }
 
     public getTypingTree(): TypingTree {      
-        return new TypingTree(TypingTreeNodeLabel.VAR, this.getCode(), this.getType().toString());
+        return new TypingTree(TypingTreeNodeLabel.VAR, this);
     }
 
 }

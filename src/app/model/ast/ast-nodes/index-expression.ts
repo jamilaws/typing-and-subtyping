@@ -47,14 +47,18 @@ export class IndexExpression extends AstNode {
         let valueType = this.value.performTypeCheck(t);
         let indexType = this.index.performTypeCheck(t);
 
+        const type = (<ArrayType | PointerType> valueType).getBaseType();
+
         if(!(valueType instanceof PointerType) && !(valueType instanceof ArrayType)) {
-            throw new TypeError("Index syntax can only be applied on either pointer or array type.");
+            return this.failTypeCheck("Index syntax can only be applied on either pointer or array type.", type);
+            //throw new TypeError("Index syntax can only be applied on either pointer or array type.");
         }
         if(!(indexType instanceof IntType)) {
-            throw new TypeError("Array accessor index must be of type int");
+            return this.failTypeCheck("Array accessor index must be of type int.", type);
+            //throw new TypeError("Array accessor index must be of type int");
         }
 
-        return this.type = (<ArrayType | PointerType> valueType).getBaseType();
+        return this.type = type;
     }
 
     public getType(): AbstractType_ {
@@ -66,7 +70,7 @@ export class IndexExpression extends AstNode {
         let arrayTree = this.value.getTypingTree();
         let indexTree = this.index.getTypingTree();
 
-        return new TypingTree(TypingTreeNodeLabel.ARRAY, this.getCode(), this.getType().toString(), [arrayTree, indexTree]);
+        return new TypingTree(TypingTreeNodeLabel.ARRAY, this, [arrayTree, indexTree]);
     }
 
     // Move abstract method into AstNode?

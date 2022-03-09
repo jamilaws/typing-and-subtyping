@@ -8,7 +8,6 @@ import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
 import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
 
-// char*, int[]
 export class TypeDefStatement extends AstNode {
 
     public target: AbstractTypeExpression;
@@ -48,6 +47,6 @@ export class TypeDefStatement extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        return new TypingTree(TypingTreeNodeLabel.APP, this);
     }
 }

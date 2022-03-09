@@ -46,6 +46,6 @@ export class PointerTypeExpression extends AbstractTypeExpression {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        throw new Error("Method not implemented.");
     }
 }

@@ -6,6 +6,7 @@ import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstra
 import { TypeError } from "../../typing/type-error";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
+import { StructuralSubtypingQuery } from "../../typing/types/common/structural-subtyping/structural-subtyping-query";
 
 export enum BinaryOperator {
     PLUS = '+',
@@ -23,6 +24,9 @@ export class BinaryExpression extends AstNode {
     public operator: BinaryOperator;
     public left: AstNode;
     public right: AstNode;
+
+    // Buffer written in 'performTypeCheck' / read in 'getTypingTree'
+    private subtypingQueryBuffer: StructuralSubtypingQuery = null;
 
     constructor(codeLine: number, operator: BinaryOperator, left: AstNode, right: AstNode) {
         super(codeLine);
@@ -57,7 +61,10 @@ export class BinaryExpression extends AstNode {
     }
 
     /**
-     * TODO: SUBTYPING
+     * In case of left and right operator are of different type (even if they are in a subtype relation of either direction), the type of this
+     * AST-Node is ambiguously. This method handles this circumstance by returning the type of the first operand.
+     * @param t 
+     * @returns 
      */
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const t_1 = this.left.performTypeCheck(t);
@@ -66,13 +73,21 @@ export class BinaryExpression extends AstNode {
         const typedefs = t.getTypeDefinitions();
 
         if (this.operator === BinaryOperator.EQ) {
-            const isSubtype = t_1.isStrutcturalSubtypeOf(t_2, typedefs);
-            if (!isSubtype) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
-            return this.type = t_1;
+            const subtypingResult = t_2.isStrutcturalSubtypeOf(t_1, typedefs);
+            this.subtypingQueryBuffer = subtypingResult.queryGraph.getGraph().getRoot().getData().query; // TODO: Write method for this!
+            if (!subtypingResult.value){
+                const msg = `Cannot assign value of type ${t_2.toString()} to ${t_1.toString()}`;
+                return this.failTypeCheck(msg, t_1);
+            } else {
+                return this.type = t_1;
+            }
         } else {
-            if (!(t_1.isStrutcturalSubtypeOf(t_2, typedefs) || t_2.isStrutcturalSubtypeOf(t_1, typedefs))) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
-            //if (!t_1.equals(t_2)) throw new TypeError(`Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`);
-            return this.type = t_1;
+            if (!t_1.isStrutcturalSubtypeOf(t_2, typedefs).value && !t_2.isStrutcturalSubtypeOf(t_1, typedefs).value){
+                const msg = `Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`;
+                return this.failTypeCheck(msg, t_1);
+            } else {
+                return this.type = t_1;
+            }
         }
     }
 
@@ -83,7 +98,14 @@ export class BinaryExpression extends AstNode {
     public getTypingTree(): TypingTree {
         const left = this.left.getTypingTree();
         const right = this.right.getTypingTree();
-        return new TypingTree(TypingTreeNodeLabel.OP, this.getCode(), this.type.toString(), [left, right]);
+
+        let subtypingQueryBuffer = null;
+        if(this.subtypingQueryBuffer){
+            subtypingQueryBuffer = this.subtypingQueryBuffer;
+            this.subtypingQueryBuffer = null; // Consume buffer
+        }
+
+        return new TypingTree(TypingTreeNodeLabel.OP, this, [left, right], subtypingQueryBuffer);
     }
 
 }

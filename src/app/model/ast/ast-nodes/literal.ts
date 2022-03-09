@@ -41,6 +41,6 @@ export class Literal extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.CONST, this.getCode(), this.getType().toString());
+        return new TypingTree(TypingTreeNodeLabel.CONST, this);
     }
 }

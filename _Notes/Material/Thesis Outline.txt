@@ -57,6 +57,9 @@ D. Webtool structure and development process
 			- Display space allocation by (recursively computed) node width depending on number of children (show screenshots before and after)
 		- Implementation of the Algorithm
 			- Mapping typing rules to performTypeCheck() implementations of AstNode subclasses (one rule as example)
+				- ambiguous type with binop --> specify!
+				- failWithTypeError() --> recovery strategy (Clear: strategy 'expected' and 'wildcard')
+				- TODO: PROVIDE FULL GRAINED SPECIFICATION OF WHAT DECISIONS ARE MADE REGARDING TYPING IN EXCEPTINOAL/EDGE CASES
 	* Tab "Structural Subtyping"
 		- UI / Manual
 			- Dropdowns for selection of two types (from output of TypeConstructionKitComponent)
@@ -75,9 +78,9 @@ D. Webtool structure and development process
 			- Mapping deduction rules to implementations of checkRealSubtypingRelation-steps in AbstractType subtypes (expample in e.g. FunctionType) 
 
 E. Outlook
-	(* Proxy Pattern for cdecl calls)
 	* Replayable History for TypingTree and SubtypingGraph (e.g. using Decorators to avoid changing existing code)
 	* Configuration store (localstorage, serialize/deserialize) persisting constructed types etc.
+	* Add Tab with code editor (with multiple lines) and finish Symbol table
 
 
 

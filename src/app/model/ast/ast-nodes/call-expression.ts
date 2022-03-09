@@ -58,14 +58,17 @@ export class CallExpression extends AstNode {
             const declarationParamTypes = functionType.getParameters();
             const callParamTypes = this.args.map(arg => arg.performTypeCheck(t));
 
+            const returnType = functionType.getReturnType();
+
             // TODO: Check subtyping!
             if(declarationParamTypes.length !== callParamTypes.length) throw new TypeError(`Expected ${declarationParamTypes.length} parameters, but got ${callParamTypes.length}`);
             if(!declarationParamTypes.every((value, index) => value.equals(callParamTypes[index]))){
-                throw new TypeError(`Function parameter missmatch. Cannot apply [${callParamTypes}] to [${declarationParamTypes}]`);
+                const msg = `Function parameter missmatch. Cannot apply [${callParamTypes}] to [${declarationParamTypes}]`;
+                return this.failTypeCheck(msg, returnType);
             }
 
 
-            return this.type = functionType.getReturnType();
+            return this.type = returnType;
         } else {
             throw new TypeError(this.base.getName() + " is not a function");
         }
@@ -77,6 +80,6 @@ export class CallExpression extends AstNode {
 
     public getTypingTree(): TypingTree {
         const children = [this.base.getTypingTree()].concat(this.args.map(arg => arg.getTypingTree()));
-        return new TypingTree(TypingTreeNodeLabel.APP, this.getCode(), this.getType().toString(), children);
+        return new TypingTree(TypingTreeNodeLabel.APP, this, children);
     }
 }

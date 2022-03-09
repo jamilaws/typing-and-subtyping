@@ -47,7 +47,7 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
         const typeType = this.defType.performTypeCheck(t);
         const valueType = this.value.performTypeCheck(t);
 
-        if (!valueType.isStrutcturalSubtypeOf(typeType, t.getTypeDefinitions())) {
+        if (!valueType.isStrutcturalSubtypeOf(typeType, t.getTypeDefinitions()).value) {
             throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
         }
 
@@ -60,7 +60,7 @@ export class GlobalVariableDeclaration extends AstNode implements Declaration {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        throw new Error("Method not implemented.");
     }
 
     /*

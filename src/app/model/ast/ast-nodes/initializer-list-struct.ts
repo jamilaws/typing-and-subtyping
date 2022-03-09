@@ -48,7 +48,7 @@ export class StructMemberValue extends AstNode{
         return null;
     }
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        throw new Error("Method not implemented.");
     }
 }
 
@@ -94,6 +94,6 @@ export class InitializerListStruct extends AstNode {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        throw new Error("Method not implemented.");
     }
 }

@@ -12,4 +12,8 @@ export class StructuralSubtypingQuery {
     public equals(other: StructuralSubtypingQuery): boolean {          
         return this.a.equals(other.a) && this.b.equals(other.b);
     }
+
+    public toString(): string {
+        return this.a.toString() + " <= " + this.b.toString();
+    }
 }

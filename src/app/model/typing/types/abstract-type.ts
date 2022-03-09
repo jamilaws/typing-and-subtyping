@@ -29,17 +29,17 @@ export class Queue<T> {
     }
 
     public dequeue(): T {
-        if (this.array.length === 0) throw new Error("Cannot dequeue empty queue.");
+        if (this.array.length === 0) return null;
         return this.array.shift();
     }
 
     public getFirst(): T {
-        if (this.array.length === 0) throw new Error("Empty queue.");
+        if (this.array.length === 0) return null;
         return this.array[0];
     }
 
     public getLast(): T {
-        if (this.array.length === 0) throw new Error("Empty queue.");
+        if (this.array.length === 0) return null;
         return this.array[this.array.length - 1];
     }
 
@@ -226,14 +226,18 @@ export abstract class AbstractType {
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
         const bufferFrame = this.buildQueryGraph_step_dequeueBufferFrame();
 
+        if(!bufferFrame) return null;
+
         let graph = this.buildQueryGraph_step_buildBasicGraph(bufferFrame);
         const root = graph.getGraph().getRoot();
 
         graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
 
-        if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
-            graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
-        }
+        // if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
+        //     graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
+        // }
+        graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
+
 
         graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph, root, bufferFrame);
 
@@ -269,7 +273,7 @@ export abstract class AbstractType {
     protected buildQueryGraph_step_handleCaseOtherBeingAlias(graph: StructuralSubtypingQueryGraph, targetNode: Node<QueryGraphNodeData>, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
 
         if (bufferFrame.didReplaceOtherAlias) {
-            alert("ALIAS in GRAPH");
+            //alert("ALIAS in GRAPH");
 
             const newNode = new Node<QueryGraphNodeData>({
                 query: bufferFrame.aliasQuery,

@@ -42,13 +42,13 @@ export class VariableDeclaration extends AstNode implements Declaration {
         return new Graph([newNode], edges).merge(defTypeGraph).merge(valueGraph);
     }
 
-    // TODO: Suptyping! - Check 't_2 can be converted into t_1'
     public performTypeCheck(t: TypeEnvironment): AbstractType {
 
         const typeType = this.defType.performTypeCheck(t);
         const valueType = this.value.performTypeCheck(t);
 
-        if (!valueType.isStrutcturalSubtypeOf(typeType, t.getTypeDefinitions())) {
+        // Suptyping - Check 't_2 can be converted into t_1'
+        if (!valueType.isStrutcturalSubtypeOf(typeType, t.getTypeDefinitions()).value) {
             throw new TypeError(`Cannot assign value of type '${valueType.toString()}' to '${typeType.toString()}'`);
         }
 
@@ -61,7 +61,7 @@ export class VariableDeclaration extends AstNode implements Declaration {
     }
 
     public getTypingTree(): TypingTree {
-        return new TypingTree(TypingTreeNodeLabel.APP, "Method not implemented.", "TODO");
+        return new TypingTree(TypingTreeNodeLabel.APP, this);
     }
 
     /*

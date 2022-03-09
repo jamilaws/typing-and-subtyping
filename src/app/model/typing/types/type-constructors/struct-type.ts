@@ -9,7 +9,7 @@ export class StructType extends AbstractType {
 
     private name: string;
     private members: Definition[];
-    
+
     constructor(name: string, members: Definition[]) {
         super();
         this.name = name;
@@ -54,7 +54,7 @@ export class StructType extends AbstractType {
                     if (d1.getName() === d2.getName()) {
                         // Name match...
                         buffer.appendix.relevantMembers.push(d1);
-                        
+
                         if (d1.getType().performStructuralSubtypingCheck(d2.getType(), context)) {
                             // ...and type match
                             return true;
@@ -71,17 +71,21 @@ export class StructType extends AbstractType {
     }
     protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
 
-        if(!bufferFrame.appendix.relevantMembers) throw new Error("Unexpected: Relevant memebers not found in cache.");
+        if (!bufferFrame.appendix.relevantMembers) throw new Error("Unexpected: Relevant memebers not found in cache.");
 
-        bufferFrame.appendix.relevantMembers.map((m: Definition) => {
+        const subgraphsWithNames: { subgraph: string, name: string }[] = bufferFrame.appendix.relevantMembers.map((m: Definition) => {
             return {
                 subgraph: m.getType().buildQueryGraph(),
                 name: m.getName()
             };
-        }).forEach((e: any) => {
-            graph.merge(e.subgraph);
-            graph.getGraph().addEdge(new Edge(graph.getGraph().getRoot(), e.subgraph.getGraph().getRoot(), e.name));
         });
+
+        if (subgraphsWithNames.some(x => !x.subgraph)) return graph; // Cancel if any member type did not return a valid graph
+
+            subgraphsWithNames.forEach((e: any) => {
+                graph.merge(e.subgraph);
+                graph.getGraph().addEdge(new Edge(graph.getGraph().getRoot(), e.subgraph.getGraph().getRoot(), e.name));
+            });
 
         return graph;
     }
