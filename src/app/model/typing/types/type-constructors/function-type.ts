@@ -22,7 +22,7 @@ export class FunctionType extends AbstractType {
 
     /* Structural Subtyping */
 
-    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         const buffer = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
 
         if (other instanceof FunctionType) {
@@ -72,9 +72,10 @@ export class FunctionType extends AbstractType {
 
     /* --- */
 
-    public toString(): string {
-        return `${this.returnType.toString()}(${this.parameterTypes.map(p => p.toString()).join(", ")})`;
-    }
+    // DEPRECATED
+    // public toString(): string {
+    //     return `${this.returnType.toString()}(${this.parameterTypes.map(p => p.toString()).join(", ")})`;
+    // }
 
     public toCdeclEnglish(): string {
         const paramTxt: string = "(" + this.parameterTypes.map(pt => pt.toCdeclEnglish()).join(",") + ")";
@@ -105,15 +106,31 @@ export class FunctionType extends AbstractType {
             prev = 'f';
             }
 
-    */
-    public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
+    adecllist ....
+            | adecllist COMMA adecllist
+			{
+			$$ = cat($1, ds(", "), $3, NullCP);
+			}
+            | adecl
+			{
+			$$ = cat($1.type, ds(" "), $1.left, $1.right, NullCP);
+			}
 
-        context.prev = 'f'; // Check if this is ok
+    */
+    public override toCdeclCImpl(): CdeclHalves {
+
+        const paramCdecls = this.getParameters().map(p => p.toCdeclCImpl());
+        const returnCdecl = this.getReturnType().toCdeclCImpl();
 
         return {
-            left: this.getReturnType().cdeclToStringImpl(context).left,
-            right: '(' + this.getParameters().map(p => p.cdeclToStringImpl(context)) + ')' + this.getReturnType().cdeclToStringImpl(context).right,
-            type: this.getReturnType().cdeclToStringImpl(context).type
+            left: returnCdecl.left,
+            right: '(' + paramCdecls.map(tup => tup.type + " " + tup.left + tup.right).join(", ") + ')' + returnCdecl.right,
+            type: returnCdecl.type
         }
     }
 }
+
+/*
+Expected: char *(*(*_(int        **()[]     ))[5])()
+Actual:   char *(*(*_(int                   ))[5])()
+*/

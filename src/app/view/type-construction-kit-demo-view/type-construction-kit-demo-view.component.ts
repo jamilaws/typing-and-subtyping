@@ -113,6 +113,7 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
     const arr = Array.from(typeDefs.entries());
 
+    // TODO: DO NOT USE cdeclService here!
     Promise.all(arr.map(tup => this.cdeclService.typedefToString(tup[0], tup[1]))).then(ts => {
       this._typedefsCode = ts.join(";\n");
       if(this._typedefsCode.length > 0) this._typedefsCode += ";";      
@@ -124,6 +125,7 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   public onDeclarationsChange(declarations: Declaration[]) {
     this.declarations = declarations;
 
+    // TODO: DO NOT USE cdeclService here!
     Promise.all(declarations.map(d => this.cdeclService.declarationToString(d.getDeclarationIdentifier(), d.getDeclarationType()))).then(ds => {
       this._declarationsCode = ds.join(";\n");
       if(this._declarationsCode.length > 0) this._declarationsCode += ";";      

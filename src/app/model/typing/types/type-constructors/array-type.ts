@@ -11,20 +11,16 @@ export class ArrayType extends AbstractType {
     private baseType: AbstractType;
     private dimension: number;
 
-    constructor(baseType: AbstractType, dimension: number = null){
+    constructor(baseType: AbstractType, dimension: number = null) {
         super();
         this.baseType = baseType;
         this.dimension = dimension;
     }
 
-    public toString(): string {
-        return this.baseType.toString() + "[ ]";
-    }
-
-    public toCdeclEnglish(): string {
-        const dimTxt = this.dimension === null ? "" : this.dimension + " ";
-        return "array " + dimTxt + "of " + this.baseType.toCdeclEnglish();
-    }
+    // DEPRECATED
+    // public toString(): string {
+    //     return this.baseType.toString() + "[ ]";
+    // }
 
     public getBaseType(): AbstractType {
         return this.baseType;
@@ -32,8 +28,8 @@ export class ArrayType extends AbstractType {
 
     /* Structural Subtyping */
 
-    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
-        if(other instanceof ArrayType) {
+    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        if (other instanceof ArrayType) {
             return this.baseType.performStructuralSubtypingCheck(other.baseType, context);
         } else {
             return false;
@@ -55,26 +51,17 @@ export class ArrayType extends AbstractType {
     /*
 
     | ARRAY adims OF adecl
-			{
-			if (prev == 'f')
-				unsupp("Array of function",
-				       "array of pointer to function");
-			else if (prev == 'a')
-				unsupp("Inner array of unspecified size",
-				       "array of pointer");
-			else if (prev == 'v')
-				unsupp("Array of void",
-				       "pointer to void");
-			if (arbdims)
-				prev = 'a';
-			else
-				prev = 'A';
-			$$.left = $4.left;
-			$$.right = cat($2,$4.right,NullCP);
-			$$.type = $4.type;
-			}
+            {
+            if (arbdims)
+                prev = 'a';
+            else
+                prev = 'A';
+            $$.left = $4.left;
+            $$.right = cat($2,$4.right,NullCP);
+            $$.type = $4.type;
+            }
     adims		: //empty
-			{
+            {
                 arbdims = 1;
                 $$ = ds("[]");
                 }
@@ -86,15 +73,26 @@ export class ArrayType extends AbstractType {
                 }
             ;
     */
-   public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
-       // Note: Ignore array dimension
+    public override toCdeclCImpl(): CdeclHalves {
 
-       context.prev = 'A';
+        const baseCdecl = this.getBaseType().toCdeclCImpl();
 
-       return {
-           left: this.getBaseType().cdeclToStringImpl(context).left,
-           right: "[ ]" + this.getBaseType().cdeclToStringImpl(context).right,
-           type: this.getBaseType().cdeclToStringImpl(context).type
-       };
-   }
+        let arrayString;
+        if (this.dimension){
+            arrayString = "[" + this.dimension + "]";
+        } else {
+            arrayString = "[]";
+        }
+
+        return {
+            left: baseCdecl.left,
+            right: arrayString + baseCdecl.right,
+            type: baseCdecl.type
+        };
+    }
+
+    public toCdeclEnglish(): string {
+        const dimTxt = this.dimension === null ? "" : this.dimension + " ";
+        return "array " + dimTxt + "of " + this.baseType.toCdeclEnglish();
+    }
 }

@@ -58,13 +58,17 @@ export abstract class AbstractType {
      */
     private structuralSubtypingBuffer: Queue<StructuralSubtypingBufferFrame>;
 
+    /**
+     * Do not instanciate AbstractType with new keyword! Use TypeFactoryService instead!
+     */
     constructor() {
         this.structuralSubtypingBuffer = new Queue();
     }
 
-    public abstract toString(): string;
+    public toString(): string {
+        return this.toCdeclC();
+    }
 
-    public abstract toCdeclEnglish(): string;
 
     /**
      * TODO:
@@ -127,7 +131,7 @@ export abstract class AbstractType {
             bufferFrame.aliasQuery = new StructuralSubtypingQuery(this, other);
 
             // Repeat call with other being replaced by its target
-            //return this.performStructuralSubtypingCheck(target, context);
+            // return this.performStructuralSubtypingCheck(target, context);
             other = target;
         }
         /* --- */
@@ -148,7 +152,7 @@ export abstract class AbstractType {
             return true;
         }
 
-        const result = this.performStructuralSubtypingCheck_step_realSubtypingRelation(other, context);
+        const result = this.performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other, context);
 
         bufferFrame.result = result;
 
@@ -208,7 +212,7 @@ export abstract class AbstractType {
      * @param other 
      * @param context 
      */
-    protected abstract performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean;
+    protected abstract performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean;
 
     protected performStructuralSubtypingCheck_getBufferFrameForWriting(): StructuralSubtypingBufferFrame {
         return this.structuralSubtypingBuffer.getLast();
@@ -222,7 +226,7 @@ export abstract class AbstractType {
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
         const bufferFrame = this.buildQueryGraph_step_dequeueBufferFrame();
 
-        let graph = this.buildQueryGraph_step_basicGraph(bufferFrame);
+        let graph = this.buildQueryGraph_step_buildBasicGraph(bufferFrame);
         const root = graph.getGraph().getRoot();
 
         graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
@@ -247,7 +251,7 @@ export abstract class AbstractType {
      * @param currentQuery current query 
      * @returns basic graph
      */
-    protected buildQueryGraph_step_basicGraph(bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
+    protected buildQueryGraph_step_buildBasicGraph(bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
         if (!bufferFrame.currentQuery) throw new Error("Cannot build query graph with empty buffer.");
 
         // Build basic graph with single node representing query in this.structuralSubtypingBuffer
@@ -303,7 +307,7 @@ export abstract class AbstractType {
      * - NO query loop has been detected
      * - NO type equality has been detected
      * 
-     * @param graph in basic form, see buildQueryGraph_step_basicGraph method
+     * @param graph in basic form, see buildQueryGraph_step_buildBasicGraph method
      * @returns extended graph
      */
     protected abstract buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph;
@@ -320,20 +324,26 @@ export abstract class AbstractType {
         return false;
     }
 
-    /* --- */
+    /* --- Cdecl --- */
 
-    public cdeclToString(): string {
-        const tuple = this.cdeclToStringImpl({ prev: null });
-        return tuple.left + tuple.right + tuple.type;
+    public abstract toCdeclEnglish(): string;
+
+    /* 
+    | NAME AS adecl
+            {
+            $$ = cat($3.type, ds(" "), $3.left, $1, $3.right, NullCP);
+            }
+    */
+
+    public toCdeclC(identifier: string = "_"): string {
+        const tuple = this.toCdeclCImpl();
+        return tuple.type + " " + tuple.left + identifier + tuple.right;
     }
 
-    public cdeclToStringImpl(context: { prev: string }): CdeclHalves {
-        return {
-            left: "",
-            right: "",
-            type: this.toString() // CHECK IF THIS IS OK!
-        }
-    }
+    public abstract toCdeclCImpl(): CdeclHalves;
+
+    /* ------------- */
+
 }
 
 
@@ -355,8 +365,17 @@ export class AliasPlaceholderType extends AbstractType {
         return this.alias;
     }
 
-    public toString(): string {
-        return this.alias;
+    // DEPRECATED
+    //public toString(): string {
+    //    return this.alias;
+    //}
+
+    public override toCdeclCImpl(): CdeclHalves {
+        return {
+            left: "",
+            right: "",
+            type: this.alias
+        }
     }
 
     public toCdeclEnglish(): string {
@@ -365,7 +384,7 @@ export class AliasPlaceholderType extends AbstractType {
 
     /* Structural Subtyping */
 
-    protected override performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+    protected override performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         const target = context.typeDefinitions.get(this.getAlias());
         if (!target) throw new Error("No type definition exists for " + this.getAlias());
         // Add found target to cache so it can be used when building the query graph

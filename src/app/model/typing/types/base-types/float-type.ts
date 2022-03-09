@@ -2,13 +2,11 @@ import { BaseType } from "../base-type";
 
 export class FloatType extends BaseType {
 
+    protected token: string = "float";
     protected superTypes: (typeof BaseType)[] = [];
 
-    public toString(): string {
-        return "float";
-    }
-
-    public toCdeclEnglish(): string {
-        return "float";
-    }
+    // DEPRECATED
+    // public toString(): string {
+    //     return "float";
+    // }
 }

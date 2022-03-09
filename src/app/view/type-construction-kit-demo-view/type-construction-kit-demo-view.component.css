@@ -3,7 +3,7 @@
 }
 
 .left-panel-wrapper {
-    border-right: solid 1px lightgrey;
+    border-right: solid 1px darkgrey;
     height: 86vh;
 }
 
@@ -58,5 +58,5 @@
 }
 
 .tabs-wrapper {
-    border-top: solid 1px lightgrey;
+    border-top: solid 1px darkgrey;
 }

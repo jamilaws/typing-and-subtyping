@@ -1,46 +1,101 @@
-A. Goal (and blueprint) of the Tool
-	* Goal of Typing (see screenshots, e.g.: manage memory, select correct assembler instruction, avoid certain run-time errors)
-	* Goal of Tool (lerning by vizualization of ... a) Typing b) Structural Subtyping
+A. Intro: Goal of the Project
+	* Goal of Typing in general (e.g.: manage memory, select correct assembler instruction, avoid certain run-time errors)
+	* Goal of Tool: Webtool to enable visually accompanied learning/understanding of Typing and Structural Subtyping
+	
+B. Theoretical Fundamentals: Explanation of Algorithms for
+	* Typing 
+		- Problem definition
+		- Type expressions (Set of base types and type constructors)
+		- Type environment, Set of typing rules
+		- example
+		(- Symbol tables?)
+	* Structural Subtyping
+		- Problem definition (including Definition/Meaning)
+		- Role in this project (teaching purpose only; actually not covered by C (nominal type systems), but still important concept for languages like e.g. TypeScript)
+		- Supplement to typing rules: "can be converted to"/"can be assigned to"
+		- Set of deduction rules (Explain detail: co- and contra-variance in rule for functions - example: array function map)
+		- example
 
-B. Technical Decisions / Fundamentals
-	* Framework / Language
-		- TypeScript (override and the --noImplicitOverride Flag)
+C. Technical Decisions / TechStack
+	(
+		* Framework / Language
+		- TypeScript
+			- superset of javascript implementing type system and OOP concepts 
 			- Decorators (Purpose, variants, math concat explanation)
-        - Angular Basics (directive examples, change detection)
-	* Dependencies (e.g. monaco-code-editor, apache echart, cparse)
-	* Class Diagram (AstNode, TypeExpression, TypeEnvironment... )
-	* (Explanation of some of the applied design patterns
-		- Callback Pattern
-		- Template Method Pattern
-		- State Pattern)
+			(- override and the --noImplicitOverride Flag)
+        - Angular Basics
+			- core principals (component-based frontend framework, ...)
+			- directive examples
+			(- change detection)
+	* Dependencies (e.g. monaco-code-editor, apache echart, cparse, cdecl.org) 
+	)
+	* High-level model - Class Diagram (Ast, Types, TypeEnvironment, ... )
 
-C. Development Progress
-    * New Features
-	- Baseline: Integration of monaco, cparse and echarts (Realtime refresh by angular change detection)
-	- Adding TypeEnvironment / Symbol Table
-	- Adding performTypeCheck()
-	- Vizualization by Typing tree (also: add type placeholder to always have full typing tree)
-    * Refactorings (Abstractions etc.)
-        - Better display size allocation for TypingTree visualization (Add node width depending on number of children; add screenshots)
-D. Outlook
-	* Proxy Pattern for cdecl calls
-	* Typing Tree History
-	* Configuration store (localstorage, serialize/deserialize)
+D. Webtool structure and development process
+	* TypeConstructionKitComponent
+		- Problem: User Input only by code-editor (first approach), BUT: Incapability of 'cparse' handling complex types and Typedefs
+		(example: Nested structs, functions as parameters, typedefs for structs) 
+		- Solution:
+			- provide base types as atomic building blocks
+			- type constructor templates as toolset for consecutive type construction
+			- output: larger set of types + Typdefs and Declarations (printed in readonly code-editor)
+		- Implementation:
+			- Lifecycle-hooks of AbstractTypeBubble as a framework enabling extension (provide UML Class Diagram!)
+			(- State Pattern)
+			- AliasPlaceholder as workaround for recursive typedefs (provide example use case)
+		- Cdecl
+			- Explanation with example why it is required
+			- Webservice NOT suitable due to lack of structs. Also no workaround possible (e.g. [complex pointer/array combo] to pointer to struct)
+			- However, webservice still useful for testing --> Test driven development
+	* Tab "Typing"
+		- UI / Manual
+			- Input field for expression (based on output of TypeConstructionKitComponent)
+		 	- Visualizing entered expression with AST by apache echarts
+			- TypingTreeComponent on the right side
+		- TypingTreeComponent
+			- Recursive Angular component
+			- Display space allocation by (recursively computed) node width depending on number of children (show screenshots before and after)
+		- Implementation of the Algorithm
+			- Mapping typing rules to performTypeCheck() implementations of AstNode subclasses (one rule as example)
+	* Tab "Structural Subtyping"
+		- UI / Manual
+			- Dropdowns for selection of two types (from output of TypeConstructionKitComponent)
+			- Visualization of structural subtyping query via graph on the right
+		- Implementation of the Algorithm
+			- Template Method Pattern
+				- decomposing complex tasks into smaller steps
+				- allowing slight changes by substitution of only relevant steps without rewriting unaffected logic 
+			- Nested Template Method Pattern in AbstractType
+				- isStrutcturalSubtypeOf
+					- performStructuralSubtypingCheck
+						- manageQueryHistory, checkEquality, checkRealSubtypingRelation (+ steps writing buffer)
+					- buildQueryGraph
+						- buildBasicGraph, handleLoop, extendGraph, handleCaseOtherBeingAlias (+ steps reading buffer)
+					- Communication between two procedures via: structuralSubtypingBuffer: Queue<StructuralSubtypingBufferFrame>
+			- Mapping deduction rules to implementations of checkRealSubtypingRelation-steps in AbstractType subtypes (expample in e.g. FunctionType) 
+
+E. Outlook
+	(* Proxy Pattern for cdecl calls)
+	* Replayable History for TypingTree and SubtypingGraph (e.g. using Decorators to avoid changing existing code)
+	* Configuration store (localstorage, serialize/deserialize) persisting constructed types etc.
+
+
 
 _________________________________________________________
 Not yet positioned:
 
-- Ideas:
-	* Replayable TypingTree- and Symbol Table-History (using Decorators)
+* (Explanation of some of the applied design patterns
+	- Callback Pattern
+	- Template Method Pattern
+	- State Pattern)
 
 - "Structural Subtyping"
 	* Theory
-		- Part 1: (Structural) Type Equality (Note: "equality is subset of subtyping") (Node: for previous features; equals was just easy string comp for testing purpose) (Note: does not hold in C)
+		- Part 1: (Structural) Type Equality (Note: "equality is subset of subtyping") (Note: for previous features; equals was just easy string comp for testing purpose)
 		- Part 2: (Structural) Subtyping (e.g. co- and contra-variance of subtyping of functions -> explanation with subsets)
 	* Proof of termination
-	* Implementation in project
-		- order of decorators! (see math concat from B.)
-- New Featur: typedefs
+
+- New Feature: typedefs
 	* Add AstNode "TypeDefStatement"
 	* Add placeholder-type for it only containing name (reference to targte type would break recursion)
 	* Refactor: Add Typedefs to TypeEnvironment (idea: refactor to context holding all entities?)
@@ -50,13 +105,6 @@ Not yet positioned:
 	* Theory (slides EIST, PSE)
 	* Subsystems 'typing' and 'ast'
 	* Callback pattern with dedicated interfaces
-- User Experience
-	* Only show AST of selected row (with cursor)?
-	* 
-
-- URLs for decorators
-	* https://www.typescriptlang.org/docs/handbook/decorators.html#method-decorators
-	* https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition
 
 
 - Transition Plan to Actual Tool
@@ -80,3 +128,16 @@ Not yet positioned:
 				- 	Goal: Placeholders either already defined, or will be soon (-->exception to enable recursiveness)
 
 
+C. (DEPRECATED) Development Progress (Typing; chronologisch)
+	* Baseline: Integration of monaco, cparse and echarts
+	* Adding TypeEnvironment / Symbol Table
+	* Adding performTypeCheck() (isSubtypeOf 'mocked' by equals())
+	* Vizualization of Typing by TypingTree
+		- Type placeholder to always have full typing tree
+		- Enhanced display size allocation by node width depending on number of children (add screenshots before/after)
+
+URLS
+
+* Decorators
+	https://www.typescriptlang.org/docs/handbook/decorators.html#method-decorators
+	https://www.typescriptlang.org/docs/handbook/decorators.html#decorator-composition

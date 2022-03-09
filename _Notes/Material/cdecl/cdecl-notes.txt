@@ -17,12 +17,12 @@ export interface CdeclHalves {
     type: string;
 }
 
-public cdeclToString(): string {
-        const tuple = this.cdeclToStringImpl();
+public toCdeclC(): string {
+        const tuple = this.toCdeclCImpl();
         return tuple.left + tuple.right + tuple.type;
     }
 
-protected abstract cdeclToStringImpl(): CdeclHalves;
+protected abstract toCdeclCImpl(): CdeclHalves;
 
 
 2. Default case?

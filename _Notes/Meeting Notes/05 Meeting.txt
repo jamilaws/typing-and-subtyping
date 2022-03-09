@@ -1,2 +1,20 @@
-- array dim needed in type?
-- subtyping check between pointers and arrays?
+FRAGEN:
+
+* Cdecl (--> English in tooltip + correct string representation)
+    - CdeclService korrekt? (type, typdef, declaration alle basierend auf declaration)
+    - Structs nicht von cdecl abgedeckt? Was tun?
+* Subtyping 
+    - 'Structural Equality' bislang als mock: equals auf toString() --> Wieso falsch? --> in Ordnung
+    - check zwischen pointer und arrays? Gleichwertig? --> Ja! ("Benutzung gleich")
+* Meinung zu Gliederung / Stoffsammlung?
+* BA Präsentation online möglich?
+
+
+INPUT:
+
+* typeToC mit z.B. underscore statt placeholder entfernen
+* typedefToC passt
+* structs (webservice call direkt bei erstellung --> ergebnis speichern --> immutable)
+* statt webservice --> selbst implementieren (--> Ausblick)
+* Typing: placeholder type for error case holding error with message (--> relevant for typing tree) Vgl: IDE --> fehler merken und dann als richtig annehmen, damit rest trotzdem weiter ausgewertet werden kann
+ --> Wichtig: Lösung Spezifizieren

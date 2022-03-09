@@ -21,15 +21,6 @@ export interface Configuration {
   declarations: Declaration[]
 }
 
-// char* (*(*x(int* (*(()[]))))[5])();
-
-// declare x as function (function returning array of pointer to pointer to int)
-const stressTest_Params = [new FunctionType([], new ArrayType(new PointerType(new PointerType(new IntType()))))];
-// returning pointer to array 5 of pointer to function returning pointer to char
-const stressTest_Return = new PointerType(new ArrayType(new PointerType(new FunctionType([], new PointerType(new CharType()))), 5));
-
-const stressTestType = new FunctionType(stressTest_Params, stressTest_Return);
-
 @Injectable({
   providedIn: 'root'
 })
@@ -44,8 +35,7 @@ export class ConfigurationStoreService {
     ],
     constructedTypes: [
       new ArrayType(new IntType()),
-      new PointerType(new CharType()),
-      stressTestType
+      new PointerType(new CharType())
     ],
     aliasTypes: [
 

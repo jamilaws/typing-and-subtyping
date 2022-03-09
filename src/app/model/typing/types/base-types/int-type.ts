@@ -6,13 +6,11 @@ import { FloatType } from "./float-type";
 
 export class IntType extends BaseType {
 
+    protected token: string = "int";
     protected superTypes: (typeof BaseType)[] = [ FloatType ];
 
-    public toString(): string {        
-        return "int";
-    }
-
-    public toCdeclEnglish(): string {
-        return "int";
-    }
+    // DEPRECATED
+    // public toString(): string {        
+    //     return "int";
+    // }
 }

@@ -5,6 +5,8 @@ import { StructuralSubtypingQuery } from "../common/structural-subtyping/structu
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 import { StructuralSubtypingQueryResult } from "../common/structural-subtyping/structural-subtyping-query-result";
+import { ArrayType } from "./array-type";
+import { FunctionType } from "./function-type";
 
 export class PointerType extends AbstractType {
 
@@ -17,7 +19,7 @@ export class PointerType extends AbstractType {
 
     /* Structural Subtyping */
 
-    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if(other instanceof PointerType) {
             return this.baseType.performStructuralSubtypingCheck(other.baseType, context);
         } else {
@@ -37,9 +39,10 @@ export class PointerType extends AbstractType {
 
     /* --- */
 
-    public toString(): string {
-        return this.baseType.toString() + "*";
-    }
+    // DEPRECATED
+    // public toString(): string {
+    //     return this.baseType.toString() + "*";
+    // }
 
     public toCdeclEnglish(): string {
         return "pointer to " + this.baseType.toCdeclEnglish();
@@ -56,9 +59,6 @@ export class PointerType extends AbstractType {
             {
             char *op = "", *cp = "", *sp = "";
 
-            if (prev == 'a')
-                unsupp("Pointer to array of unspecified dimension",
-                       "pointer to object");
             if (prev=='a' || prev=='A' || prev=='f') {
                 op = "(";
                 cp = ")";
@@ -73,26 +73,24 @@ export class PointerType extends AbstractType {
             }
 
     */
-    public override cdeclToStringImpl(context: { prev: string }): CdeclHalves {
+    public override toCdeclCImpl(): CdeclHalves {
 
-        let opt_constvol_list_out = "WTF"; // WTF
+        let opt_constvol_list_out = ""; // Note: Just listed for the sake of completeness. Not relevant for this project.
 
         let op: string = "";
         let cp: string = "";
         let sp: string = "";
 
-        // TODO!
-        if (context.prev == 'a' || context.prev == 'A' || context.prev == 'f') {
+        //if (context.prev === 'a' || context.prev === 'A' || context.prev === 'f') {
+        if (this.baseType instanceof FunctionType || this.baseType instanceof ArrayType) {
             op = "(";
             cp = ")";
         }
-        if (opt_constvol_list_out) {
+        if (opt_constvol_list_out.length > 0) {
             sp = " ";
         }
 
-        context.prev = 'p'; // Check if this is ok
-
-        const baseTypeOut: CdeclHalves = this.getBaseType().cdeclToStringImpl(context);
+        const baseTypeOut: CdeclHalves = this.getBaseType().toCdeclCImpl();
 
         return {
             left: baseTypeOut.left + op + "*" + sp + opt_constvol_list_out + sp,

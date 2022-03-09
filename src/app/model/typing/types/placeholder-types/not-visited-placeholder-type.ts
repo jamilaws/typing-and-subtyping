@@ -1,18 +1,30 @@
-import { AbstractType } from "../abstract-type";
+import { AbstractType, StructuralSubtypingBufferFrame } from "../abstract-type";
+import { CdeclHalves } from "../common/cdecl-halves";
 import { StructuralSubtypingQueryContext } from "../common/structural-subtyping/structural-subtyping-query-context";
 import { StructuralSubtypingQueryGraph } from "../common/structural-subtyping/structural-subtyping-query-graph";
 
 export class NotVisitedPlaceholderType extends AbstractType {
+
+    private token: string = "t";
     
-    public toString(): string {
-        return "t";
+    // DEPRECATED
+    // public toString(): string {
+    //     return "t";
+    // }
+
+    public toCdeclCImpl(): CdeclHalves {
+        return {
+            left: "",
+            right: "",
+            type: this.token
+        };
     }
 
     public toCdeclEnglish(): string {
         throw new Error('Method not implemented.');
     }
 
-    protected performStructuralSubtypingCheck_step_realSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         throw new Error("Unexpected method call.");
     }
     
