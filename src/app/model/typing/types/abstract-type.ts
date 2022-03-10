@@ -227,11 +227,9 @@ export abstract class AbstractType {
 
         graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
 
-        // if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
-        //     graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
-        // }
-        graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
-
+        if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
+            graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
+        }
 
         graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph, root, bufferFrame);
 

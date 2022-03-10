@@ -16,7 +16,7 @@ import { FunctionType } from 'src/app/model/typing/types/type-constructors/funct
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
 
-const NODE_SIZE: number = 60;
+const NODE_SIZE: number = 20;
 
 @Component({
   selector: 'app-dummy-subtyping-test',
@@ -57,7 +57,7 @@ export class DummySubtypingTestComponent implements OnInit {
 
   private updateGraph(root: Node<QueryGraphNodeData>, graph: StructuralSubtypingQueryGraph): void {
     const gen = generateDisplayedGraph([root], graph.getGraph(), node => {
-      return node.getData().query.a.toString() + '\n<=\n' + node.getData().query.b.toString();
+      return node.getData().query.a.toString() + '  <=  ' + node.getData().query.b.toString();
     }, node => {
       return node.getData().highlight;
     }, edge => edge.getData());

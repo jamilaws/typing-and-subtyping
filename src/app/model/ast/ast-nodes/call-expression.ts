@@ -76,7 +76,6 @@ export class CallExpression extends AstNode {
                 return this.failTypeCheck(msg, returnType);
             }
 
-
             return this.type = returnType;
         } else {
             throw new TypeError(this.base.getName() + " is not a function");

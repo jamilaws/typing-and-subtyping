@@ -1,3 +1,7 @@
 .wrapper {
     height: 100%;
 }
+
+.graph {
+    height: calc(100vh - 134px);
+}

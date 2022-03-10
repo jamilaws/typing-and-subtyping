@@ -6,9 +6,11 @@ import { BaseType } from '../model/typing/types/base-type';
 import { CharType } from '../model/typing/types/base-types/char-type';
 import { FloatType } from '../model/typing/types/base-types/float-type';
 import { IntType } from '../model/typing/types/base-types/int-type';
+import { Definition } from '../model/typing/types/common/definition';
 import { ArrayType } from '../model/typing/types/type-constructors/array-type';
 import { FunctionType } from '../model/typing/types/type-constructors/function-type';
 import { PointerType } from '../model/typing/types/type-constructors/pointer-type';
+import { StructType } from '../model/typing/types/type-constructors/struct-type';
 
 export interface Configuration {
   // Types
@@ -20,6 +22,13 @@ export interface Configuration {
   // Declarations
   declarations: Declaration[]
 }
+
+const typeA = new StructType("TODO", [new Definition("info", new IntType()), new Definition("next", new PointerType(new AliasPlaceholderType("A")))]);
+const typeB = new StructType("TODO", [new Definition("info", new IntType()), new Definition("next", new PointerType(new StructType("TODO", [new Definition("info", new IntType()), new Definition("next", new PointerType(new AliasPlaceholderType("B")))])))]);
+
+const typedefs = new Map();
+typedefs.set("A", typeA);
+typedefs.set("B", typeB);
 
 @Injectable({
   providedIn: 'root'
@@ -35,13 +44,16 @@ export class ConfigurationStoreService {
     ],
     constructedTypes: [
       new ArrayType(new IntType()),
-      new PointerType(new CharType())
+      new PointerType(new CharType()),
+
+      // Test
+      typeA, typeB,
     ],
     aliasTypes: [
 
     ],
     // Typedefs
-    typeDefinitions: new Map(),
+    typeDefinitions: typedefs,
     // Declarations
     declarations: [
 

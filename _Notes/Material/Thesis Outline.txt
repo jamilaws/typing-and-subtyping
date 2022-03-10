@@ -27,6 +27,7 @@ C. Technical Decisions / TechStack
 			- core principals (component-based frontend framework, ...)
 			- directive examples
 			(- change detection)
+		- RxJS (e.g. component-interconnection-service)
 	* Dependencies (e.g. monaco-code-editor, apache echart, cparse, cdecl.org) 
 	)
 	* High-level model - Class Diagram (Ast, Types, TypeEnvironment, ... )
