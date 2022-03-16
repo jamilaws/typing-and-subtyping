@@ -1,6 +1,6 @@
 import { TypeCheckable } from "../typing/interfaces/type-checkable";
 import { TypeEnvironment } from "../typing/type-environment";
-import { AbstractType } from "../typing/types/abstract-type";
+import { AbstractType, WildcardPlaceholderType } from "../typing/types/abstract-type";
 import { NotVisitedPlaceholderType } from "../typing/types/placeholder-types/not-visited-placeholder-type";
 import { TypingTree } from "../typing/typing-tree/typing-tree";
 import { Graph, Node } from 'src/app/model/common/graph/_module';
@@ -72,11 +72,11 @@ export abstract class AstNode implements TypeCheckable {
     /**
      * Sets this.type to a new TypeErrorPlaceholderType object holding the passed errorMessage and some additional information about the recoveryType. 
      * @param errorMessage explanation to the user about the reason for the failure. 
-     * @param recoveryType Type that actually should have been computed during performTypeCheck() call without the occured failure.
+     * @param recoveryType Type that actually should have been computed during performTypeCheck() call without the occured failure. When not provided, WildcardPlaceholderType is used.
      * @returns recoveryType
      */
-    protected failTypeCheck(errorMessage: string, recoveryType: AbstractType): AbstractType {
-        const messageSuffix = " [Recovery Type: " + recoveryType.toString() + "]"
+    protected failTypeCheck(errorMessage: string, recoveryType: AbstractType = new WildcardPlaceholderType()): AbstractType {
+        const messageSuffix = " [Recovery Type: " + recoveryType.toString() + "]";
 
         const error = new TypeError(errorMessage + messageSuffix);
         const errorType = new TypeErrorPlaceholderType(error);

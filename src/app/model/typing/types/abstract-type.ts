@@ -53,6 +53,8 @@ export class Queue<T> {
  */
 export abstract class AbstractType {
 
+    public static PURE_TYPE_IDENTIFIER_PLACEHOLDER: string = "_";
+
     /**
      * Buffer for chaching all necessary data needed for buildQueryGraph method during performStructuralSubtypingCheck() call.
      */
@@ -69,6 +71,15 @@ export abstract class AbstractType {
         return this.toCdeclC();
     }
 
+    public toStringSplit(): { prefix: string, suffix: string } {
+        const split = this.toCdeclC().split(AbstractType.PURE_TYPE_IDENTIFIER_PLACEHOLDER);
+        if(split.length !== 2) throw new Error("Unexpected: split cdecl by '" + AbstractType.PURE_TYPE_IDENTIFIER_PLACEHOLDER + "' into array with length unequal 2");
+        return {
+            prefix: split[0],
+            suffix: split[1],
+        };
+    }
+
 
     /**
      * TODO:
@@ -78,6 +89,10 @@ export abstract class AbstractType {
      * @returns 
      */
     public equals(other: AbstractType): boolean {
+
+        // equality checks with wildcards always yield true
+        if(this instanceof WildcardPlaceholderType || other instanceof WildcardPlaceholderType) return true;
+
         return this.toString() === other.toString();
     }
 
@@ -331,7 +346,7 @@ export abstract class AbstractType {
             }
     */
 
-    public toCdeclC(identifier: string = "_"): string {
+    public toCdeclC(identifier: string = AbstractType.PURE_TYPE_IDENTIFIER_PLACEHOLDER): string {
         const tuple = this.toCdeclCImpl();
         return tuple.type + " " + tuple.left + identifier + tuple.right;
     }
@@ -404,4 +419,31 @@ export class AliasPlaceholderType extends AbstractType {
 
 }
 
+export abstract class AbstractPlaceholderType extends AbstractType {
 
+    protected abstract token: string;
+
+    public toCdeclCImpl(): CdeclHalves {
+        return {
+            left: "",
+            right: "",
+            type: this.token
+        };
+    }
+
+    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        throw new Error("Unexpected method call on placeholder type.");
+    }
+
+    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
+        throw new Error("Unexpected method call on placeholder type.");
+    }
+
+    public toCdeclEnglish(): string {
+        throw new Error("Unexpected method call on placeholder type.");
+    }
+}
+
+export class WildcardPlaceholderType extends AbstractPlaceholderType {
+    protected token: string = "?";
+}

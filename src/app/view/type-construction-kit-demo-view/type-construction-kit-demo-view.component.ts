@@ -3,7 +3,7 @@ import { EChartsOption } from 'echarts';
 import { Declaration } from 'src/app/model/typing/symbol-table';
 import { TypeDefinitionTable } from 'src/app/model/typing/type-definition-table';
 import { TypeEnvironment } from 'src/app/model/typing/type-environment';
-import { AbstractType } from 'src/app/model/typing/types/abstract-type';
+import { AbstractType, WildcardPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { TypingTree } from 'src/app/model/typing/typing-tree/typing-tree';
 import { ParsingService } from 'src/app/service/parsing.service';
 import { SymbolTableAdapter } from './adapter/symbol-table-adapter';
@@ -121,7 +121,7 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
   }
 
   public onTypesChange(types: AbstractType[]) {
-    this.availableTypes = types;
+    this.availableTypes = types.concat([new WildcardPlaceholderType()]);
     this.updateTrees();
   }
   public onTypedefsChange(typeDefs: TypeDefinitionTable) {

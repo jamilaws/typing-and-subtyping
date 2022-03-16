@@ -10,18 +10,18 @@ import { TypeError } from "../../typing/type-error";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 import { StructuralSubtypingQuery } from "../../typing/types/common/structural-subtyping/structural-subtyping-query";
+import { Definition } from "./DEPRECATED-AST-NODES/definition";
 
 export class CallExpression extends AstNode {
 
-    // IMPORTANT!!!
-    // TODO: Base does not necessarily be of type Identifier! Could be some more complex expression!
-    public base: Identifier;
-    public args: AstNode[]; // TODO: Change to concrete subclass, Definition?
+    // Note: In the typical case, base will be an identifier belonging to a declaration of a function.
+    public base: AstNode;
+    public args: Definition[];
 
     // Buffer written in 'performTypeCheck' / read in 'getTypingTree'
     private subtypingQueryBuffer: StructuralSubtypingQuery[] = null;
 
-    constructor(codeLine: number, base: Identifier, args: AstNode[]) {
+    constructor(codeLine: number, base: Identifier, args: Definition[]) {
         super(codeLine);
         this.base = base;
         this.args = args;
@@ -62,13 +62,13 @@ export class CallExpression extends AstNode {
             const returnType = functionType.getReturnType();
 
             if(declarationParamTypes.length !== callParamTypes.length){
-                // TODO!
                 const msg = `Expected ${declarationParamTypes.length} parameters, but got ${callParamTypes.length}`;
                 return this.failTypeCheck(msg, returnType);
             }
 
             // Check if call params are subtypes of the declaration param types (per index)
             const subtypingChecks = declarationParamTypes.map((pt, index) => callParamTypes[index].isStrutcturalSubtypeOf(pt, t.getTypeDefinitions()));
+            
             this.subtypingQueryBuffer = subtypingChecks.map(check => check.getQuery());
 
             if(!subtypingChecks.every(check => check.value)){
@@ -78,7 +78,7 @@ export class CallExpression extends AstNode {
 
             return this.type = returnType;
         } else {
-            throw new TypeError(this.base.getName() + " is not a function");
+            throw new TypeError(functionType.toString() + " is not a function");
         }
     }
 

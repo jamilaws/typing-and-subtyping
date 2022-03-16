@@ -1,15 +1,13 @@
-import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../../common/graph/_module";
+import { AstNode } from "../../ast-node";
+import { Edge, Graph } from "../../../common/graph/_module";
 
-import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
+import { AbstractTypeExpression } from "../type-expressions/abstract-type-expression";
 
-import { TypeEnvironment } from "../../typing/type-environment";
+import { TypeEnvironment } from "../../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
-import { TypingTree } from "../../typing/typing-tree/typing-tree";
-import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
+import { TypingTree } from "../../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "../../../typing/typing-tree/typing-tree-node-label";
 
-
-// TODO: Clearify!
 
 // e.g. function parameter, struct member
 export class ExpressionStatement extends AstNode {
@@ -35,6 +33,7 @@ export class ExpressionStatement extends AstNode {
     }
 
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
+        throw new Error("ExpressionStatement needed")
         return this.type = this.expression.performTypeCheck(t);
     }
 

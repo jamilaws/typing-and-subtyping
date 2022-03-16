@@ -1,8 +1,12 @@
-<h1 mat-dialog-title>Name for {{data.type.toString()}} declaration.</h1>
+<h1 mat-dialog-title>Add new declaration.</h1>
 <div mat-dialog-content>
-    <input #nameInput type="text">
+  <span>{{_prefix}}</span>
+  <input #nameInput type="text" class="inputName" (input)="updateInputWidth()" cdkFocusInitial>
+  <span>{{_suffix}}</span>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onClickCancel()">Cancel</button>
-  <button mat-button (click)="onClickCreate(nameInput.value)" cdkFocusInitial>Create</button>
+  <div class="dialog-buttons-wrapper">
+    <button mat-button (click)="onClickCancel()" class="dialog-button cancel-button">Cancel</button>
+    <button mat-button (click)="onClickCreate(nameInput.value)" class="dialog-button approve-button">Declare</button>
+  </div>
 </div>

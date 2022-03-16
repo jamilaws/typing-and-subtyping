@@ -16,6 +16,9 @@ export abstract class AbstractTypeBubble {
 
     @ViewChild("menuTrigger") menuTrigger: MatMenuTrigger;
 
+    public menuAddTypedefLabel: string = "add typedef";
+    public menuAddDeclarationLabel: string = "declare";
+
     constructor(protected bubbleSelectionService: BubbleSelectionService, protected cdeclService: CdeclService) {}
 
     public onClick(): void {

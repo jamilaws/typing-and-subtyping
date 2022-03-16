@@ -8,15 +8,19 @@ import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 import { StructuralSubtypingQuery } from "../../typing/types/common/structural-subtyping/structural-subtyping-query";
 
+/**
+ * NOTE: 
+ * Update method 'validateOperator' in class 'BinaryExpression' whenevery this enum is changed!
+ */
 export enum BinaryOperator {
     PLUS = '+',
     MINUS = '-',
     MUL = '*',
     DIV = '/',
     EQ = '=',
-    ARROW = "->",
-    DOT = "."
-    // TODO ...
+    
+    //ARROW = "->",
+    //DOT = "."
 }
 
 export class BinaryExpression extends AstNode {
@@ -30,10 +34,22 @@ export class BinaryExpression extends AstNode {
 
     constructor(codeLine: number, operator: BinaryOperator, left: AstNode, right: AstNode) {
         super(codeLine);
-
+        this.validateOperator(operator);
         this.operator = operator;
         this.left = left;
         this.right = right;
+    }
+
+    private validateOperator(operator: BinaryOperator): void {
+        let fail: boolean = true;
+        
+        if(operator === BinaryOperator.PLUS) fail = false;
+        if(operator === BinaryOperator.MINUS) fail = false;
+        if(operator === BinaryOperator.MUL) fail = false;
+        if(operator === BinaryOperator.DIV) fail = false;
+        if(operator === BinaryOperator.EQ) fail = false;
+
+        if(fail) throw new Error("Invalid binary operator " + operator);
     }
 
     public getCode(): string {
@@ -67,38 +83,36 @@ export class BinaryExpression extends AstNode {
      * @returns 
      */
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
-        const t_1 = this.left.performTypeCheck(t);
-        const t_2 = this.right.performTypeCheck(t);
+        const leftType = this.left.performTypeCheck(t);
+        const rightType = this.right.performTypeCheck(t);
 
         const typedefs = t.getTypeDefinitions();
 
         if (this.operator === BinaryOperator.EQ) {
-            const subtypingResult = t_2.isStrutcturalSubtypeOf(t_1, typedefs);
+            const subtypingResult = rightType.isStrutcturalSubtypeOf(leftType, typedefs);
 
-            // TODO: Write method for this!
             this.subtypingQueryBuffer = [subtypingResult.getQuery()];
 
             if (!subtypingResult.value) {
-                const msg = `Cannot assign value of type ${t_2.toString()} to ${t_1.toString()}`;
-                return this.failTypeCheck(msg, t_1);
+                const msg = `Cannot assign value of type ${rightType.toString()} to ${leftType.toString()}`;
+                return this.failTypeCheck(msg, leftType);
             } else {
-                return this.type = t_1;
+                return this.type = leftType;
             }
         } else {
-            const subtypingResult1 = t_1.isStrutcturalSubtypeOf(t_2, typedefs);
-            const subtypingResult2 = t_2.isStrutcturalSubtypeOf(t_1, typedefs);
+            const subtypingResult1 = leftType.isStrutcturalSubtypeOf(rightType, typedefs);
+            const subtypingResult2 = rightType.isStrutcturalSubtypeOf(leftType, typedefs);
 
-            // TODO: Write method for this!
             this.subtypingQueryBuffer = [
                 subtypingResult1.getQuery(),
                 subtypingResult2.getQuery(),
             ];
 
             if (!subtypingResult1.value && !subtypingResult2.value) {
-                const msg = `Cannot apply operator '${this.operator}' on values of types ${t_1.toString()} and ${t_2.toString()}`;
-                return this.failTypeCheck(msg, t_1);
+                const msg = `Cannot apply operator '${this.operator}' on values of types ${leftType.toString()} and ${rightType.toString()}`;
+                return this.failTypeCheck(msg, leftType);
             } else {
-                return this.type = t_1;
+                return this.type = leftType;
             }
         }
     }

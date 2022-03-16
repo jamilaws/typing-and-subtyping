@@ -15,7 +15,7 @@ import { BaseTypeExpression, TypeName } from '../model/ast/ast-nodes/type-expres
 import { VariableDeclaration } from '../model/ast/ast-nodes/DEPRECATED-AST-NODES/variable-declaration';
 import { BinaryExpression, BinaryOperator } from '../model/ast/ast-nodes/binary-expression';
 import { StructAccessExpression } from '../model/ast/ast-nodes/struct-access-expression';
-import { ExpressionStatement } from '../model/ast/ast-nodes/expression-statement';
+import { ExpressionStatement } from '../model/ast/ast-nodes/DEPRECATED-AST-NODES/expression-statement';
 import { PrefixExpression, PrefixOperator } from '../model/ast/ast-nodes/prefix-expression';
 import { StructTypeExpression } from '../model/ast/ast-nodes/type-expressions/struct-type-expression';
 import { AbstractTypeExpression } from '../model/ast/ast-nodes/type-expressions/abstract-type-expression';
@@ -143,7 +143,7 @@ export class ParsingService {
   private rawToAstNode_CallExpression(x: any): CallExpression {
     const base: Identifier = <Identifier>this.rawToAstNode(x["base"]);
 
-    var args: AstNode[];
+    var args: Definition[];
     if (x["arguments"].length === 1 && x["arguments"][0] === undefined) {
       // Note: the underlying parser implementation handles a call without any arguments with an array containing 'undefined' once
       args = [];
@@ -263,7 +263,7 @@ export class ParsingService {
 
   private rawToAstNode_BinaryExpression(x: any): BinaryExpression | StructAccessExpression {
     const line: number = x["pos"]["line"];
-    const operator = <BinaryOperator>x["operator"];
+    const operator = x["operator"];
     const left = this.rawToAstNode(x["left"]);
     const right = this.rawToAstNode(x["right"]);
 
@@ -275,9 +275,9 @@ export class ParsingService {
     
     */
     switch (operator) {
-      case BinaryOperator.DOT:
+      case ".":
         return new StructAccessExpression(line, <Identifier>left, <Identifier>right);
-      case BinaryOperator.ARROW:
+      case "->":
         const derefNode = new PrefixExpression(line, left, PrefixOperator.DEREF);
         return new StructAccessExpression(line, derefNode, <Identifier>right);
       default:

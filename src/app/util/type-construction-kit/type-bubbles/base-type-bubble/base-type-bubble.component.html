@@ -6,9 +6,9 @@
 <div #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu"></div>
 <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="onClickAddTypedef()">
-        <span>+ Typedef</span>
+        <span>{{menuAddTypedefLabel}}</span>
     </button>
     <button mat-menu-item (click)="onClickAddDeclaration()">
-        <span>+ Declaration</span>
+        <span>{{menuAddDeclarationLabel}}</span>
     </button>
 </mat-menu>

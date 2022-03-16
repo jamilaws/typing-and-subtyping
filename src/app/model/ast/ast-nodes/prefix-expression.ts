@@ -57,7 +57,7 @@ export class PrefixExpression extends AstNode {
                     return this.type = childType.getBaseType();
                 } else {
                     const msg = "Invalid use of deref operator on type " + childType.toString();
-                    return this.failTypeCheck(msg, childType); // TODO: Wildcard/Joker/?
+                    return this.failTypeCheck(msg); // Wildcard
                 }
 
             default: throw new Error("Invalid prefix operator found: " + this.operator);
