@@ -3,7 +3,7 @@ import { AbstractType } from 'src/app/model/typing/types/abstract-type';
 import { Definition } from 'src/app/model/typing/types/common/definition';
 import { NoTypePlaceholder } from 'src/app/model/typing/types/common/no-type-placeholder';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
-import { TypeBubble } from '../../service/bubble-selection.service';
+import { NO_SELECTION_PLACEHOLDER_BUBBLE, TypeBubble } from '../../service/bubble-selection.service';
 import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
 
 @Component({
@@ -43,6 +43,7 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
 
   protected onCreationStopped(): void {
     this.members = new Array();
+    this.currentTypeSelection = NO_SELECTION_PLACEHOLDER_BUBBLE.getType();
     this.resetAddRow();
   }
 
@@ -70,8 +71,8 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
     this.resetAddRow();
   }
 
-  getSelectionText(): string {
-    return AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.currentTypeSelection.toString();
+  getSelectionText(): { prefix: string, suffix: string } {
+    return AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection) ? { prefix: AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER, suffix: ""} : this.currentTypeSelection.toStringSplit();
   }
 
   getInputPrefix(): string {

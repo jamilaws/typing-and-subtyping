@@ -43,7 +43,6 @@ export class CreateTypedefDialogComponent implements OnInit {
 
   updateInputWidth() {
     this.nameInput.nativeElement.style.width = (this.nameInput.nativeElement.value.length * 12) + 'px';
-    this.nameInput.nativeElement.focus();
   }
 
 }

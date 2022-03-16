@@ -41,7 +41,7 @@ export class CreateArrayTypeBubbleComponent extends AbstractCreateTypeBubble imp
   }
 
   getSelectionText(): string {
-    return AbstractCreateTypeBubble.isEmpty(this.currentTargetSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.currentTargetSelection.toString();
+    return AbstractCreateTypeBubble.isEmpty(this.currentTargetSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER + "[]" : new ArrayType(this.currentTargetSelection).toString();
   }
 
 }

@@ -3,10 +3,13 @@
         {{getInputPrefix()}}
     </span>
     <span class="member-input-wrapper">
-        <span style="width: 50px;">
-            {{getSelectionText()}}
+        <span>
+            {{getSelectionText().prefix}}
         </span>
         <input #nameInput type="text" class="input-member-name">
+        <span>
+            {{getSelectionText().suffix}}
+        </span>
         <button #addMemberButton class="add-member-button" (click)="onClickAddMember(nameInput.value)">+</button>
     </span>
     <span>

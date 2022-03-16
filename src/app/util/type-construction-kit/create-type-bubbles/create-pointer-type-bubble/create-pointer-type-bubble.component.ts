@@ -40,7 +40,7 @@ export class CreatePointerTypeBubbleComponent extends AbstractCreateTypeBubble i
   }
 
   getSelectionText(): string {
-    return AbstractCreateTypeBubble.isEmpty(this.currentTargetSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.currentTargetSelection.toString();
+    return AbstractCreateTypeBubble.isEmpty(this.currentTargetSelection) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER + "*" : new PointerType(this.currentTargetSelection).toString();
   }
 
 }
