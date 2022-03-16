@@ -1,12 +1,12 @@
-import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../../common/graph/_module";
+import { AstNode } from "./../../ast-node";
+import { Edge, Graph } from "./../../../common/graph/_module";
 
 
-import { TypeEnvironment } from "../../typing/type-environment";
+import { TypeEnvironment } from "./../../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
-import { TypingTree } from "../../typing/typing-tree/typing-tree";
-import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
-import { PointerType } from "../../typing/types/type-constructors/pointer-type";
+import { TypingTree } from "./../../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "./../../../typing/typing-tree/typing-tree-node-label";
+import { PointerType } from "./../../../typing/types/type-constructors/pointer-type";
 
 /**
  * e.g. {1, 2, 3}

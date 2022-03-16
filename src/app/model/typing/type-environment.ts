@@ -1,4 +1,4 @@
-import { TypeDefStatement } from "../ast/ast-nodes/type-def-statement";
+import { TypeDefStatement } from "../ast/ast-nodes/DEPRECATED-AST-NODES/type-def-statement";
 import { Declaration, ISymbolTable, SymbolTable } from "./symbol-table";
 import { TypeDefinitionTable, TypeDefinitionTableUiData } from "./type-definition-table";
 import { AbstractType } from "./types/abstract-type";

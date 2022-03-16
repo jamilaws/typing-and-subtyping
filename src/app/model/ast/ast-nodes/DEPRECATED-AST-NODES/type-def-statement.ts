@@ -1,12 +1,12 @@
 import { TypeEnvironment } from "src/app/model/typing/type-environment";
-import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../../common/graph/_module";
+import { AstNode } from "./../../ast-node";
+import { Edge, Graph } from "./../../../common/graph/_module";
 
 
 import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { TypingTree } from "src/app/model/typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tree-node-label";
-import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
+import { AbstractTypeExpression } from "./../type-expressions/abstract-type-expression";
 
 export class TypeDefStatement extends AstNode {
 

@@ -1,15 +1,15 @@
-import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../../common/graph/_module";
+import { AstNode } from "./../../ast-node";
+import { Edge, Graph } from "./../../../common/graph/_module";
 
 import { Definition } from "./definition";
-import { AbstractTypeExpression } from "./type-expressions/abstract-type-expression";
+import { AbstractTypeExpression } from "./../type-expressions/abstract-type-expression";
 
-import { TypeEnvironment } from "../../typing/type-environment";
+import { TypeEnvironment } from "./../../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
-import { Declaration } from "../../typing/symbol-table";
-import { FunctionType } from "../../typing/types/type-constructors/function-type";
-import { TypingTree } from "../../typing/typing-tree/typing-tree";
-import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
+import { Declaration } from "./../../../typing/symbol-table";
+import { FunctionType } from "./../../../typing/types/type-constructors/function-type";
+import { TypingTree } from "./../../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "./../../../typing/typing-tree/typing-tree-node-label";
 
 export class FunctionDeclaration extends AstNode implements Declaration {
     

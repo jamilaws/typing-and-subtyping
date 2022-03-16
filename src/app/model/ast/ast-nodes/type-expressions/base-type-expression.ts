@@ -15,7 +15,7 @@ import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tre
 export enum TypeName {
     char = "char", float = "float", int = "int", void = "void" // TODO ...
 }
-export class TypeExpression extends AbstractTypeExpression {
+export class BaseTypeExpression extends AbstractTypeExpression {
     public name: TypeName; //TODO: clearify 'modifier', e.g. if you add 'struct ' as prefix in function arg
 
     constructor(codeLine: number, name: TypeName) {

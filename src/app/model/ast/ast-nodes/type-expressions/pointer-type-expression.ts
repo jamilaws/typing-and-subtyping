@@ -2,7 +2,7 @@ import { TypeEnvironment } from "src/app/model/typing/type-environment";
 import { AstNode } from "../../ast-node";
 import { Graph, Edge } from 'src/app/model/common/graph/_module';
 import { AbstractTypeExpression } from "./abstract-type-expression";
-import { TypeExpression } from "./type-expression";
+import { BaseTypeExpression } from "./base-type-expression";
 
 import { PointerType as PointerType_ } from "src/app/model/typing/types/type-constructors/pointer-type";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
@@ -12,9 +12,9 @@ import { TypingTreeNodeLabel } from "src/app/model/typing/typing-tree/typing-tre
 // char*, int[]
 export class PointerTypeExpression extends AbstractTypeExpression {
 
-    public target: TypeExpression;
+    public target: BaseTypeExpression;
 
-    constructor(codeLine: number, target: TypeExpression) {
+    constructor(codeLine: number, target: BaseTypeExpression) {
         super(codeLine);
         this.target = target;
     }

@@ -1,15 +1,15 @@
-import { AstNode } from "../ast-node";
-import { Edge, Graph } from "../../common/graph/_module";
+import { AstNode } from "./../../ast-node";
+import { Edge, Graph } from "./../../../common/graph/_module";
 
 import { Definition } from "./definition";
 
-import { TypeEnvironment } from "../../typing/type-environment";
+import { TypeEnvironment } from "./../../../typing/type-environment";
 import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
-import { Declaration } from "../../typing/symbol-table";
-import { StructType } from "../../typing/types/type-constructors/struct-type";
-import { Definition as Definition_ } from "../../typing/types/common/definition";
-import { TypingTree } from "../../typing/typing-tree/typing-tree";
-import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
+import { Declaration } from "./../../../typing/symbol-table";
+import { StructType } from "./../../../typing/types/type-constructors/struct-type";
+import { Definition as Definition_ } from "./../../../typing/types/common/definition";
+import { TypingTree } from "./../../../typing/typing-tree/typing-tree";
+import { TypingTreeNodeLabel } from "./../../../typing/typing-tree/typing-tree-node-label";
 
 
 /**
