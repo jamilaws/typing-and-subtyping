@@ -97,9 +97,10 @@ export class BinaryExpression extends AstNode {
                 const msg = `Cannot assign value of type ${rightType.toString()} to ${leftType.toString()}`;
                 return this.failTypeCheck(msg, leftType);
             } else {
-                return this.type = leftType;
+                return this.type = leftType; // TODO: Check if leftType is okay here!
             }
         } else {
+
             const subtypingResult1 = leftType.isStrutcturalSubtypeOf(rightType, typedefs);
             const subtypingResult2 = rightType.isStrutcturalSubtypeOf(leftType, typedefs);
 
@@ -112,7 +113,8 @@ export class BinaryExpression extends AstNode {
                 const msg = `Cannot apply operator '${this.operator}' on values of types ${leftType.toString()} and ${rightType.toString()}`;
                 return this.failTypeCheck(msg, leftType);
             } else {
-                return this.type = leftType;
+                // Return the ("more general" supertype), e.g. 1 + 3.14 has type float
+                return this.type = subtypingResult1.value ? rightType : leftType;
             }
         }
     }

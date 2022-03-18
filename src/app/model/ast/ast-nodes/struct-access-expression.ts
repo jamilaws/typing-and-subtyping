@@ -48,16 +48,15 @@ export class StructAccessExpression extends AstNode {
         .merge(memberGraph);
     }
 
-    // TODO: Wildcard/Joker/?
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const structType = this.struct.performTypeCheck(t);
         if(structType instanceof StructType) {
             const member = structType.getMembers().find(m => m.getName() === this.member.getName());
-            if(!member) throw new TypeError(`Struct '${structType.getName()}' does not include member '${this.member.getName()}'`);
+            if(!member) return this.failTypeCheck(structType.toString() + " does not include member " + this.member.getName()); // Wildcard
             
             return this.type = member.getType(); 
         } else {
-            throw new TypeError("Cannot use '.' operator on type " + structType.toString());
+            return this.failTypeCheck("Cannot use '.' operator on type " + structType.toString()); // Wildcard
         }
     }
 

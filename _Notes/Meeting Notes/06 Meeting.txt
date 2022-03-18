@@ -1,7 +1,20 @@
 FRAGEN:
 
-* Add wildcard type as recovery type, e.g. in PrefixOperator.DEREF one can not know what type is expected in parent ast node
+* Feedback Wildcard Idee; 
+* Quellen
+* Thema Cdecl in Ausarbeitung als Blackbox?
+
+
+ANMERKUNGEN STAND:
+
+* Bugs bei der Einfärbung von SubtypingGraph
+* Subtyping: Schritte, in denen 'other' ein Alias ist, führen IMMER zu einem nächsten Schritt zur Ersetzung (trotz Schleife)
+* WildcardPlaceholderType Konzept noch nicht ausgereift
+* evtl. bugs in LIVE durch build
+
 
 INPUT:
 
-* 
+* BinaryExpression --> return more "general" type 
+* Related work --> viele Quellen (https://dblp.org/; https://scholar.google.com/; andere BAs)
+* Browser komp. probleme (firefox)

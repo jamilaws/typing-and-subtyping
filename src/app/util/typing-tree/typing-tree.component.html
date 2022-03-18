@@ -1,7 +1,7 @@
 <div *ngIf="typingTree; then showBlock else doNotShowBlock"></div>
 <ng-template #showBlock>
     <div class="wrapper">
-        <div class="labelWrapper" [ngStyle]="{'color': _color}">
+        <div class="labelWrapper" [ngStyle]="{'color': _getColor()}">
             {{typingTree.label}}
         </div>
         <div class="bodyWrapper">
@@ -13,8 +13,8 @@
                     [ngClass]="{'notLastChild': i !== typingTree.children.length-1}">
                 </app-typing-tree>
             </div>
-            <div class="divider" [ngStyle]="{'border-top': 'solid 1.5px ' + _color}"></div>
-            <div class="text" [ngStyle]="{'color': _color}">
+            <div class="divider" [ngStyle]="{'border-top': 'solid 1.5px ' + _getColor()}"></div>
+            <div class="text" [ngStyle]="{'color': _getColor()}">
                 {{typingTree.text}}
                 <div *ngIf="typingTree.structuralSubtypingQueries; then showSubtypingLink"></div>
             </div>

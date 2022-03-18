@@ -3,7 +3,7 @@ import { Edge, Graph } from "../../common/graph/_module";
 
 
 import { TypeEnvironment } from "../../typing/type-environment";
-import { AbstractType as AbstractType_ } from "src/app/model/typing/types/abstract-type";
+import { AbstractType as AbstractType_, WildcardPlaceholderType } from "src/app/model/typing/types/abstract-type";
 import { IntType } from "../../typing/types/base-types/int-type";
 import { PointerType } from "../../typing/types/type-constructors/pointer-type";
 import { ArrayType } from "../../typing/types/type-constructors/array-type";
@@ -51,11 +51,9 @@ export class IndexExpression extends AstNode {
 
         if(!(valueType instanceof PointerType) && !(valueType instanceof ArrayType)) {
             return this.failTypeCheck("Index syntax can only be applied on either pointer or array type.", type);
-            //throw new TypeError("Index syntax can only be applied on either pointer or array type.");
         }
-        if(!(indexType instanceof IntType)) {
+        if(!(indexType instanceof IntType) && !(indexType instanceof WildcardPlaceholderType)) {
             return this.failTypeCheck("Array accessor index must be of type int.", type);
-            //throw new TypeError("Array accessor index must be of type int");
         }
 
         return this.type = type;

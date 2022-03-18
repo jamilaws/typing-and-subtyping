@@ -78,7 +78,7 @@ export class CallExpression extends AstNode {
 
             return this.type = returnType;
         } else {
-            throw new TypeError(functionType.toString() + " is not a function");
+            return this.failTypeCheck(functionType.toString() + " is not a function"); // Wildcard
         }
     }
 

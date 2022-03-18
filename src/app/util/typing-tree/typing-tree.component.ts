@@ -13,25 +13,33 @@ export class TypingTreeComponent implements OnInit {
 
   @Input("typingTree") typingTree: TypingTree;
 
-  public _color: string;
+  //public _color: string;
   public _subtypingInfoTooltip: string = "Click to view structural subtyping queries"
 
   constructor(private componentInterconnectionService: ComponentInterconnectionService) { }
 
   ngOnInit(): void {
-    this.initColor();
+    //this.initColor();
   }
 
-  private initColor(): void {
-    if(this.typingTree.node.getType() instanceof TypeErrorPlaceholderType){
-      this._color = "red";
-    } else {
-      this._color = "black";
-    }
-  }
+  // private initColor(): void {
+  //   if(this.typingTree.node.getType() instanceof TypeErrorPlaceholderType){
+  //     this._color = "red";
+  //   } else {
+  //     this._color = "black";
+  //   }
+  // }
 
   public _onClickSubtypingQuery(query: StructuralSubtypingQuery): void {
     this.componentInterconnectionService.onClickSubtypingQuery(query);
+  }
+
+  public _getColor(): string {
+    if(this.typingTree.node.getType() instanceof TypeErrorPlaceholderType){
+      return "red";
+    } else {
+      return "black";
+    }
   }
 
 }

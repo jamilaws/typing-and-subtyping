@@ -19,7 +19,7 @@ export class SymbolTableAdapter implements ISymbolTable {
 
     lookup(identifier: string): Declaration {
         const found = this.declarations.find(d => d.getDeclarationIdentifier() === identifier);
-        if(!found) throw new TypeError("Identifier " + identifier + " not declared.");
+        //if(!found) throw new TypeError("Identifier " + identifier + " not declared.");
         return found;
     }
 

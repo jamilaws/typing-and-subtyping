@@ -35,7 +35,7 @@ export class Identifier extends AstNode {
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const type = t.getTypeOfIdentifier(this.value);
-        if (!type) throw new Error("Found undeclared identifier: " + this.value); // TODO: Wildcard/Joker/?
+        if (!type) return this.failTypeCheck("Identifier " + this.value + " not declared. TEST"); // Wildcard
         
         return this.type = type;
     }

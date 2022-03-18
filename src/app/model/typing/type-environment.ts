@@ -83,13 +83,15 @@ export class TypeEnvironment {
      * Axioms --> Var
      * 
      * Returns the type for an identifier name in the type environment.
-     * Throws an error if identifier has not been declared before use/lookup.
+     * Returns null if identifier has not been declared before use/lookup.
      * 
      * @param {string} identifier 
      * @returns {AbstractType}
      */
     public getTypeOfIdentifier(identifier: string): AbstractType {
-        return this.symbolTable.lookup(identifier).getDeclarationType();
+        const d = this.symbolTable.lookup(identifier);
+        if(!d) return null;
+        return d.getDeclarationType();
     }
 
     /**
