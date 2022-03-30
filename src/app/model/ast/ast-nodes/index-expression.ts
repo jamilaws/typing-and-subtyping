@@ -47,13 +47,14 @@ export class IndexExpression extends AstNode {
         let valueType = this.value.performTypeCheck(t);
         let indexType = this.index.performTypeCheck(t);
 
+        if(!(valueType instanceof PointerType) && !(valueType instanceof ArrayType)) {
+            return this.failTypeCheck("Index syntax can only be applied on either pointer or array type.");
+        }
+
         const type = (<ArrayType | PointerType> valueType).getBaseType();
 
-        if(!(valueType instanceof PointerType) && !(valueType instanceof ArrayType)) {
-            return this.failTypeCheck("Index syntax can only be applied on either pointer or array type.", type);
-        }
         if(!(indexType instanceof IntType) && !(indexType instanceof WildcardPlaceholderType)) {
-            return this.failTypeCheck("Array accessor index must be of type int.", type);
+            return this.failTypeCheck("Array index must be of type int.", type);
         }
 
         return this.type = type;

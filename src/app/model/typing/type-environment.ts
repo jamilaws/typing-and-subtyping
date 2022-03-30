@@ -41,7 +41,7 @@ export class TypeEnvironment {
      * @param   {string} constant 
      * @returns {AbstractType}
      */
-    public getTypeOfConstant(constant: string): AbstractType {
+    public getTypeOfConst(constant: string): AbstractType {
         if (!isNaN(Number(constant))) {
             /*
             int | float
@@ -68,17 +68,6 @@ export class TypeEnvironment {
         throw new Error("Failed mapping type to constant: " + constant);
     }
 
-    /*
-
-    Symbol Table related methods
-
-    */
-
-    public declare(declaration: Declaration): void {
-        this.symbolTable.insert(declaration.getDeclarationIdentifier(), declaration);
-    }
-
-
     /**
      * Axioms --> Var
      * 
@@ -88,10 +77,20 @@ export class TypeEnvironment {
      * @param {string} identifier 
      * @returns {AbstractType}
      */
-    public getTypeOfIdentifier(identifier: string): AbstractType {
+     public getTypeOfVar(identifier: string): AbstractType {
         const d = this.symbolTable.lookup(identifier);
         if(!d) return null;
         return d.getDeclarationType();
+    }
+
+    /*
+
+    Symbol Table related methods
+
+    */
+
+    public declare(declaration: Declaration): void {
+        this.symbolTable.insert(declaration.getDeclarationIdentifier(), declaration);
     }
 
     /**

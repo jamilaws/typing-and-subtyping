@@ -32,7 +32,7 @@ export class Literal extends AstNode {
     }
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
-        this.type = t.getTypeOfConstant(this.value);
+        this.type = t.getTypeOfConst(this.value);
         return this.type;
     }
 

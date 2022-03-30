@@ -50,7 +50,7 @@ export abstract class AstNode implements TypeCheckable {
         this.codeLine = codeLine;
     }
 
-    public getCodeLine(): number { return this.codeLine; }
+    public getCodeLine(): number { return this.codeLine; } // DEPRECATED
     public abstract getCode(): string;
 
     /**

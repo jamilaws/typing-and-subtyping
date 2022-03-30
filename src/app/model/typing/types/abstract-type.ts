@@ -390,7 +390,7 @@ export class AliasPlaceholderType extends AbstractType {
     }
 
     public toCdeclEnglish(): string {
-        throw new Error('Method not implemented.');
+        return this.alias;
     }
 
     /* Structural Subtyping */
@@ -440,7 +440,7 @@ export abstract class AbstractPlaceholderType extends AbstractType {
     }
 
     public toCdeclEnglish(): string {
-        throw new Error("Unexpected method call on placeholder type.");
+        return this.token;
     }
 }
 
