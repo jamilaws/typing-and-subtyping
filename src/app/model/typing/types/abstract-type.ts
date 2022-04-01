@@ -4,8 +4,6 @@ import { StructuralSubtypingQuery } from "./common/structural-subtyping/structur
 import { StructuralSubtypingQueryResult } from "./common/structural-subtyping/structural-subtyping-query-result";
 import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from './common/structural-subtyping/structural-subtyping-query-graph';
 import { CdeclHalves } from './common/cdecl-halves';
-import { Stack } from './common/stack';
-import { CdeclService } from 'src/app/service/cdecl.service';
 
 export interface StructuralSubtypingBufferFrame {
     result: boolean;
@@ -169,7 +167,7 @@ export abstract class AbstractType {
     }
 
     /**
-     * Creates new buffer frame for a performStructuralSubtypingCheck call and pushes it to the buffer stack.
+     * Creates new buffer frame for a performStructuralSubtypingCheck call and pushes it to the buffer queue.
      * Each opened frame should be closed when consumed.
      * @param graph 
      */
@@ -249,7 +247,7 @@ export abstract class AbstractType {
         graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph, root, bufferFrame);
 
 
-        // Buffer frame consumed --> remove it from the stack
+        // Buffer frame consumed --> remove it from the queue
         //this.buildQueryGraph_step_closeBufferFrame();
 
         return graph;
