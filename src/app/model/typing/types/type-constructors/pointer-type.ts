@@ -19,7 +19,7 @@ export class PointerType extends AbstractType {
 
     /* Structural Subtyping */
 
-    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+    protected override performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         if(other instanceof PointerType) {
             return this.baseType.performStructuralSubtypingCheck(other.baseType, context);
         } else {
@@ -27,7 +27,7 @@ export class PointerType extends AbstractType {
         }
     }
 
-    protected buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
+    protected override buildQueryGraph_step_extendGraph(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
         const targetOut = this.baseType.buildQueryGraph();
         if(!targetOut) return graph; 
 

@@ -3,7 +3,7 @@ import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { NoTypePlaceholder } from "src/app/model/typing/types/common/no-type-placeholder";
 import { BubbleSelectionService, TypeBubble } from "../service/bubble-selection.service";
 
-export class InvalidTypeCreationError extends Error {
+export class InvalidTypeConstructionError extends Error {
     public userMessage: string;
 
     constructor(userMessage: string) {
@@ -19,16 +19,17 @@ export class InvalidTypeCreationError extends Error {
 
 
 @Directive()
-export abstract class AbstractCreateTypeBubble {
+export abstract class AbstractTypeConstructionBubble {
 
     @Output('onApplyCreation') onApplyCreation_extern = new EventEmitter<AbstractType>();
     @Output('onCancelCreation') onCancelCreation_extern = new EventEmitter<void>();
 
     protected static SELECTION_EMPTY_PLACEHOLDER: string = "?";
 
+
     private active: boolean = false;
 
-    constructor(protected bubbleSelectionService: BubbleSelectionService) {
+    constructor(private bubbleSelectionService: BubbleSelectionService) {
         this.bubbleSelectionService.selectedBubble.subscribe(bubble => {
             if (this.active) {
                 this.onTypeBubbleSelected(bubble);
@@ -39,7 +40,7 @@ export abstract class AbstractCreateTypeBubble {
     public activate(): void {
         this.active = true;
         // Use setTimeout to overcome changedetection. TODO Find more elegant solution for this!
-        setTimeout(() => this.onCreationStarted(), 100);
+        setTimeout(() => this.onConstructionStarted(), 100);
     }
 
     public deactivate(): void {
@@ -50,9 +51,9 @@ export abstract class AbstractCreateTypeBubble {
     private onPressedEnter(): void {
         let output: AbstractType;
         try {
-            output = this.onApplyCreation(); // Lifecycle Callback
+            output = this.onApplyConstruction(); // Lifecycle Callback
         } catch (e) {
-            if (e instanceof InvalidTypeCreationError) {
+            if (e instanceof InvalidTypeConstructionError) {
                 alert(e.userMessage); // TODO: Use better UI here.
                 return;
             } else {
@@ -63,21 +64,21 @@ export abstract class AbstractCreateTypeBubble {
         this.onApplyCreation_extern.next(output);
         this.deactivate();
 
-        this.onCreationStopped(); // Lifecycle Callback
+        this.onConstructionStopped(); // Lifecycle Callback
     }
 
     private onPressedEscape(): void {
-        this.onCancelCreation(); // Lifecycle Callback
+        this.onCancelConstruction(); // Lifecycle Callback
 
         this.onCancelCreation_extern.next();
         this.deactivate();
 
-        this.onCreationStopped(); // Lifecycle Callback
+        this.onConstructionStopped(); // Lifecycle Callback
     }
 
     @HostListener('document:keydown.escape', ['$event'])
     @HostListener('document:keypress', ['$event'])
-    private handleKeyboardEvent(event: KeyboardEvent) {
+    private handleKeyboardEvent(event: KeyboardEvent): void {
         if (!this.active) return;
         switch (event.key) {
             case "Enter":
@@ -110,36 +111,40 @@ export abstract class AbstractCreateTypeBubble {
     */
 
     /**
-     * Will be called automatically when the creation state had been entered. Use this lifecycle hook for initialization.
+     * Called after activation. Use this hook for set-up purpose.
      */
-    protected abstract onCreationStarted(): void;
+    protected abstract onConstructionStarted(): void;
 
     /**
-     * Will be called automatically when user clicks a different bubble. Use this callback to store references to other types when composing a complex one.
+     * Called when user clicks a different bubble. Use this callback to store references to other types when composing a complex one.
      * @param bubble clicked (other) bubble holding an already existing type
      */
     protected abstract onTypeBubbleSelected(bubble: TypeBubble): void;
 
     /**
-     * Will be called automatically when user tries to apply the composed type (i.e. pressing 'Enter').
-     * Throw a InvalidTypeCreationError if creation is not possible to notify user and abort applying the creation.
+     * Called when user tries to apply the composed type (by pressing 'Enter').
+     * Throw an InvalidTypeConstructionError if construction is not possible to notify the user and ignore the keypress.
+     * 
+     * Note: Do not use this callback for cleanup. Use 'onCreationStopped' instead.
      * 
      * @returns the created type
      */
-    protected abstract onApplyCreation(): AbstractType;
+    protected abstract onApplyConstruction(): AbstractType;
 
     /**
-     * Will be called automatically when user cancels the creation (i.e. by pressing 'Esc').
+     * Called when user cancels the construction (by pressing 'Esc').
+     * 
      * Note: Do not use this callback for cleanup. Use 'onCreationStopped' instead.
      * 
      * @returns 
      */
-    protected abstract onCancelCreation(): void;
+    protected abstract onCancelConstruction(): void;
 
     /**
-     * Will be called automatically when the creation state has been stopped, no matter if creation was applies or canceled.
-     * Use this lifecycle hook for cleanup, so everything is ready for next 'onCreationStarted' callback.
+     * Called when the construction has finished, no matter if it was applied or canceled.
+     * Use this hook for clean-up purpose, so the component remains in a well defined state 
+     * for upcoming 'onCreationStarted' hook calls.
      */
-    protected abstract onCreationStopped(): void;
+    protected abstract onConstructionStopped(): void;
 }
 

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateStructTypeBubbleComponent } from './create-struct-type-bubble.component';
+import { StructTypeConstructionBubbleComponent } from './create-struct-type-bubble.component';
 
 describe('CreateStructTypeBubbleComponent', () => {
-  let component: CreateStructTypeBubbleComponent;
-  let fixture: ComponentFixture<CreateStructTypeBubbleComponent>;
+  let component: StructTypeConstructionBubbleComponent;
+  let fixture: ComponentFixture<StructTypeConstructionBubbleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateStructTypeBubbleComponent ]
+      declarations: [ StructTypeConstructionBubbleComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateStructTypeBubbleComponent);
+    fixture = TestBed.createComponent(StructTypeConstructionBubbleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

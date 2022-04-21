@@ -1,14 +1,14 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractType, AliasPlaceholderType } from 'src/app/model/typing/types/abstract-type';
 import { TypeBubble } from '../../service/bubble-selection.service';
-import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
+import { AbstractTypeConstructionBubble, InvalidTypeConstructionError } from '../abstract-type-construction-bubble';
 
 @Component({
   selector: 'app-create-alias-type-bubble',
   templateUrl: './create-alias-type-bubble.component.html',
   styleUrls: ['./create-alias-type-bubble.component.css']
 })
-export class CreateAliasTypeBubbleComponent extends AbstractCreateTypeBubble implements OnInit {
+export class CreateAliasTypeBubbleComponent extends AbstractTypeConstructionBubble implements OnInit {
 
   @Input("isAliasAvailableCallback") isAliasAvailableCallback: (alias: string) => boolean;
 
@@ -16,7 +16,7 @@ export class CreateAliasTypeBubbleComponent extends AbstractCreateTypeBubble imp
 
   ngOnInit(): void {}
 
-  protected onCreationStarted(): void {
+  protected onConstructionStarted(): void {
     this.aliasInput.nativeElement.focus();
   }
 
@@ -24,18 +24,18 @@ export class CreateAliasTypeBubbleComponent extends AbstractCreateTypeBubble imp
     // Intentionally left blank
   }
 
-  protected onApplyCreation(): AbstractType {
+  protected onApplyConstruction(): AbstractType {
     const enteredAlias: string = this.aliasInput.nativeElement.value;
-    if(!enteredAlias) throw new InvalidTypeCreationError("Please enter a valid alias name");
-    if(!this.isAliasAvailableCallback(enteredAlias)) throw new InvalidTypeCreationError("Please enter an available alias name");
+    if(!enteredAlias) throw new InvalidTypeConstructionError("Please enter a valid alias name");
+    if(!this.isAliasAvailableCallback(enteredAlias)) throw new InvalidTypeConstructionError("Please enter an available alias name");
     return new AliasPlaceholderType(enteredAlias);
   }
 
-  protected onCancelCreation(): void {
+  protected onCancelConstruction(): void {
     // Intentionally left blank
   }
 
-  protected onCreationStopped(): void {
+  protected onConstructionStopped(): void {
     this.aliasInput.nativeElement.value = "";
   }
 

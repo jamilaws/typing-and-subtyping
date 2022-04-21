@@ -1,10 +1,11 @@
-* Add CAST support
-* separate BinOp in '=' and 'rest'
+* Browser komp. probleme (firefox) --> Anmerkung BA
+* Fix coloring in Subtyping tree
 * TypingTreeComponen --> overflow?
 * Fix type-environment constants!
 * Check: does equality respect typedefs??
 * struct names? (write in BA: omitted because irrelevant, deal with structural eq only)
 * subtyping between pointers and arrays (specify in BA!)
-(* Idee: Config mit enable/disbale structural subtyping check in typing tab)
+(* Idee: Config mit enable/disbale structural subtyping check in typing tab + BinaryExpression special impl instead of typing rule)
 (*Ask: termination subtyping --> what exactly does "declared types" mean?)
 (*Reset structuralSubtypingBuffer at the end of the routine)
+(*Subtyping OP incomplete in slides --> rewatch video and check comments)

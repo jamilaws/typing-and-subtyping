@@ -26,7 +26,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BaseTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/base-type-bubble/base-type-bubble.component';
 import { ConstructedTypeBubbleComponent } from './util/type-construction-kit/type-bubbles/constructed-type-bubble/constructed-type-bubble.component';
 import { CreateArrayTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
-import { CreateStructTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
+import { StructTypeConstructionBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
 import { CreatePointerTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-pointer-type-bubble/create-pointer-type-bubble.component';
 import { CreateFunctionTypeBubbleComponent } from './util/type-construction-kit/create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
 import { CreateTypedefDialogComponent } from './util/type-construction-kit/dialogs/create-typedef-dialog/create-typedef-dialog.component';
@@ -69,7 +69,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     BaseTypeBubbleComponent,
     ConstructedTypeBubbleComponent,
     CreateArrayTypeBubbleComponent,
-    CreateStructTypeBubbleComponent,
+    StructTypeConstructionBubbleComponent,
     CreatePointerTypeBubbleComponent,
     CreateFunctionTypeBubbleComponent,
     CreateTypedefDialogComponent,

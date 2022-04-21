@@ -25,6 +25,8 @@ const NODE_SIZE: number = 20;
 })
 export class DummySubtypingTestComponent implements OnInit {
 
+  public uxHint: string = "Scroll to zoom. Click and hold to move."
+
   private data: StructuralSubtypingQueryResult;
 
   @Input('structuralSubtypingQueryResult')

@@ -35,7 +35,7 @@ export class Identifier extends AstNode {
     
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const type = t.getTypeOfVar(this.value);
-        if (!type) return this.failTypeCheck("Identifier " + this.value + " not declared. TEST"); // Wildcard
+        if (!type) return this.failTypeCheck("Identifier " + this.value + " not declared."); // Wildcard
         
         return this.type = type;
     }

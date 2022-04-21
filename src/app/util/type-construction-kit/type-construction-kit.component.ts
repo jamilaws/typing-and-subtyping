@@ -11,11 +11,11 @@ import { ArrayType } from 'src/app/model/typing/types/type-constructors/array-ty
 import { PointerType } from 'src/app/model/typing/types/type-constructors/pointer-type';
 import { ConfigurationStoreService } from 'src/app/service/configuration-store.service';
 import { DeclarationAdapter } from 'src/app/view/type-construction-kit-demo-view/adapter/declaration-adapter';
-import { AbstractCreateTypeBubble } from './create-type-bubbles/abstract-create-type-bubble';
+import { AbstractTypeConstructionBubble } from './create-type-bubbles/abstract-type-construction-bubble';
 import { CreateArrayTypeBubbleComponent } from './create-type-bubbles/create-array-type-bubble/create-array-type-bubble.component';
 import { CreateFunctionTypeBubbleComponent } from './create-type-bubbles/create-function-type-bubble/create-function-type-bubble.component';
 import { CreatePointerTypeBubbleComponent } from './create-type-bubbles/create-pointer-type-bubble/create-pointer-type-bubble.component';
-import { CreateStructTypeBubbleComponent } from './create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
+import { StructTypeConstructionBubbleComponent } from './create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
 import { CreateDeclarationDialogComponent } from './dialogs/create-declaration-dialog/create-declaration-dialog.component';
 import { CreateTypedefDialogComponent } from './dialogs/create-typedef-dialog/create-typedef-dialog.component';
 
@@ -29,7 +29,7 @@ export class TypeConstructionKitComponent implements OnInit {
 
   @ViewChild('createPointerBubble') createPointerBubble: CreatePointerTypeBubbleComponent;
   @ViewChild('createArrayBubble') createArrayBubble: CreateArrayTypeBubbleComponent;
-  @ViewChild('createStructBubble') createStructBubble: CreateStructTypeBubbleComponent;
+  @ViewChild('createStructBubble') createStructBubble: StructTypeConstructionBubbleComponent;
   @ViewChild('createFunctionBubble') createFunctionBubble: CreateFunctionTypeBubbleComponent;
 
   @Output('onTypesChange') types_extern = new EventEmitter<AbstractType[]>();
@@ -82,7 +82,7 @@ export class TypeConstructionKitComponent implements OnInit {
     return (<AbstractType[]>this.baseTypes).concat(this.constructedTypes).concat(this.aliasTypes);
   }
 
-  public onClickStartCreation(creationBubble: AbstractCreateTypeBubble) {
+  public onClickStartCreation(creationBubble: AbstractTypeConstructionBubble) {
     creationBubble.activate();
     this.creationActive = true;
   }

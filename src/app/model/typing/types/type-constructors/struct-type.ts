@@ -44,7 +44,7 @@ export class StructType extends AbstractType {
 
     /* Structural Subtyping */
 
-    protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+    protected override performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         const buffer = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
         buffer.appendix.relevantMembers = new Array<Definition>();
 
@@ -92,4 +92,11 @@ export class StructType extends AbstractType {
 
     /* --- */
 
+
 }
+
+
+
+
+
+

@@ -4,24 +4,24 @@ import { Definition } from 'src/app/model/typing/types/common/definition';
 import { NoTypePlaceholder } from 'src/app/model/typing/types/common/no-type-placeholder';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
 import { NO_SELECTION_PLACEHOLDER_BUBBLE, TypeBubble } from '../../service/bubble-selection.service';
-import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
+import { AbstractTypeConstructionBubble, InvalidTypeConstructionError } from '../abstract-type-construction-bubble';
+
 
 @Component({
   selector: 'app-create-struct-type-bubble',
   templateUrl: './create-struct-type-bubble.component.html',
   styleUrls: ['./create-struct-type-bubble.component.css']
 })
-export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble implements OnInit {
+export class StructTypeConstructionBubbleComponent extends AbstractTypeConstructionBubble implements OnInit {
 
   @ViewChild('nameInput') nameInput: ElementRef;
 
   currentTypeSelection: AbstractType;
-  members: Definition[] = new Array();
+  addedMembers: Definition[] = new Array();
 
   ngOnInit(): void { }
 
-  protected onCreationStarted(): void {
-    // Intentionally left blank
+  protected onConstructionStarted(): void {
   }
 
   protected onTypeBubbleSelected(bubble: TypeBubble): void {
@@ -29,20 +29,20 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
     this.nameInput.nativeElement.focus();
   }
 
-  protected onApplyCreation(): AbstractType {
-    if (this.members.length === 0) {
-      throw new InvalidTypeCreationError("Please add a member to the struct.");
-    }
+  protected onApplyConstruction(): AbstractType {
+    // if (this.addedMembers.length === 0) {
+    //   throw new InvalidTypeConstructionError("Please add a member to the struct.");
+    // }
 
-    return new StructType("TODO", this.members);
+    return new StructType("TODO", this.addedMembers);
   }
 
-  protected onCancelCreation(): void {
+  protected onCancelConstruction(): void {
     // Intentionally left blank
   }
 
-  protected onCreationStopped(): void {
-    this.members = new Array();
+  protected onConstructionStopped(): void {
+    this.addedMembers = new Array();
     this.currentTypeSelection = NO_SELECTION_PLACEHOLDER_BUBBLE.getType();
     this.resetAddRow();
   }
@@ -50,7 +50,6 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
 
   private resetAddRow(): void {
     // Reset
-    this.bubbleSelectionService.unselect();
     this.nameInput.nativeElement.value = "";
     this.nameInput.nativeElement.focus();
   }
@@ -62,22 +61,28 @@ export class CreateStructTypeBubbleComponent extends AbstractCreateTypeBubble im
       return;
     }
 
-    if (AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection)) {
+    if (AbstractTypeConstructionBubble.isEmpty(this.currentTypeSelection)) {
       alert("Please select a member type");
       return;
     }
-    this.members.push(new Definition(name, this.currentTypeSelection));
+    this.addedMembers.push(new Definition(name, this.currentTypeSelection));
 
     this.resetAddRow();
   }
 
+  /*
+  
+  Helper methods
+
+  */
+
   getSelectionText(): { prefix: string, suffix: string } {
-    return AbstractCreateTypeBubble.isEmpty(this.currentTypeSelection) ? { prefix: AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER, suffix: ""} : this.currentTypeSelection.toStringSplit();
+    return AbstractTypeConstructionBubble.isEmpty(this.currentTypeSelection) ? { prefix: AbstractTypeConstructionBubble.SELECTION_EMPTY_PLACEHOLDER, suffix: ""} : this.currentTypeSelection.toStringSplit();
   }
 
   getInputPrefix(): string {
-    const semicolon = this.members.length > 0 ? ";" : "";
-    return "struct { " + this.members.map(m => m.getType().toCdeclC(m.getName())).join("; ") + semicolon;
+    const semicolon = this.addedMembers.length > 0 ? ";" : "";
+    return "struct { " + this.addedMembers.map(m => m.getType().toCdeclC(m.getName())).join("; ") + semicolon;
   }
 
   getInputSuffix(): string {

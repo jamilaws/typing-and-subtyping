@@ -2,17 +2,17 @@ import { Directive, EventEmitter, HostListener, Input, Output, ViewChild } from 
 import { MatMenuTrigger } from "@angular/material/menu";
 import { AbstractType } from "src/app/model/typing/types/abstract-type";
 import { CdeclService } from "src/app/service/cdecl.service";
-import { BubbleSelectionService, TypeBubble } from "../service/bubble-selection.service";
+import { BubbleSelectionService, TypeBubble as ITypeBubble } from "../service/bubble-selection.service";
 import { TypeBubbleState } from "./type-bubble-state";
 
 @Directive()
-export abstract class AbstractTypeBubble {
+export abstract class AbstractTypeBubble implements ITypeBubble {
 
     @Input("type") type: AbstractType;
-    @Input("state") state: TypeBubbleState = TypeBubbleState.ACTION;
+    @Input("state") state: TypeBubbleState = TypeBubbleState.CREATION;
 
-    @Output("onClickCreateTypedef") onClickCreateTypedef = new EventEmitter<AbstractType>();
-    @Output("onClickCreateDeclaration") onClickCreateDeclaration = new EventEmitter<AbstractType>();
+    @Output("onClickCreateTypedef") onClickCreateTypedef_extern = new EventEmitter<AbstractType>();
+    @Output("onClickCreateDeclaration") onClickCreateDeclaration_extern = new EventEmitter<AbstractType>();
 
     @ViewChild("menuTrigger") menuTrigger: MatMenuTrigger;
 
@@ -22,11 +22,12 @@ export abstract class AbstractTypeBubble {
     constructor(protected bubbleSelectionService: BubbleSelectionService, protected cdeclService: CdeclService) {}
 
     public onClick(): void {
+        // TODO: Find mistake!!!
         switch (this.state) {
-            case TypeBubbleState.ACTION:
+            case TypeBubbleState.CREATION:
                 this.menuTrigger.openMenu();
                 break;
-            case TypeBubbleState.SELECTION:
+            case TypeBubbleState.IDLE:
                 this.bubbleSelectionService.select(this)
                 break;
             default: throw new Error("Unexpected bubble state found.")
@@ -38,12 +39,12 @@ export abstract class AbstractTypeBubble {
     }
 
     public onClickAddTypedef(): void {
-        if (!(this.state === TypeBubbleState.ACTION)) throw new Error("Unexpectedly called onClickAddTypedef while being in state " + this.state);
-        this.onClickCreateTypedef.emit(this.getType());
+        if (!(this.state === TypeBubbleState.CREATION)) throw new Error("Unexpectedly called onClickAddTypedef while being in state " + this.state);
+        this.onClickCreateTypedef_extern.emit(this.getType());
     }
 
     public onClickAddDeclaration(): void {
-        if (!(this.state === TypeBubbleState.ACTION)) throw new Error("Unexpectedly called onClickAddDeclaration while being in state " + this.state);
-        this.onClickCreateDeclaration.emit(this.getType());
+        if (!(this.state === TypeBubbleState.CREATION)) throw new Error("Unexpectedly called onClickAddDeclaration while being in state " + this.state);
+        this.onClickCreateDeclaration_extern.emit(this.getType());
     }
 }

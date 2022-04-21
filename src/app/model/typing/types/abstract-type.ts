@@ -71,7 +71,7 @@ export abstract class AbstractType {
 
     public toStringSplit(): { prefix: string, suffix: string } {
         const split = this.toCdeclC().split(AbstractType.PURE_TYPE_IDENTIFIER_PLACEHOLDER);
-        if(split.length !== 2) throw new Error("Unexpected: split cdecl by '" + AbstractType.PURE_TYPE_IDENTIFIER_PLACEHOLDER + "' into array with length unequal 2");
+        if (split.length !== 2) throw new Error("Unexpected: split cdecl by '" + AbstractType.PURE_TYPE_IDENTIFIER_PLACEHOLDER + "' into array with length unequal 2");
         return {
             prefix: split[0],
             suffix: split[1],
@@ -89,7 +89,7 @@ export abstract class AbstractType {
     public equals(other: AbstractType): boolean {
 
         // equality checks with wildcards always yield true
-        if(this instanceof WildcardPlaceholderType || other instanceof WildcardPlaceholderType) return true;
+        if (this instanceof WildcardPlaceholderType || other instanceof WildcardPlaceholderType) return true;
 
         return this.toString() === other.toString();
     }
@@ -125,24 +125,6 @@ export abstract class AbstractType {
         this.performStructuralSubtypingCheck_step_openNewBufferFrame();
         const bufferFrame = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
 
-        /* --- */
-        if (other instanceof AliasPlaceholderType) {
-
-            const alias = other.getAlias();
-            const target = context.typeDefinitions.get(alias);
-
-            if (!target) throw new Error("No type definition exists for " + alias);
-
-            // Cache relevant data about alias replacement
-            bufferFrame.didReplaceOtherAlias = true;
-            bufferFrame.aliasQuery = new StructuralSubtypingQuery(this, other);
-
-            // Repeat call with other being replaced by its target
-            // return this.performStructuralSubtypingCheck(target, context);
-            other = target;
-        }
-        /* --- */
-
         const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory);
 
         bufferFrame.currentQuery = newQuery;
@@ -159,11 +141,28 @@ export abstract class AbstractType {
             return true;
         }
 
+        if (other instanceof AliasPlaceholderType) {
+            return this.performStructuralSubtypingCheck_step_delegateToAliasTarget(other, context);
+        }
+
         const result = this.performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other, context);
 
         bufferFrame.result = result;
 
         return result;
+    }
+
+    protected performStructuralSubtypingCheck_step_delegateToAliasTarget(other: AliasPlaceholderType, context: StructuralSubtypingQueryContext): boolean {
+        const alias: string         = other.getAlias();
+        const target: AbstractType  = context.typeDefinitions.get(alias);
+
+        if (!target) throw new Error("No type definition exists for " + alias);
+
+        const bufferFrame = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
+        bufferFrame.didReplaceOtherAlias = true;
+
+        // Repeat call with other replaced by its target
+        return this.performStructuralSubtypingCheck(target, context);
     }
 
     /**
@@ -233,22 +232,20 @@ export abstract class AbstractType {
     public buildQueryGraph(): StructuralSubtypingQueryGraph {
         const bufferFrame = this.buildQueryGraph_step_dequeueBufferFrame();
 
-        if(!bufferFrame) return null;
+        if (!bufferFrame) return null;
 
         let graph = this.buildQueryGraph_step_buildBasicGraph(bufferFrame);
         const root = graph.getGraph().getRoot();
 
         graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
 
-        if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
-            graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
+        if (bufferFrame.didReplaceOtherAlias) {
+            graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph);
+        } else {
+            if (!bufferFrame.loopDetected && !bufferFrame.equalityDetected) {
+                graph = this.buildQueryGraph_step_extendGraph(graph, bufferFrame);
+            }
         }
-
-        graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph, root, bufferFrame);
-
-
-        // Buffer frame consumed --> remove it from the queue
-        //this.buildQueryGraph_step_closeBufferFrame();
 
         return graph;
     }
@@ -275,22 +272,15 @@ export abstract class AbstractType {
         return new StructuralSubtypingQueryGraph(graph, []);
     }
 
-    protected buildQueryGraph_step_handleCaseOtherBeingAlias(graph: StructuralSubtypingQueryGraph, targetNode: Node<QueryGraphNodeData>, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
+    protected buildQueryGraph_step_handleCaseOtherBeingAlias(graph: StructuralSubtypingQueryGraph): StructuralSubtypingQueryGraph {
 
-        if (bufferFrame.didReplaceOtherAlias) {
-            //alert("ALIAS in GRAPH");
+        // Simply continue (deque buffer ...)
+        const subgraph = this.buildQueryGraph();
 
-            const newNode = new Node<QueryGraphNodeData>({
-                query: bufferFrame.aliasQuery,
-                highlight: false // A node right before an alias replacement should never be highlighted
-            });
+        const newEdge = new Edge(graph.getGraph().getRoot(), subgraph.getGraph().getRoot(), "alias");
 
-            const newEdge = new Edge(newNode, targetNode, "alias");
-
-            graph.getGraph().addNode(newNode)
-            graph.getGraph().addEdge(newEdge);
-            graph.getGraph().setRoot(newNode);
-        }
+        graph.merge(subgraph);
+        graph.getGraph().addEdge(newEdge);
 
         return graph;
     }

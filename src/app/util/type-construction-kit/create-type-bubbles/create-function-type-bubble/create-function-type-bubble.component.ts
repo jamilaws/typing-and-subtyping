@@ -3,7 +3,7 @@ import { AbstractType } from 'src/app/model/typing/types/abstract-type';
 import { NoTypePlaceholder } from 'src/app/model/typing/types/common/no-type-placeholder';
 import { FunctionType } from 'src/app/model/typing/types/type-constructors/function-type';
 import { TypeBubble } from '../../service/bubble-selection.service';
-import { AbstractCreateTypeBubble, InvalidTypeCreationError } from '../abstract-create-type-bubble';
+import { AbstractTypeConstructionBubble, InvalidTypeConstructionError } from '../abstract-type-construction-bubble';
 
 enum SelectionState {
   RETURN, // Idle state in which the return type has to be selected
@@ -15,7 +15,7 @@ enum SelectionState {
   templateUrl: './create-function-type-bubble.component.html',
   styleUrls: ['./create-function-type-bubble.component.css']
 })
-export class CreateFunctionTypeBubbleComponent extends AbstractCreateTypeBubble implements OnInit {
+export class CreateFunctionTypeBubbleComponent extends AbstractTypeConstructionBubble implements OnInit {
 
   private state: SelectionState = SelectionState.RETURN;
 
@@ -24,12 +24,12 @@ export class CreateFunctionTypeBubbleComponent extends AbstractCreateTypeBubble 
 
   ngOnInit(): void { }
 
-  protected onCreationStarted(): void {
+  protected onConstructionStarted(): void {
     // Intentionally left blank
   }
 
   protected onTypeBubbleSelected(bubble: TypeBubble): void {
-    if (AbstractCreateTypeBubble.isEmpty(bubble.getType())) {
+    if (AbstractTypeConstructionBubble.isEmpty(bubble.getType())) {
       return;
     }
     switch (this.state) {
@@ -42,25 +42,25 @@ export class CreateFunctionTypeBubbleComponent extends AbstractCreateTypeBubble 
     }
   }
 
-  protected onApplyCreation(): AbstractType {
-    if (AbstractCreateTypeBubble.isEmpty(this.returnType)) {
-      throw new InvalidTypeCreationError("Please select at least a return type.");
+  protected onApplyConstruction(): AbstractType {
+    if (AbstractTypeConstructionBubble.isEmpty(this.returnType)) {
+      throw new InvalidTypeConstructionError("Please select at least a return type.");
     }
     return new FunctionType(this.paramTypes, this.returnType);
   }
 
-  protected onCancelCreation(): void {
+  protected onCancelConstruction(): void {
     // Intentionally left blank
   }
 
-  protected onCreationStopped(): void {
+  protected onConstructionStopped(): void {
     this.returnType = null;
     this.paramTypes = new Array();
     this.state = SelectionState.RETURN;
   }
 
   getReturnTypeText(): string {
-    return AbstractCreateTypeBubble.isEmpty(this.returnType) ? AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER : this.returnType.toString();
+    return AbstractTypeConstructionBubble.isEmpty(this.returnType) ? AbstractTypeConstructionBubble.SELECTION_EMPTY_PLACEHOLDER : this.returnType.toString();
   }
 
   getParamTypesText(): string {
@@ -70,7 +70,7 @@ export class CreateFunctionTypeBubbleComponent extends AbstractCreateTypeBubble 
         // Intentionally left blank
         break;
       case SelectionState.PARAMS:
-        xs.push(AbstractCreateTypeBubble.SELECTION_EMPTY_PLACEHOLDER);
+        xs.push(AbstractTypeConstructionBubble.SELECTION_EMPTY_PLACEHOLDER);
         break;
     }
     return xs.join(', ');

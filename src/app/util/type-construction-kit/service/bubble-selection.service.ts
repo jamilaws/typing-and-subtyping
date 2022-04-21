@@ -20,7 +20,11 @@ export class BubbleSelectionService {
   public selectedBubble: BehaviorSubject<TypeBubble>;
 
   constructor() {
-    this.selectedBubble = new BehaviorSubject(NO_SELECTION_PLACEHOLDER_BUBBLE);
+    this.selectedBubble = new BehaviorSubject<TypeBubble>(NO_SELECTION_PLACEHOLDER_BUBBLE);
+  }
+
+  public subscribe(onSelect: (bubble: TypeBubble) => void): void {
+    this.selectedBubble.subscribe(onSelect);
   }
 
   public select(bubble: TypeBubble) {
