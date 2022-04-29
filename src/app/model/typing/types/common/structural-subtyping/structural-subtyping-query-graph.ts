@@ -14,9 +14,9 @@ export interface LoopPair{
 
 export class StructuralSubtypingQueryGraph {
     private graph: Graph<QueryGraphNodeData, string>;
-    private loopPairs: LoopPair[];
+    private loopPairs: Edge<QueryGraphNodeData, string>[];
 
-    constructor(graph: Graph<QueryGraphNodeData, string>, loopPairs: LoopPair[] = []){
+    constructor(graph: Graph<QueryGraphNodeData, string>, loopPairs: Edge<QueryGraphNodeData, string>[] = []){
         this.graph = graph;
         this.loopPairs = loopPairs;
     }
@@ -41,7 +41,7 @@ export class StructuralSubtypingQueryGraph {
     }
 
     
-    public setLoopPairs(v : LoopPair[]) {
+    public setLoopPairs(v : Edge<QueryGraphNodeData, string>[]) {
         this.loopPairs = v;
     }
     

@@ -9,6 +9,7 @@ import { TypeError } from "../../typing/type-error";
 import { TypingTree } from "../../typing/typing-tree/typing-tree";
 import { TypingTreeNodeLabel } from "../../typing/typing-tree/typing-tree-node-label";
 import { storeError } from "../decorators/store-error";
+import { ArrayType } from "../../typing/types/type-constructors/array-type";
 
 export enum PrefixOperator {
     REF = "&",
@@ -44,7 +45,6 @@ export class PrefixExpression extends AstNode {
         return new Graph([newNode], [newEdge]).merge(subgraph);
     }
 
-    @storeError()
     public performTypeCheck(t: TypeEnvironment): AbstractType_ {
         const childType = this.value.performTypeCheck(t);
 
@@ -53,7 +53,7 @@ export class PrefixExpression extends AstNode {
                 return this.type = new PointerType(childType);
 
             case PrefixOperator.DEREF:
-                if (childType instanceof PointerType) {
+                if (childType instanceof PointerType || childType instanceof ArrayType) {
                     return this.type = childType.getBaseType();
                 } else {
                     const msg = "Invalid use of deref operator on type " + childType.toString();

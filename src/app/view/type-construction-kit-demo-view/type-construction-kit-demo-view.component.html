@@ -13,18 +13,9 @@
                     <mat-tab-group #matTabGroup mat-align-tabs="center" animationDuration="0ms">
                         <mat-tab #typingTab label="Typing">
                             <div class="menu-wrapper typing-menu-wrapper">
-                                <!-- <div class="type-env-data-wrapper">
-                                    <div class="typedef-wrapper">
-                                        <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
-                                    </div>
-                                    <div class="declarations-wrapper">
-                                        <app-declarations-table [declarations]="declarationStrings"></app-declarations-table>
-                                    </div>
-                                </div> -->
                                 <div class="expression-input-wrapper">
                                     <input #inputExpression class="expression-input" type="text"
                                         placeholder="Enter an expression to check its type" (keyup)="onChangeExpression()">
-                                    <!-- <button class="check-button" (click)="onChangeExpression()">Check</button> -->
                                 </div>
                                 <div class="ast-wrapper">
                                     <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
@@ -45,11 +36,6 @@
                         </mat-tab>
                         <mat-tab #subtypingTab label="Structural Subtyping">
                             <div class="menu-wrapper subtyping-menu-wrapper">
-                                <!-- <div class="type-env-data-wrapper">
-                                    <div class="typedef-wrapper">
-                                        <app-typedef-table [typeDefs]="typeDefs"></app-typedef-table>
-                                    </div>
-                                </div> -->
                                 <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes"
                                     [optionToName]="typeToName" (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
                                 <br>

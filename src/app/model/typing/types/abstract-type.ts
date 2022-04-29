@@ -12,11 +12,11 @@ export interface StructuralSubtypingBufferFrame {
     equalityDetected: boolean;
 
     currentQuery: StructuralSubtypingQuery;
+    duplicateQuery: StructuralSubtypingQuery;
 
     didReplaceOtherAlias: boolean;
-    aliasQuery: StructuralSubtypingQuery;
 
-    appendix: any; // TODO: Change this!
+    appendix: any;
 }
 
 export class Queue<T> {
@@ -125,7 +125,7 @@ export abstract class AbstractType {
         this.performStructuralSubtypingCheck_step_openNewBufferFrame();
         const bufferFrame = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
 
-        const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory);
+        const { loopDetected, newQuery } = this.performStructuralSubtypingCheck_step_manageQueryHistory(other, context.queryHistory, bufferFrame);
 
         bufferFrame.currentQuery = newQuery;
 
@@ -177,7 +177,7 @@ export abstract class AbstractType {
             equalityDetected: false,
             currentQuery: null,
             didReplaceOtherAlias: false,
-            aliasQuery: null,
+            duplicateQuery: null,
             appendix: {}
         };
         this.structuralSubtypingBuffer.enqueue(frame);
@@ -189,13 +189,19 @@ export abstract class AbstractType {
      * @param history current list of queries that have already been performed
      * @returns if a query loop has been detected and the new query that has been added to the history
      */
-    protected performStructuralSubtypingCheck_step_manageQueryHistory(other: AbstractType, history: StructuralSubtypingQuery[]): { loopDetected: boolean, newQuery: StructuralSubtypingQuery } {
+    protected performStructuralSubtypingCheck_step_manageQueryHistory(other: AbstractType, history: StructuralSubtypingQuery[], bufferFrame: StructuralSubtypingBufferFrame): { loopDetected: boolean, newQuery: StructuralSubtypingQuery } {
+        
+        
         const newQuery = new StructuralSubtypingQuery(this, other);
         // Check for query loop
-        const loopDetected = !!history.find(q => q.equals(newQuery))
+        const duplicate = history.find(q => q.equals(newQuery));
+        // Update history
         history.push(newQuery);
 
-        return { loopDetected: loopDetected, newQuery: newQuery };
+        // If existing, cache duplicate
+        bufferFrame.duplicateQuery = duplicate;
+
+        return { loopDetected: !!duplicate, newQuery: newQuery };
     }
 
     /**
@@ -288,12 +294,14 @@ export abstract class AbstractType {
     protected buildQueryGraph_step_handleLoop(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
 
         // Add loop edge if needed
-        let loopPairs = new Array();
         if (bufferFrame.loopDetected) {
-            // TODO: Implement adding edges representing query loops!
+            const query = bufferFrame.currentQuery;
+            const duplicates = graph.getGraph().getNodes().filter(node => node.getData().query.equals(query));
+            if(duplicates.length !== 2) console.warn("Unexpected: Loop detected but number of duplicates was " + duplicates.length + " instead of 2.");
+            
+            const edge = new Edge<QueryGraphNodeData, string>(duplicates[0], duplicates[1], "loop");
+            graph.getLoopPairs().push(edge);
         }
-
-        graph.setLoopPairs(loopPairs);
 
         return graph;
     }

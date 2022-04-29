@@ -9,9 +9,9 @@ const NODE_SIZE: number = 30;
 const NODE_COLOR: string = "#2469B3";
 
 const NODE_TEXT_COLOR_HIGHLIGHTED: string = "blue"
-const NODE_TEXT_COLOR: string = "white"
+const NODE_TEXT_COLOR: string = "black"
 
-const NODE_TEXT_POSITION = "inside";
+const NODE_TEXT_POSITION = "top"; //"inside";
 
 const LINE_CURVENESS: number = 0; //0.1;
 
