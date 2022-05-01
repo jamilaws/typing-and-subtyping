@@ -20,7 +20,8 @@ export class CdeclService {
   private static DECLARATION_IDENTIFIER_PLACEHOLDER = "_";
 
   constructor(private http: HttpClient) {
-    this.runAllTests();
+    // Uncomment the line below to run tests comparing cdecl implementation to web API.
+    //this.runAllTests();
   }
 
   private cdecl_englishToC(english: string): Promise<string> {
