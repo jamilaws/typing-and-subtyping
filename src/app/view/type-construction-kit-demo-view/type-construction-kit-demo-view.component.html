@@ -15,7 +15,8 @@
                             <div class="menu-wrapper typing-menu-wrapper">
                                 <div class="expression-input-wrapper">
                                     <input #inputExpression class="expression-input" type="text"
-                                        placeholder="Enter an expression to check its type" (keyup)="onChangeExpression()">
+                                        placeholder="Enter an expression to check its type"
+                                        (keyup)="onChangeExpression()">
                                 </div>
                                 <div class="ast-wrapper">
                                     <div *ngIf="isAstValid; then astValidBlock else astInvalidBlock"></div>
@@ -23,7 +24,9 @@
                                         <div echarts [options]="_graphOptions"></div>
                                     </ng-template>
                                     <ng-template #astInvalidBlock>
-                                        <div *ngIf="inputExpression.value.length > 0; then expressionInvalid else expressionEmpty"></div>
+                                        <div
+                                            *ngIf="inputExpression.value.length > 0; then expressionInvalid else expressionEmpty">
+                                        </div>
                                         <ng-template #expressionInvalid>
                                             <span>Invalid expression</span>
                                         </ng-template>
@@ -36,21 +39,29 @@
                         </mat-tab>
                         <mat-tab #subtypingTab label="Structural Subtyping">
                             <div class="menu-wrapper subtyping-menu-wrapper">
-                                <app-singleselect-dropdown #typeOneDropdown class="type-dropdown" [options]="availableTypes"
-                                    [optionToName]="typeToName" (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
+                                <app-singleselect-dropdown #typeOneDropdown class="type-dropdown"
+                                    [options]="availableTypes" [optionToName]="typeToName"
+                                    (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
                                 <br>
-                                <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown" [options]="availableTypes"
-                                    [optionToName]="typeToName" (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
+                                <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown"
+                                    [options]="availableTypes" [optionToName]="typeToName"
+                                    (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
                                 <br>
                                 <div *ngIf="structuralSubtypingQueryResult">
                                     <div
                                         *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse">
                                     </div>
                                     <ng-template #subtypingResultMsgTrue>
-                                        <span>True</span>
+                                        <div class="subtyping-feedback-yes">
+                                            <mat-icon class="subtyping-feedback-font">check_circle</mat-icon>
+                                            <span class="subtyping-feedback-font">Subtypes</span>
+                                        </div>
                                     </ng-template>
                                     <ng-template #subtypingResultMsgFalse>
-                                        <span>False</span>
+                                        <div class="subtyping-feedback-no">
+                                            <mat-icon class="subtyping-feedback-font">cancel</mat-icon>
+                                            <span class="subtyping-feedback-font">No subtypes</span>
+                                        </div>
                                     </ng-template>
                                 </div>
                             </div>

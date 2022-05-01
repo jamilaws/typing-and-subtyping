@@ -60,3 +60,15 @@
 .tabs-wrapper {
     border-top: solid 1px darkgrey;
 }
+
+.subtyping-feedback-font {
+    font-size: 14px;
+} 
+
+.subtyping-feedback-yes {
+    color: green;
+}
+
+.subtyping-feedback-no {
+    color: red;
+}
