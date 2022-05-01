@@ -66,6 +66,7 @@ export class StructType extends AbstractType {
                 });
             });
         } else {
+            buffer.ruleNotApplicable = true;
             return false;
         }
     }

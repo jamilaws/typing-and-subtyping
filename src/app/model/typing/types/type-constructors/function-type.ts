@@ -39,6 +39,7 @@ export class FunctionType extends AbstractType {
 
             return returnTypesCheck && parameterTypesCheck;
         } else {
+            buffer.ruleNotApplicable = true;
             return false;
         }
     }

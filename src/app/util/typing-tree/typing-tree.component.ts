@@ -14,7 +14,7 @@ export class TypingTreeComponent implements OnInit {
   @Input("typingTree") typingTree: TypingTree;
 
   //public _color: string;
-  public _subtypingInfoTooltip: string = "Click to view structural subtyping queries"
+  public _subtypingInfoTooltip: string = "Click to view structural subtype queries"
 
   constructor(private componentInterconnectionService: ComponentInterconnectionService) { }
 

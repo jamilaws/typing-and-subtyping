@@ -7,6 +7,7 @@ import { CdeclHalves } from './common/cdecl-halves';
 
 export interface StructuralSubtypingBufferFrame {
     result: boolean;
+    ruleNotApplicable: boolean;
 
     loopDetected: boolean;
     equalityDetected: boolean;
@@ -173,6 +174,7 @@ export abstract class AbstractType {
     protected performStructuralSubtypingCheck_step_openNewBufferFrame(): void {
         const frame: StructuralSubtypingBufferFrame = {
             result: false,
+            ruleNotApplicable: false,
             loopDetected: false,
             equalityDetected: false,
             currentQuery: null,
@@ -243,7 +245,7 @@ export abstract class AbstractType {
         let graph = this.buildQueryGraph_step_buildBasicGraph(bufferFrame);
         const root = graph.getGraph().getRoot();
 
-        graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
+        //graph = this.buildQueryGraph_step_handleLoop(graph, bufferFrame);
 
         if (bufferFrame.didReplaceOtherAlias) {
             graph = this.buildQueryGraph_step_handleCaseOtherBeingAlias(graph);
@@ -291,21 +293,6 @@ export abstract class AbstractType {
         return graph;
     }
 
-    protected buildQueryGraph_step_handleLoop(graph: StructuralSubtypingQueryGraph, bufferFrame: StructuralSubtypingBufferFrame): StructuralSubtypingQueryGraph {
-
-        // Add loop edge if needed
-        if (bufferFrame.loopDetected) {
-            const query = bufferFrame.currentQuery;
-            const duplicates = graph.getGraph().getNodes().filter(node => node.getData().query.equals(query));
-            if(duplicates.length !== 2) console.warn("Unexpected: Loop detected but number of duplicates was " + duplicates.length + " instead of 2.");
-            
-            const edge = new Edge<QueryGraphNodeData, string>(duplicates[0], duplicates[1], "loop");
-            graph.getLoopPairs().push(edge);
-        }
-
-        return graph;
-    }
-
     /**
      * Override this method to build more complex query graphs, i.e. by making recursive calls to child types.
      * 
@@ -328,7 +315,7 @@ export abstract class AbstractType {
      * @returns 
      */
     protected isQueryGraphNodeHighlighted(bufferFrame: StructuralSubtypingBufferFrame): boolean {
-        return false;
+        return bufferFrame.ruleNotApplicable; // E.g. compare pointer to struct
     }
 
     /* --- Cdecl --- */

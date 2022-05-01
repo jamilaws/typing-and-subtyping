@@ -29,9 +29,13 @@ export class ArrayType extends AbstractType {
     /* Structural Subtyping */
 
     protected performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
+        const buffer = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
+
         if (other instanceof ArrayType) {
             return this.baseType.performStructuralSubtypingCheck(other.baseType, context);
         } else {
+            buffer.ruleNotApplicable = true;
+
             return false;
         }
     }

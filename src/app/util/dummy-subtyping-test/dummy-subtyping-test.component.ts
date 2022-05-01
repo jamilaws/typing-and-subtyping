@@ -69,7 +69,7 @@ export class DummySubtypingTestComponent implements OnInit {
 
   private updateGraphOptions(): void {
     this._graphOptions = {
-      color: "lightgreys", //"#2469B3",
+      color: "lightgrey", //"#2469B3",
       //layout: "",
       // label: {
       //   show: true
@@ -82,7 +82,7 @@ export class DummySubtypingTestComponent implements OnInit {
           //itemStyle: {borderColor: "blue", borderWidth: 100, },
           type: "graph",
           layout: 'none',
-          symbol: 'emptyRect',
+          symbol: 'circle',
           symbolSize: NODE_SIZE,
           roam: true, // Graph position movable
           lineStyle: {
