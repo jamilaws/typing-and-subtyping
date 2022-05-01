@@ -46,7 +46,7 @@ export class DummySubtypingTestComponent implements OnInit {
   }
 
   private update(): void {
-    if(!this.data) return;
+    if (!this.data) return;
     this.updateGraph(this.data.queryGraph.getGraph().getRoot(), this.data.queryGraph);
     this.updateGraphOptions();
   }
@@ -58,11 +58,19 @@ export class DummySubtypingTestComponent implements OnInit {
   */
 
   private updateGraph(root: Node<QueryGraphNodeData>, graph: StructuralSubtypingQueryGraph): void {
+
+    /*
+    var graphIncludingLoops = new Graph<QueryGraphNodeData, string>();
+    graphIncludingLoops.merge(graph.getGraph());
+    graph.getLoopPairs().forEach(loopEdge => graphIncludingLoops.addEdge(loopEdge));
+    */
+
     const gen = generateDisplayedGraph([root], graph.getGraph(), node => {
       return node.getData().query.a.toString() + '  <=  ' + node.getData().query.b.toString();
     }, node => {
       return node.getData().highlight;
     }, edge => edge.getData());
+
     this.graphNodes = gen.nodes;
     this.graphEdges = gen.edges;
   }

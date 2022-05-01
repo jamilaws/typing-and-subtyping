@@ -27,6 +27,9 @@ export interface DisplayedGraph {
   edges: DisplayGraphEdge[];
 }
 
+/**
+ * IMPORTANT: graph must not contain loops!
+ */
 export const generateDisplayedGraph = function <T, K>
   (roots: Node<T>[],
     graph: Graph<T, K>,

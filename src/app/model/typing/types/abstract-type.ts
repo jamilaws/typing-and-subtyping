@@ -5,6 +5,15 @@ import { StructuralSubtypingQueryResult } from "./common/structural-subtyping/st
 import { QueryGraphNodeData, StructuralSubtypingQueryGraph } from './common/structural-subtyping/structural-subtyping-query-graph';
 import { CdeclHalves } from './common/cdecl-halves';
 
+
+export class InvalidAliasException extends Error {
+    public alias: string;
+    constructor(alias: string) {
+        super("No type definition exists for alias " + alias);
+        this.alias = alias;
+    }
+}
+
 export interface StructuralSubtypingBufferFrame {
     result: boolean;
     ruleNotApplicable: boolean;
@@ -109,10 +118,21 @@ export abstract class AbstractType {
             queryHistory: new Array()
         };
 
-        const check: boolean = this.performStructuralSubtypingCheck(other, context);
-        const graph: StructuralSubtypingQueryGraph = this.buildQueryGraph();
+        try {
 
-        return new StructuralSubtypingQueryResult(check, graph);
+            const check: boolean = this.performStructuralSubtypingCheck(other, context);
+            var graph: StructuralSubtypingQueryGraph = this.buildQueryGraph();
+            graph = this.buildQueryGraph_step_addEdgesForHistoryDuplicates(graph, context.queryHistory);
+
+            return new StructuralSubtypingQueryResult(check, graph);
+
+        } catch (e) {
+            if (e instanceof InvalidAliasException) {
+                alert("Please add a type definition for alias " + e.alias);
+            } 
+            throw e;
+        }
+
     }
 
     /**
@@ -154,10 +174,12 @@ export abstract class AbstractType {
     }
 
     protected performStructuralSubtypingCheck_step_delegateToAliasTarget(other: AliasPlaceholderType, context: StructuralSubtypingQueryContext): boolean {
-        const alias: string         = other.getAlias();
-        const target: AbstractType  = context.typeDefinitions.get(alias);
+        const alias: string = other.getAlias();
+        const target: AbstractType = context.typeDefinitions.get(alias);
 
-        if (!target) throw new Error("No type definition exists for " + alias);
+        if (!target) {
+            throw new InvalidAliasException(alias);
+        }
 
         const bufferFrame = this.performStructuralSubtypingCheck_getBufferFrameForWriting();
         bufferFrame.didReplaceOtherAlias = true;
@@ -192,8 +214,8 @@ export abstract class AbstractType {
      * @returns if a query loop has been detected and the new query that has been added to the history
      */
     protected performStructuralSubtypingCheck_step_manageQueryHistory(other: AbstractType, history: StructuralSubtypingQuery[], bufferFrame: StructuralSubtypingBufferFrame): { loopDetected: boolean, newQuery: StructuralSubtypingQuery } {
-        
-        
+
+
         const newQuery = new StructuralSubtypingQuery(this, other);
         // Check for query loop
         const duplicate = history.find(q => q.equals(newQuery));
@@ -310,6 +332,27 @@ export abstract class AbstractType {
         return this.structuralSubtypingBuffer.dequeue();
     }
 
+    private buildQueryGraph_step_addEdgesForHistoryDuplicates(graph: StructuralSubtypingQueryGraph, queryHistory: StructuralSubtypingQuery[]): StructuralSubtypingQueryGraph {
+        const edges: Edge<QueryGraphNodeData, string>[] = new Array();
+
+        const nodes = graph.getGraph().getNodes();
+        nodes.forEach(node => {
+            const query = node.getData().query;
+            const laterDuplicate = nodes.find(target => target.getData().query.equals(query) && node.getId() < target.getId());
+
+            if (laterDuplicate) {
+                // Duplicate found --> add edge
+                const e = new Edge(laterDuplicate, node, "duplicate");
+                edges.push(e);
+            }
+        });
+
+        graph.setLoopPairs(edges);
+
+        return graph;
+    }
+
+
     /**
      * Override this method if more complex decision is needed.
      * @returns 
@@ -380,7 +423,9 @@ export class AliasPlaceholderType extends AbstractType {
 
     protected override performStructuralSubtypingCheck_step_checkRealSubtypingRelation(other: AbstractType, context: StructuralSubtypingQueryContext): boolean {
         const target = context.typeDefinitions.get(this.getAlias());
-        if (!target) throw new Error("No type definition exists for " + this.getAlias());
+        if (!target) {
+            throw new InvalidAliasException(this.alias);
+        }
         // Add found target to cache so it can be used when building the query graph
         this.performStructuralSubtypingCheck_getBufferFrameForWriting().appendix.target = target;
         // Delegate

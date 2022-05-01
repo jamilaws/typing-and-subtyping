@@ -30,8 +30,8 @@ const typeB = new StructType("TODO", [new Definition("info", new IntType()), new
 const typedefs = new Map();
 
 // Test (1/3)
-typedefs.set("A", typeA);
-typedefs.set("B", typeB);
+//typedefs.set("A", typeA);
+//typedefs.set("B", typeB);
 
 @Injectable({
   providedIn: 'root'
@@ -51,13 +51,13 @@ export class ConfigurationStoreService {
       new PointerType(new CharType()),
 
       // Test (2/3)
-      typeA, typeB,
+      //typeA, typeB,
     ],
     aliasTypes: [
 
       // Test (3/3)
-      new AliasPlaceholderType("A"),
-      new AliasPlaceholderType("B"),
+      //new AliasPlaceholderType("A"),
+      //new AliasPlaceholderType("B"),
     
     ],
     // Typedefs
