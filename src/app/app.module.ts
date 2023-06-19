@@ -37,6 +37,9 @@ import { TypedefTableComponent } from './util/typedef-table/typedef-table.compon
 import { DeclarationsTableComponent } from './util/declarations-table/declarations-table.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { InstructionsComponent } from './instructions/instructions.component';
+import { CommonMistakesComponent } from './common-mistakes/common-mistakes.component';
+import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 
 
 
@@ -78,6 +81,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CreateAliasTypeBubbleComponent,
     TypedefTableComponent,
     DeclarationsTableComponent,
+    InstructionsComponent,
+    CommonMistakesComponent,
+    MonacoEditorComponent,
   ],
   imports: [
     BrowserModule,

@@ -15,7 +15,8 @@
     border-right: solid 1px lightgrey;
 }
 
-.code-editor {}
+.code-editor {
+}
 
 .ast-wrapper {
     height: 100%;

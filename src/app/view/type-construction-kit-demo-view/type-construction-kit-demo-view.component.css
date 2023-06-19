@@ -5,15 +5,20 @@
 .left-panel-wrapper {
     border-right: solid 1px darkgrey;
     height: 86vh;
+    margin-left: -22px;
+    border-left: solid 1px darkgrey;
 }
 
 .right-panel-wrapper {
+    position: relative;
+    padding-top: 10px;
 }
 
 .menu-wrapper{
     overflow: hidden;
     margin: 10px;
-    margin-top: 20px
+    margin-top: 20px;
+    
 }
 
 .typedef-wrapper {}
@@ -54,7 +59,7 @@
 
 .code-editor-wrapper {
     height: 120px;
-    margin-left: -22px;
+    margin-top: 10px;
 }
 
 .tabs-wrapper {
@@ -71,4 +76,13 @@
 
 .subtyping-feedback-no {
     color: red;
+}
+
+.common-mistakes-wrapper{
+    position: absolute;
+
+}
+
+.instructions-wrapper{
+    margin-right: -10px;
 }

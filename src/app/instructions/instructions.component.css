@@ -1,0 +1,67 @@
+.instructions.wrapper{
+    box-sizing: border-box;
+    border-right: solid 5px lightgrey;
+    margin: 0%;
+}
+
+.title{
+    border-bottom: solid 1px #2469B3;
+    font-size: 20px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-weight: bold;
+    color: darkslategrey;
+    
+}
+
+.content-wrapper{
+   
+}
+
+summary:hover{
+    text-decoration: underline;
+}
+
+details {
+    padding: 0.25em 1em;
+    margin-bottom: 1.5em;
+}
+    
+summary {
+    position: relative;
+    font-weight: 500;
+    color: #2469B3;
+}
+    
+summary:after {
+    position: absolute;
+    top: 0em;
+    right: 0.5em;
+    transition: all 0.5s;
+}
+    
+details[open] summary::after {
+    top: 0.05em;
+    transform: scale(1, -1);
+    margin-bottom: 1px;
+}
+    
+details[open] summary {
+    margin-bottom: 5px;
+    font-style: italic;
+}
+    
+details summary { 
+    cursor: pointer;
+}
+    
+details[open] summary ~ * {
+    animation: open .6s ease-in-out;
+}
+    
+@keyframes open {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+    

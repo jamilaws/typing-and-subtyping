@@ -20,7 +20,7 @@ export class CodeEditorComponent implements OnInit {
   public editorOptions = {
     theme: 'vs-light',
     language: 'c',
-    readOnly: true,
+    readOnly: false,
     minimap: {
       enabled: false
     }
