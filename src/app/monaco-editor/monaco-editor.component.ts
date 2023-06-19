@@ -15,7 +15,9 @@ export class MonacoEditorComponent implements OnInit {
     }
   };
 
-  code: String= "/*\nPlease enter your declarations\nand typedefs here \n*/";
+  public static _code: String= "/*\nPlease enter your declarations\nand typedefs here \n*/";
+
+
 
   
 
