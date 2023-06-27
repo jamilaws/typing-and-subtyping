@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import {MonacoEditorComponent} from 'src/app/monaco-editor/monaco-editor.component'
-/*import { Parser } from 'src/assets/ansic'*/
+import { MonacoEditorComponent } from 'src/app/monaco-editor/monaco-editor.component'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ParserService {
 
-  code = MonacoEditorComponent._code;
+  public code: String;
 
-  /*const parser = new Parser();*/
+  public parse(){
+    var parser = require("src/assets/ansic")
+    console.log(JSON.stringify(parser.parse(this.code)))
+
+  }
+
+  
 
   constructor() { }
 }

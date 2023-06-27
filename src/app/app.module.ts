@@ -40,6 +40,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { InstructionsComponent } from './instructions/instructions.component';
 import { CommonMistakesComponent } from './common-mistakes/common-mistakes.component';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
+import { InstructionListComponent } from './instruction-list/instruction-list.component';
 
 
 
@@ -84,6 +85,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     InstructionsComponent,
     CommonMistakesComponent,
     MonacoEditorComponent,
+    InstructionListComponent,
   ],
   imports: [
     BrowserModule,
@@ -104,7 +106,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatTabsModule,
     MatTooltipModule,
   ],
-  providers: [],
+  providers: [MonacoEditorComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+  
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Input, Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-monaco-editor',
@@ -7,24 +7,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MonacoEditorComponent implements OnInit {
 
+  @Input('code') code: string = "/*\nPlease enter your declarations\nand typedefs here \n/*";
+
   public editorOptions = {
     theme: 'vs-light',
     language: 'c',
+    readOnly: false,
     minimap: {
       enabled: false
     }
   };
-
-  public static _code: String= "/*\nPlease enter your declarations\nand typedefs here \n*/";
-
-
-
   
 
-  constructor() { }
+  constructor() { 
+  }
 
 
   ngOnInit(): void {
+    //var parser = require('../../assets/ansic').parser
+    //console.log(JSON.stringify(parser.parse(this.code)))
+  }
+ 
+  ngOnChange(){
+    
+    //console.log(JSON.stringify(parser.parse(this.code)))
+  
+    
   }
 
 }
