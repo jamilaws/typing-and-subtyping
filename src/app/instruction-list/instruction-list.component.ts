@@ -12,11 +12,21 @@ export class InstructionListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
-
-  instr1={
+  instr = [{
     summary :"Define Environment",
     details: "Define your environment in the code box"
-  }
+  },
+  {
+    summary: "Type in Expresseion",
+    details: "State the expression that you want to type check into the box on the right"
+  },
+  {
+    summary: "Select devider",
+    details: "Choose the correct devider for each leaf of the tree"
+  },
+  {
+    summary: "Check type",
+    details: "Start from the top to get the correct type for each step of the tree"
+  }]
 
 }

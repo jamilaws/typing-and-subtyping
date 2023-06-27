@@ -2,7 +2,7 @@
     <div class="content-wrapper">
         <div class="title">Instructions</div>
        
-        <app-instructions [instruction]="instr1"></app-instructions>
+        <app-instructions *ngFor="let item of instr" [instruction]="item"></app-instructions>
        
     </div>
 </div>

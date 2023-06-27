@@ -41,6 +41,7 @@ import { InstructionsComponent } from './instructions/instructions.component';
 import { CommonMistakesComponent } from './common-mistakes/common-mistakes.component';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 import { InstructionListComponent } from './instruction-list/instruction-list.component';
+import { InstructionsSubtypingComponent } from './instructions-kit/instructions-subtyping/instructions-subtyping.component';
 
 
 
@@ -86,6 +87,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CommonMistakesComponent,
     MonacoEditorComponent,
     InstructionListComponent,
+    InstructionsSubtypingComponent,
   ],
   imports: [
     BrowserModule,
