@@ -31,4 +31,6 @@ export class InstructionListComponent implements OnInit {
     details: "Start from the top to get the correct type for each step of the tree"
   }]
 
+  
+
 }

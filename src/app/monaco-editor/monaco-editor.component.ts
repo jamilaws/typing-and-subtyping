@@ -30,9 +30,6 @@ export class MonacoEditorComponent implements OnInit {
  
   ngOnChange(){
     
-    //console.log(JSON.stringify(parser.parse(this.code)))
-  
-    
   }
 
 }
