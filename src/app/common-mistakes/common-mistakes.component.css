@@ -2,3 +2,20 @@
 .modal.show{
     display: block;
 }
+
+.btn-secondary{
+    color: white;
+    background-color:  #2469B3;
+}
+
+.btn-primary{
+    color: white;
+    background-color: #2469B3;
+}
+
+.close {
+    color: #000; /* Farbe des Schließen-Symbols */
+    text-shadow: none; /* Entfernt den Textschatten */
+    opacity: 1; /* Stellt die volle Deckkraft wieder her */
+  }
+  
