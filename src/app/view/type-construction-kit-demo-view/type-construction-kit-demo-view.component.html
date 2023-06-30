@@ -80,7 +80,9 @@
             
             <div class="right-panel-wrapper" *ngIf="typingTab.isActive">
                 <div class="common-mistake-wrapper">
+
                     <app-common-mistakes></app-common-mistakes>
+                    
                 </div>
                 <div class="typing-tree-wrapper" *ngIf="isAstValid && !typingErrorMessage">
                     
@@ -93,6 +95,7 @@
                 
             </div>
             <div class="right-panel-wrapper" *ngIf="subtypingTab.isActive">
+                <app-subtyping-tipps></app-subtyping-tipps>
                 <app-dummy-subtyping-test [structuralSubtypingQueryResult]="structuralSubtypingQueryResult">
                 </app-dummy-subtyping-test>
             </div>
