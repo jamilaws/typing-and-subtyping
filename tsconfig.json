@@ -22,6 +22,10 @@
     ],
     "strictNullChecks": false,
     "noImplicitOverride": true,
+
+    "typeRoots": [
+      "typings" // Deklarationsdatei einbinden
+    ],
     //"emitDecoratorMetadata": false,
   },
   "angularCompilerOptions": {

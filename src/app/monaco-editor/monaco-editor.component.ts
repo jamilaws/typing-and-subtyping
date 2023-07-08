@@ -1,4 +1,5 @@
 import { Input, Component, OnInit } from '@angular/core';
+import * as parser from "ansic.js";
 
 @Component({
   selector: 'app-monaco-editor',
@@ -24,8 +25,7 @@ export class MonacoEditorComponent implements OnInit {
 
 
   ngOnInit(): void {
-    //var parser = require('../../assets/ansic').parser
-    //console.log(JSON.stringify(parser.parse(this.code)))
+    
   }
  
   ngOnChange(){
