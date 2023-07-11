@@ -33,6 +33,16 @@
     padding-right: 15px;
 }
 
+.subtyping-input-wrapper{
+    width: 100%;
+    padding-right: 15px;
+}
+
+.subtyping-input{
+    width: 100%;
+    margin-top: 10px;
+}
+
 .expression-input {
     width: 100%;
 }

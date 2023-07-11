@@ -45,14 +45,24 @@
                         </mat-tab>
                         <mat-tab #subtypingTab label="Structural Subtyping">
                             <div class="menu-wrapper subtyping-menu-wrapper">
-                                <app-singleselect-dropdown #typeOneDropdown class="type-dropdown"
+                                <!--app-singleselect-dropdown #typeOneDropdown class="type-dropdown"
                                     [options]="availableTypes" [optionToName]="typeToName"
                                     (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
                                 <br>
                                 <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown"
                                     [options]="availableTypes" [optionToName]="typeToName"
                                     (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
-                                <br>
+                                <br-->
+                                <div class="subtyping-input-wrapper">
+                                    <input #inputExpression class="subtyping-input" type="text"
+                                        placeholder="Enter the potential supertype"
+                                        (keyup)="onChangeExpression()">
+                                </div>
+                                <div class="expression-input-wrapper">
+                                    <input #inputExpression class="subtyping-input" type="text"
+                                        placeholder="Enter the potential subtype"
+                                        (keyup)="onChangeExpression()">
+                                </div>
                                 <div *ngIf="structuralSubtypingQueryResult">
                                     <div
                                         *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse">

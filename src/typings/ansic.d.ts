@@ -1,5 +1,5 @@
 
-declare module 'ansic.js' {
+declare module 'ansic' {
     interface Lexer {
       // Methoden und Eigenschaften für den Lexer
       // ...

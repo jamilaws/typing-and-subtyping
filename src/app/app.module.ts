@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { RouterModule, Routes } from '@angular/router';
 
-import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
+//import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -54,13 +54,13 @@ const routes: Routes = [
   //{ path: 'type-construction-kit-demo', component: TypeConstructionKitDemoViewComponent },
 ]
 
-const monacoConfig: NgxMonacoEditorConfig = {
+/*const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'app-name/assets', // configure base path cotaining monaco-editor directory after build default: './assets'
   defaultOptions: { 
     scrollBeyondLastLine: false,
    }, // pass default options to be used
   onMonacoLoad: () => { console.log((<any>window).monaco); } // here monaco object will be available as window.monaco use this function to extend monaco editor functionalities.
-};
+};*/
 
 @NgModule({
   declarations: [
@@ -96,7 +96,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     RouterModule.forRoot(routes),
     HttpClientModule,
     FormsModule,
-    MonacoEditorModule.forRoot(),
+    
     BrowserAnimationsModule,
     MatToolbarModule,
     NgxEchartsModule.forRoot({
@@ -113,6 +113,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
   providers: [MonacoEditorComponent],
   bootstrap: [AppComponent]
 })
+// MonacoEditorModule.forRoot(monacoConfig),
 export class AppModule { 
   
 }
