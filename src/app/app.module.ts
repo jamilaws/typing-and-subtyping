@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { RouterModule, Routes } from '@angular/router';
 
-//import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
+import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -43,6 +43,8 @@ import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 import { InstructionListComponent } from './instruction-list/instruction-list.component';
 import { InstructionsSubtypingComponent } from './instructions-subtyping/instructions-subtyping.component';
 import { SubtypingTippsComponent } from './subtyping-tipps/subtyping-tipps.component';
+import { MirrorEditorComponent } from './mirror-editor/mirror-editor.component';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 
 
@@ -54,13 +56,13 @@ const routes: Routes = [
   //{ path: 'type-construction-kit-demo', component: TypeConstructionKitDemoViewComponent },
 ]
 
-/*const monacoConfig: NgxMonacoEditorConfig = {
+const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'app-name/assets', // configure base path cotaining monaco-editor directory after build default: './assets'
   defaultOptions: { 
     scrollBeyondLastLine: false,
    }, // pass default options to be used
   onMonacoLoad: () => { console.log((<any>window).monaco); } // here monaco object will be available as window.monaco use this function to extend monaco editor functionalities.
-};*/
+};
 
 @NgModule({
   declarations: [
@@ -90,13 +92,14 @@ const routes: Routes = [
     InstructionListComponent,
     InstructionsSubtypingComponent,
     SubtypingTippsComponent,
+    MirrorEditorComponent,
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
     HttpClientModule,
     FormsModule,
-    
+    MonacoEditorModule.forRoot(monacoConfig),
     BrowserAnimationsModule,
     MatToolbarModule,
     NgxEchartsModule.forRoot({
@@ -109,11 +112,11 @@ const routes: Routes = [
     MatDialogModule,
     MatTabsModule,
     MatTooltipModule,
+    CodemirrorModule
   ],
   providers: [MonacoEditorComponent],
   bootstrap: [AppComponent]
 })
-// MonacoEditorModule.forRoot(monacoConfig),
 export class AppModule { 
   
 }
