@@ -10,7 +10,7 @@ import * as parser from '../../assets/ansic';
 export class MonacoEditorComponent implements OnInit {
 
   @Input('code') code: string = "/*\nPlease enter your declarations\nand typedefs here \n/*";
-
+  environmentMap: any;
   
   public editorOptions = {
     theme: 'vs-light',
@@ -25,9 +25,27 @@ export class MonacoEditorComponent implements OnInit {
   constructor() { 
   }
 
+  parseInput(){
+    this.environmentMap = JSON.stringify(
+      parser.parse(this.code),
+      null, 
+      2
+  )
+  
+  }
 
   ngOnInit(): void {
-    parser.parse("int i; int main(){x = x + 25}");
+
+    /*let environmentMap = parser.parse("int i; int a;");
+    this.code = JSON.stringify(environmentMap[0],
+      null,
+      2)*/
+    
+    /*this.code = JSON.stringify(
+      parser.parse("int main() { x = 25+x; } "),
+      null, 
+      2
+  )*/
     //parse(this.code);
 
     //var parser = require("../../assets/ansic.js").parser;
