@@ -10,7 +10,6 @@ import * as parser from '../../assets/ansic';
 export class MonacoEditorComponent implements OnInit {
 
   @Input('code') code: string = "/*\nPlease enter your declarations\nand typedefs here \n/*";
-  environmentMap: any;
   
   public editorOptions = {
     theme: 'vs-light',
@@ -26,18 +25,29 @@ export class MonacoEditorComponent implements OnInit {
   }
 
   parseInput(){
-    this.environmentMap = JSON.stringify(
-      parser.parse(this.code),
-      null, 
-      2
-  )
-  
+    // TODO: Falsche Eingabe handlen --> es passiert nix bei falschen eingaben (endlosschleife?)
+    let environmentMap = parser.parse(this.code);
+    
+  for (let i=0; i < environmentMap.length; i++){
+    // parse individual statement
+    switch (environmentMap[i]["kind"]){
+      case "type": {
+
+        break;
+      }
+      case "expr":{
+        // Kann hier eigentlich nicht sein oder??
+      }
+    }
+    
+    //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
+    this.code = "This worked!";
+  }
   }
 
   ngOnInit(): void {
 
-    /*let environmentMap = parser.parse("int i; int a;");
-    this.code = JSON.stringify(environmentMap[0],
+    /*this.code = JSON.stringify(environmentMap[0],
       null,
       2)*/
     
@@ -46,11 +56,6 @@ export class MonacoEditorComponent implements OnInit {
       null, 
       2
   )*/
-    //parse(this.code);
-
-    //var parser = require("../../assets/ansic.js").parser;
-    //var parser = require("../../assets/js/cparse/cparse.js");
-
     
   }
  
