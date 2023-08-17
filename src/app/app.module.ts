@@ -45,6 +45,7 @@ import { InstructionsSubtypingComponent } from './instructions-subtyping/instruc
 import { SubtypingTippsComponent } from './subtyping-tipps/subtyping-tipps.component';
 import { MirrorEditorComponent } from './mirror-editor/mirror-editor.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { PopUpErrorMessageComponent } from './pop-up-error-message/pop-up-error-message.component';
 
 
 
@@ -93,6 +94,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     InstructionsSubtypingComponent,
     SubtypingTippsComponent,
     MirrorEditorComponent,
+    PopUpErrorMessageComponent,
   ],
   imports: [
     BrowserModule,
@@ -115,7 +117,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CodemirrorModule
   ],
   providers: [MonacoEditorComponent],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { 
   

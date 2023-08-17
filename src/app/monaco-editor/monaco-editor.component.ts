@@ -1,6 +1,8 @@
 import { Input, Component, OnInit } from '@angular/core';
 import * as parser from '../../assets/ansic';
 import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
+import { MatDialog } from "@angular/material/dialog";
+import { PopUpErrorMessageComponent } from '../pop-up-error-message/pop-up-error-message.component';
 
 @Component({
   selector: 'app-monaco-editor',
@@ -22,7 +24,7 @@ export class MonacoEditorComponent implements OnInit {
   };
   
 
-  constructor() { 
+  constructor(private dialogRef: MatDialog) { 
   }
 
   parseInput(){
@@ -65,13 +67,17 @@ export class MonacoEditorComponent implements OnInit {
         this.code = this.code + "\nThis is an expression, but we need type definitions here";
         break;
       }
-      default: this.code = this.code + "\nthis is not parsable";
-      // change deafult to pop up window saying the is a mistake in the provided code
+      default: this.popUpError();
+      
     }
     
     //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
     //this.code = JSON.stringify(environmentMap, null, 2);
   }
+  }
+
+  popUpError(){
+    this.dialogRef.open(PopUpErrorMessageComponent);
   }
 
   evalBaseType(typeDefinition: any, name: string){
