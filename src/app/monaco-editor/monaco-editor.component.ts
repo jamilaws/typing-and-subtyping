@@ -28,8 +28,14 @@ export class MonacoEditorComponent implements OnInit {
   }
 
   parseInput() {
+    console.log("vor dem parsen")
     // TODO: Falsche Eingabe handlen --> es passiert nix bei falschen eingaben (endlosschleife?)
+    try {
+      
     let environmentMap = parser.parse(this.code);
+
+    console.log("parsed scuccesfully")
+    console.log(environmentMap)
     //this.code = JSON.stringify(environmentMap, null, 2);
 
     for (let i = 0; i < environmentMap.length; i++) {
@@ -43,10 +49,11 @@ export class MonacoEditorComponent implements OnInit {
             case "declaration": {
               switch (environmentMap[i]["base"][0]["type"]){
                 case "struct": {
-                  this.code = "das ein struct"
+                  // struct
+                  this.evalStruct(environmentMap[i])
                   break;
                 }
-                default: { // wenn base nicht ein struct ist dann ist alles andere mit base and base type 
+                default: { // wenn base nicht ein struct ist dann ist alles andere mit base ein base type 
                   switch (environmentMap[i]["declarator"]["type"]) {
                     case "identifier": {
                       // the expression defines a base type
@@ -54,13 +61,8 @@ export class MonacoEditorComponent implements OnInit {
                       this.evalBaseType(environmentMap[i], varName)
                       break;
                     }
-                    case "struct": {
-                      // struct
-                      this.code = this.code + "\nthis is a struct"
-                      break;
-                    }
                     case "array": {
-                      // array (count depth with while?)
+                      // array (
                       this.evalArray(environmentMap[i])
                       break;
                     }
@@ -86,6 +88,11 @@ export class MonacoEditorComponent implements OnInit {
       //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
       //this.code = JSON.stringify(environmentMap, null, 2);
     }
+  } catch (err) {
+    this.popUpError();
+    console.log("Error gefangen")
+    console.error(err)
+  }
   }
 
   popUpError() {
@@ -134,6 +141,10 @@ export class MonacoEditorComponent implements OnInit {
     }
     this.code = this.code +
       "\nArray of dimension: " + dimension + " and base " + (arrayDefinition["base"][0]) + " and name " + arrName
+  }
+
+  evalStruct(structDefinition: any){
+    this.code = this.code + "\nyou have entered a struct"
   }
 
   ngOnInit(): void {
