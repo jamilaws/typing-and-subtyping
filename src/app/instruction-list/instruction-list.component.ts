@@ -20,15 +20,15 @@ export class InstructionListComponent implements OnInit {
   },
   {
     summary: "Type in Expresseion",
-    details: "State the expression that you want to type check into the box on the right"
+    details: "State the expression that you want to type check into the box under your environment"
   },
   {
-    summary: "Select devider",
-    details: "Choose the correct devider for each leaf of the tree"
+    summary: "Select Rule",
+    details: "Choose the correct rule for each leaf of the tree"
   },
   {
-    summary: "Check type",
-    details: "Start from the top to get the correct type for each step of the tree"
+    summary: "Check Type",
+    details: "Start from the leaves of the tree to get choose the type for each node"
   }]
 
   
