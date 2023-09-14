@@ -3,6 +3,13 @@ import * as parser from '../../assets/ansic';
 import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { MatDialog } from "@angular/material/dialog";
 import { PopUpErrorMessageComponent } from '../pop-up-error-message/pop-up-error-message.component';
+import { ArrayType } from '../model/typing/types/type-constructors/array-type';
+import { BaseType } from '../model/typing/types/base-type';
+import { IntType } from '../model/typing/types/base-types/int-type';
+import { AbstractType } from '../model/typing/types/abstract-type';
+import { FloatType } from '../model/typing/types/base-types/float-type';
+import { CharType } from '../model/typing/types/base-types/char-type';
+import { VoidType } from '../model/typing/types/base-types/void-type';
 
 @Component({
   selector: 'app-monaco-editor',
@@ -103,6 +110,7 @@ export class MonacoEditorComponent implements OnInit {
     switch (typeDefinition["base"][0]) {
       case "int": {
         // base type int 
+        let intType = new IntType();
         this.code = this.code + "\nyou entered a base type int with name " + name;
         break;
       }
@@ -139,6 +147,22 @@ export class MonacoEditorComponent implements OnInit {
         dimension = dimension + 1
       }
     }
+    let arrayBaseType : string = arrayDefinition["base"][0];
+    let constructedBaseType : AbstractType;
+      switch (arrayBaseType) {
+        case "int":
+          constructedBaseType = new IntType
+          break;
+        case "float": 
+          constructedBaseType = new FloatType
+          break;
+        case "char":
+          constructedBaseType = new CharType
+          break;
+        default: 
+          constructedBaseType = new VoidType
+      }
+    let constructed = new ArrayType(constructedBaseType, dimension)
     this.code = this.code +
       "\nArray of dimension: " + dimension + " and base " + (arrayDefinition["base"][0]) + " and name " + arrName
   }
