@@ -6,12 +6,13 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class EnvironmentDataService {
 
-  private map = new BehaviorSubject(null);
+  private map = new BehaviorSubject("");
 
   public sharedMap = this.map.asObservable();
 
-  public updateMap(map : any) {
-    this.map = map;
+  public updateMap(newMap : any) {
+    console.log("used updateMap")
+    this.map.next(newMap);
   }
 
   constructor() { }

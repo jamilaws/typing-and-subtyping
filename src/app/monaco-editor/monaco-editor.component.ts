@@ -10,6 +10,7 @@ import { AbstractType } from '../model/typing/types/abstract-type';
 import { FloatType } from '../model/typing/types/base-types/float-type';
 import { CharType } from '../model/typing/types/base-types/char-type';
 import { VoidType } from '../model/typing/types/base-types/void-type';
+import { EnvironmentDataService } from '.././environment-data.service';
 
 @Component({
   selector: 'app-monaco-editor',
@@ -19,7 +20,7 @@ import { VoidType } from '../model/typing/types/base-types/void-type';
 
 export class MonacoEditorComponent implements OnInit {
 
-  @Input('code') code: string = "/*\nPlease enter your declarations\nand typedefs here \n/*";
+  @Input('code') code: string = "/*\nPlease enter your declarations\nand typedefs here \n*/";
 
   public editorOptions = {
     theme: 'vs-light',
@@ -29,21 +30,26 @@ export class MonacoEditorComponent implements OnInit {
       enabled: false
     }
   };
+  
+  constructor(private dialogRef: MatDialog, private mapService: EnvironmentDataService) {
+  }
 
-
-  constructor(private dialogRef: MatDialog) {
+  updateMap(environmentMap: any) {
+    this.mapService.updateMap(environmentMap)
   }
 
   parseInput() {
-    console.log("vor dem parsen")
-    // TODO: Falsche Eingabe handlen --> es passiert nix bei falschen eingaben (endlosschleife?)
+    // TODO: Falsche Ausgabe --> pointer
     try {
       
     let environmentMap = parser.parse(this.code);
 
     console.log("parsed scuccesfully")
     console.log(environmentMap)
-    //this.code = JSON.stringify(environmentMap, null, 2);
+    
+    this.updateMap(environmentMap)
+    
+    /*
 
     for (let i = 0; i < environmentMap.length; i++) {
       if (environmentMap == null) {
@@ -91,10 +97,11 @@ export class MonacoEditorComponent implements OnInit {
         default: this.popUpError();
 
       }
-
+      
       //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
       //this.code = JSON.stringify(environmentMap, null, 2);
     }
+    */
   } catch (err) {
     this.popUpError();
     console.log("Error gefangen")
@@ -184,6 +191,7 @@ export class MonacoEditorComponent implements OnInit {
   )*/
 
   }
+
 
   ngOnChange() {
 

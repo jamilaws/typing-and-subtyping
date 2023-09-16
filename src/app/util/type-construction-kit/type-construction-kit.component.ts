@@ -18,6 +18,10 @@ import { CreatePointerTypeBubbleComponent } from './create-type-bubbles/create-p
 import { StructTypeConstructionBubbleComponent } from './create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
 import { CreateDeclarationDialogComponent } from './dialogs/create-declaration-dialog/create-declaration-dialog.component';
 import { CreateTypedefDialogComponent } from './dialogs/create-typedef-dialog/create-typedef-dialog.component';
+import { EnvironmentDataService } from 'src/app/environment-data.service';
+import { PopUpErrorMessageComponent } from 'src/app/pop-up-error-message/pop-up-error-message.component';
+import { VoidType } from 'src/app/model/typing/types/base-types/void-type';
+import { config } from 'rxjs';
 
 
 @Component({
@@ -36,10 +40,17 @@ export class TypeConstructionKitComponent implements OnInit {
   @Output('onTypedefsChange') typeDefs_extern = new EventEmitter<TypeDefinitionTable>();
   @Output('onDeclarationsChange') declarations_extern = new EventEmitter<Declaration[]>();
 
+
+  /*
+  MapService
+  */
+
+  environmentMap: any;
+
   /*
   Type bubbles
   */
-
+ 
   baseTypes: BaseType[];
   constructedTypes: AbstractType[];
   aliasTypes: AliasPlaceholderType[] = new Array();
@@ -60,11 +71,160 @@ export class TypeConstructionKitComponent implements OnInit {
   */
   private declarations: Declaration[] = new Array();
 
-  constructor(public dialog: MatDialog, private configurationStoreService: ConfigurationStoreService) { }
+  constructor(public dialog: MatDialog, private configurationStoreService: ConfigurationStoreService, 
+    private mapService: EnvironmentDataService, private dialogRef: MatDialog) { }
 
   ngOnInit(): void {
     this.initConfiguration();
+    this.mapService.sharedMap.subscribe(m => this.useMap(m));
+    console.log(this.environmentMap)
   }
+
+  useMap(map: any){
+    this.environmentMap = map
+    console.log(this.environmentMap)
+    this.mapToTypes();
+  }
+
+  mapToTypes() {
+    try {
+      
+     
+  
+      for (let i = 0; i < this.environmentMap.length; i++) {
+        if (this.environmentMap == null) {
+          this.popUpError;
+        }
+        // parse individual statement
+        switch (this.environmentMap[i]["kind"]) {
+          case "type": {
+            switch (this.environmentMap[i]["type"]) {
+              case "declaration": {
+                switch (this.environmentMap[i]["base"][0]["type"]){
+                  case "struct": {
+                    // struct
+                    this.evalStruct(this.environmentMap[i])
+                    break;
+                  }
+                  default: { // wenn base nicht ein struct ist dann ist alles andere mit base ein base type 
+                    switch (this.environmentMap[i]["declarator"]["type"]) {
+                      case "identifier": {
+                        // the expression defines a base type
+                        let varName = this.environmentMap[i]["declarator"]["name"]
+                        this.evalBaseType(this.environmentMap[i], varName)
+                        break;
+                      }
+                      case "array": {
+                        // array (
+                        this.evalArray(this.environmentMap[i])
+                        break;
+                      }
+      
+                      default: console.log(JSON.stringify(this.environmentMap, null, 2));
+                    }
+                  }
+                }
+                break;
+              }
+            }
+            break;
+          }
+          case "expr": {
+            // Kann hier eigentlich nicht sein oder??
+            console.log("\nThis is an expression, but we need type definitions here");
+            break;
+          }
+          default: this.popUpError();
+  
+        }
+  
+        //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
+        //this.code = JSON.stringify(environmentMap, null, 2);
+      }
+    } catch (err) {
+      this.popUpError();
+      console.log("Error gefangen")
+      console.error(err)
+    }
+  }
+
+  popUpError() {
+    this.dialogRef.open(PopUpErrorMessageComponent);
+  }
+
+  evalBaseType(typeDefinition: any, name: string) {
+    let constructedBaseType: AbstractType = new IntType();
+    switch (typeDefinition["base"][0]) {
+      case "int": {
+        // base type int 
+        constructedBaseType = new IntType();
+        console.log("\nyou entered a base type int with name " + name);
+        break;
+      }
+      case "float": {
+        // base type float
+        constructedBaseType = new FloatType();
+        console.log("\nyou entered a base type float with name " + name);
+        break;
+      }
+      case "char": {
+        // base type char
+        constructedBaseType = new CharType();
+        console.log("\nyou entered a base type char with name " + name);
+        break;
+      }
+
+    }
+    this.addDelaration(name, constructedBaseType);
+    console.log("Added BaseType to Declararions")
+    console.log(this.baseTypes)
+    console.log(this.declarations)
+  }
+
+  evalArray(arrayDefinition: any) {
+    let lookingForBase = true
+    let dimension = 1
+    let temp = arrayDefinition["declarator"]["base"];
+    let arrName = ""
+    while (lookingForBase) {
+      if (temp["type"] == "identifier") {
+        lookingForBase = false;
+        arrName = temp["name"]
+      } else {
+        temp = temp["base"]
+        dimension = dimension + 1
+      }
+    }
+    let arrayBaseType : string = arrayDefinition["base"][0];
+    let constructedBaseType : AbstractType;
+      switch (arrayBaseType) {
+        case "int":
+          constructedBaseType = new IntType
+          break;
+        case "float": 
+          constructedBaseType = new FloatType
+          break;
+        case "char":
+          constructedBaseType = new CharType
+          break;
+        default: 
+          constructedBaseType = new VoidType
+      }
+    let constructed = new ArrayType(constructedBaseType, dimension)
+    console.log("Array of dimension: " + dimension + " and base " + (arrayDefinition["base"][0]) + " and name " + arrName);
+    this.addDelaration(arrName, constructed)
+    console.log("Added ArrayType to declarations")
+    console.log(config)
+  }
+
+  evalStruct(structDefinition: any){
+    console.log("you have entered a struct");
+    console.log(structDefinition);
+  }
+
+  /*
+    Davids code
+  */
 
   private initConfiguration() {
     const config = this.configurationStoreService.getDefaultConfiguration();
@@ -76,6 +236,7 @@ export class TypeConstructionKitComponent implements OnInit {
     this.typeDefinitions = config.typeDefinitions;
 
     this.outputConfiguration();
+    console.log(config)
   }
 
   public getAllTypes(): AbstractType[] {
