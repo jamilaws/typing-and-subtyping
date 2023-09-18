@@ -49,59 +49,6 @@ export class MonacoEditorComponent implements OnInit {
     
     this.updateMap(environmentMap)
     
-    /*
-
-    for (let i = 0; i < environmentMap.length; i++) {
-      if (environmentMap == null) {
-        this.popUpError;
-      }
-      // parse individual statement
-      switch (environmentMap[i]["kind"]) {
-        case "type": {
-          switch (environmentMap[i]["type"]) {
-            case "declaration": {
-              switch (environmentMap[i]["base"][0]["type"]){
-                case "struct": {
-                  // struct
-                  this.evalStruct(environmentMap[i])
-                  break;
-                }
-                default: { // wenn base nicht ein struct ist dann ist alles andere mit base ein base type 
-                  switch (environmentMap[i]["declarator"]["type"]) {
-                    case "identifier": {
-                      // the expression defines a base type
-                      let varName = environmentMap[i]["declarator"]["name"]
-                      this.evalBaseType(environmentMap[i], varName)
-                      break;
-                    }
-                    case "array": {
-                      // array (
-                      this.evalArray(environmentMap[i])
-                      break;
-                    }
-    
-                    default: this.code = JSON.stringify(environmentMap, null, 2);
-                  }
-                }
-              }
-              break;
-            }
-          }
-          break;
-        }
-        case "expr": {
-          // Kann hier eigentlich nicht sein oder??
-          this.code = this.code + "\nThis is an expression, but we need type definitions here";
-          break;
-        }
-        default: this.popUpError();
-
-      }
-      
-      //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
-      //this.code = JSON.stringify(environmentMap, null, 2);
-    }
-    */
   } catch (err) {
     this.popUpError();
     console.log("Error gefangen")

@@ -28,6 +28,7 @@ export class TypingTree {
         this.children = children;
 
         this.structuralSubtypingQueries = structuralSubtypingQueries;
+        console.log("This class is in use")
     }
 
     public getRelativeSizeOfChild(index: number): number {

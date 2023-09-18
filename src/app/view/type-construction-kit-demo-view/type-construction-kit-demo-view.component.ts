@@ -100,6 +100,8 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
     try {
       const type = ast.performTypeCheck(typeEnv);
+      // dropdown here
+      console.log(ast)
       this.typingTree = ast.getTypingTree();
       this.typingErrorMessage = null;
     } catch(e) {

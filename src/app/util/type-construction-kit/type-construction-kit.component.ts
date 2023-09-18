@@ -89,8 +89,6 @@ export class TypeConstructionKitComponent implements OnInit {
   mapToTypes() {
     try {
       
-     
-  
       for (let i = 0; i < this.environmentMap.length; i++) {
         if (this.environmentMap == null) {
           this.popUpError;
