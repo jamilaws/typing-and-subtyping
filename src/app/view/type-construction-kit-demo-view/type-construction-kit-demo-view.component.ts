@@ -169,15 +169,15 @@ export class TypeConstructionKitDemoViewComponent implements OnInit {
 
     return type.toString();
   }
-
+/*
   public getCode(): string {
     const separation = this._typedefsCode.length > 0 && this._declarationsCode.length > 0 ? "\n\n" : "";
     const out = this._typedefsCode + separation + this._declarationsCode;
     if(out.length > separation.length) {
       return out;
     } else {
-      return "/*\nAdd typedefs and declarations\nby clicking on the types above\n*/";
+      return "/*\nAdd typedefs and declarations\nby clicking on the types above\n*";
     }
   }
-  
+*/
 }

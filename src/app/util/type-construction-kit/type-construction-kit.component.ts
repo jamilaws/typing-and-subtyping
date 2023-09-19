@@ -77,7 +77,6 @@ export class TypeConstructionKitComponent implements OnInit {
   ngOnInit(): void {
     this.initConfiguration();
     this.mapService.sharedMap.subscribe(m => this.useMap(m));
-    console.log(this.environmentMap)
   }
 
   useMap(map: any){
@@ -96,6 +95,7 @@ export class TypeConstructionKitComponent implements OnInit {
         // parse individual statement
         switch (this.environmentMap[i]["kind"]) {
           case "type": {
+            console.log("checking type")
             switch (this.environmentMap[i]["type"]) {
               case "declaration": {
                 switch (this.environmentMap[i]["base"][0]["type"]){
@@ -108,8 +108,9 @@ export class TypeConstructionKitComponent implements OnInit {
                     switch (this.environmentMap[i]["declarator"]["type"]) {
                       case "identifier": {
                         // the expression defines a base type
-                        let varName = this.environmentMap[i]["declarator"]["name"]
-                        this.evalBaseType(this.environmentMap[i], varName)
+                        let varName = this.environmentMap[i]["declarator"]["name"];
+                        let type = this.evalBaseType(this.environmentMap[i]);
+                        this.addDelaration(varName, type);
                         break;
                       }
                       case "array": {
@@ -129,15 +130,12 @@ export class TypeConstructionKitComponent implements OnInit {
           }
           case "expr": {
             // Kann hier eigentlich nicht sein oder??
-            console.log("\nThis is an expression, but we need type definitions here");
+            console.log("This is an expression, but we need type definitions here");
             break;
           }
           default: this.popUpError();
   
         }
-  
-        //this.code= (environmentMap[i]["declarator"]["kind"] == null).toString();
-        //this.code = JSON.stringify(environmentMap, null, 2);
       }
     } catch (err) {
       this.popUpError();
@@ -150,33 +148,30 @@ export class TypeConstructionKitComponent implements OnInit {
     this.dialogRef.open(PopUpErrorMessageComponent);
   }
 
-  evalBaseType(typeDefinition: any, name: string) {
+  evalBaseType(typeDefinition: any) : AbstractType {
     let constructedBaseType: AbstractType = new IntType();
     switch (typeDefinition["base"][0]) {
       case "int": {
         // base type int 
         constructedBaseType = new IntType();
-        console.log("\nyou entered a base type int with name " + name);
+        console.log("\nyou entered a base type int");
         break;
       }
       case "float": {
         // base type float
         constructedBaseType = new FloatType();
-        console.log("\nyou entered a base type float with name " + name);
+        console.log("\nyou entered a base type float");
         break;
       }
       case "char": {
         // base type char
         constructedBaseType = new CharType();
-        console.log("\nyou entered a base type char with name " + name);
+        console.log("\nyou entered a base type char");
         break;
       }
 
     }
-    this.addDelaration(name, constructedBaseType);
-    console.log("Added BaseType to Declararions")
-    console.log(this.baseTypes)
-    console.log(this.declarations)
+    return constructedBaseType;
   }
 
   evalArray(arrayDefinition: any) {
@@ -194,6 +189,7 @@ export class TypeConstructionKitComponent implements OnInit {
       }
     }
     let arrayBaseType : string = arrayDefinition["base"][0];
+    //console.log(this.evalBaseType("",arrayDefinition["base"][0]));
     let constructedBaseType : AbstractType;
       switch (arrayBaseType) {
         case "int":
@@ -234,7 +230,6 @@ export class TypeConstructionKitComponent implements OnInit {
     this.typeDefinitions = config.typeDefinitions;
 
     this.outputConfiguration();
-    console.log(config)
   }
 
   public getAllTypes(): AbstractType[] {
