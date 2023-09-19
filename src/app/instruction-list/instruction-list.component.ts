@@ -16,7 +16,7 @@ export class InstructionListComponent implements OnInit {
 
   instr = [{
     summary :"Define Environment",
-    details: "Define your environment in the code box"
+    details: "Define your environment in the code box and click 'Ready!'"
   },
   {
     summary: "Type in Expresseion",
@@ -24,11 +24,11 @@ export class InstructionListComponent implements OnInit {
   },
   {
     summary: "Select Rule",
-    details: "Choose the correct rule for each leaf of the tree"
+    details: "Choose the correct rule for each leaf of the tree. It will"
   },
   {
-    summary: "Check Type",
-    details: "Start from the leaves of the tree to get choose the type for each node"
+    summary: "Well done!",
+    details: "You have applied the algorithm correctly when there is nothing to select left."
   }]
 
   
