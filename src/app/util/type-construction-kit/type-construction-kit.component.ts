@@ -22,6 +22,8 @@ import { EnvironmentDataService } from 'src/app/environment-data.service';
 import { PopUpErrorMessageComponent } from 'src/app/pop-up-error-message/pop-up-error-message.component';
 import { VoidType } from 'src/app/model/typing/types/base-types/void-type';
 import { config } from 'rxjs';
+import { Definition } from 'src/app/model/typing/types/common/definition';
+import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
 
 
 @Component({
@@ -95,7 +97,6 @@ export class TypeConstructionKitComponent implements OnInit {
         // parse individual statement
         switch (this.environmentMap[i]["kind"]) {
           case "type": {
-            console.log("checking type")
             switch (this.environmentMap[i]["type"]) {
               case "declaration": {
                 switch (this.environmentMap[i]["base"][0]["type"]){
@@ -214,6 +215,39 @@ export class TypeConstructionKitComponent implements OnInit {
   evalStruct(structDefinition: any){
     console.log("you have entered a struct");
     console.log(structDefinition);
+    let members = new Array<Definition>();
+    // find name 
+    let structName = structDefinition["declarator"]["name"];
+    console.log(structName)
+    // find all members
+    for (let memberIndex = 0; memberIndex < structDefinition["base"][0]["body"].length; memberIndex++){
+      // eval member
+      console.log(structDefinition["base"][0]["body"][memberIndex]);
+      switch (structDefinition["base"][0]["body"][memberIndex]["declarator"][0]["type"]) {
+      
+        // POINTER!!!
+        case "identifier": {
+          console.log("reache this ")
+          let varName = structDefinition["base"][0]["body"][memberIndex]["declarator"][0]["name"];
+          console.log(varName)
+          let type = this.evalBaseType(structDefinition["base"][0]["body"][memberIndex]);
+          console.log(type)
+          let definition : Definition = new Definition(varName, type);
+          members.push(definition);
+          console.log(members)
+          break;
+        }
+        case "array": {
+          // TODO
+          break;
+        }
+      }
+    }
+    // build structType
+    let newStruct = new StructType(structName, members);
+    // add to declarations and constructedTypes
+    this.onApplyCreation(newStruct);
+    this.addDelaration(structName, newStruct);
   }
 
   /*
