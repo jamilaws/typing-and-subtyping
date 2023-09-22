@@ -43,9 +43,6 @@ export class MonacoEditorComponent implements OnInit {
     try {
       
     let environmentMap = parser.parse(this.code);
-
-    console.log("parsed scuccesfully")
-    console.log(environmentMap)
     
     this.updateMap(environmentMap)
     

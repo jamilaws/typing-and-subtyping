@@ -492,7 +492,7 @@ parse: function parse(input) {
 		return { type:"identifier", name:name }
 	}
 	function pointerto(n,t){
-		ret = t
+		let ret = t
 		for (let i = 1; i <= n; i++) {
   			ret = { type: "pointer", base: ret}
 		} 

@@ -83,7 +83,6 @@ export class TypeConstructionKitComponent implements OnInit {
 
   useMap(map: any){
     this.environmentMap = map
-    console.log(this.environmentMap)
     this.mapToTypes();
   }
 
@@ -108,7 +107,7 @@ export class TypeConstructionKitComponent implements OnInit {
                   default: { // wenn base nicht ein struct ist dann ist alles andere mit base ein base type 
                     switch (this.environmentMap[i]["declarator"]["type"]) {
                       case "identifier": {
-                        // the expression defines a base type
+                        // base type
                         let varName = this.environmentMap[i]["declarator"]["name"];
                         let type = this.evalBaseType(this.environmentMap[i]);
                         this.addDelaration(varName, type);
@@ -119,8 +118,17 @@ export class TypeConstructionKitComponent implements OnInit {
                         this.evalArray(this.environmentMap[i])
                         break;
                       }
-      
-                      default: console.log("something went wrong" + JSON.stringify(this.environmentMap, null, 2));
+                      case "pointer": {
+                        // pointer
+                        let type = new PointerType(this.evalBaseType(this.environmentMap[i]));
+                        console.log("type " + type)
+                        let pointerName = this.environmentMap[i]["declarator"]["base"]["name"];
+                        console.log("pointer name: " + pointerName)
+                        this.addDelaration(pointerName, type);
+                        this.onApplyCreation(type);
+                        break;
+                      }
+                      default: console.log("parsable but not considered: " + JSON.stringify(this.environmentMap, null, 2));
                     }
                   }
                 }
@@ -130,8 +138,9 @@ export class TypeConstructionKitComponent implements OnInit {
             break;
           }
           case "expr": {
-            // Kann hier eigentlich nicht sein oder??
+            // Can't happen here
             console.log("This is an expression, but we need type definitions here");
+            this.popUpError();
             break;
           }
           default: this.popUpError();
@@ -273,6 +282,10 @@ export class TypeConstructionKitComponent implements OnInit {
     // add to declarations and constructedTypes
     this.onApplyCreation(newStruct);
     this.addDelaration(structName, newStruct);
+  }
+
+  evalPointer() {
+
   }
 
   /*

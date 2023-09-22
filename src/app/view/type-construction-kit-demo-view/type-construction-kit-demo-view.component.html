@@ -46,15 +46,15 @@
                         </mat-tab>
                         <mat-tab #subtypingTab label="Structural Subtyping">
                             <div class="menu-wrapper subtyping-menu-wrapper">
-                                <!--app-singleselect-dropdown #typeOneDropdown class="type-dropdown"
+                                <app-singleselect-dropdown #typeOneDropdown class="type-dropdown"
                                     [options]="availableTypes" [optionToName]="typeToName"
                                     (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
                                 <br>
                                 <app-singleselect-dropdown #typeTwoDropdown class="type-dropdown"
                                     [options]="availableTypes" [optionToName]="typeToName"
                                     (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
-                                <br-->
-                                <div class="subtyping-input-wrapper">
+                                <br>
+                                <!--div class="subtyping-input-wrapper">
                                     <input #inputExpression class="subtyping-input" type="text"
                                         placeholder="Enter the potential supertype"
                                         (keyup)="onChangeExpression()">
@@ -63,20 +63,20 @@
                                     <input #inputExpression class="subtyping-input" type="text"
                                         placeholder="Enter the potential subtype"
                                         (keyup)="onChangeExpression()">
-                                </div>
+                                </div-->
                                 <div *ngIf="structuralSubtypingQueryResult">
                                     <div
                                         *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse">
                                     </div>
                                     <ng-template #subtypingResultMsgTrue>
                                         <div class="subtyping-feedback-yes">
-                                            <mat-icon class="subtyping-feedback-font">check_circle</mat-icon>
+                                            <!--mat-icon class="subtyping-feedback-font">check_circle</mat-icon-->
                                             <span class="subtyping-feedback-font">Subtypes</span>
                                         </div>
                                     </ng-template>
                                     <ng-template #subtypingResultMsgFalse>
                                         <div class="subtyping-feedback-no">
-                                            <mat-icon class="subtyping-feedback-font">cancel</mat-icon>
+                                            <!--mat-icon class="subtyping-feedback-font">cancel</mat-icon-->
                                             <span class="subtyping-feedback-font">No subtypes</span>
                                         </div>
                                     </ng-template>
