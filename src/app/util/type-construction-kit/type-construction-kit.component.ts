@@ -120,7 +120,7 @@ export class TypeConstructionKitComponent implements OnInit {
                         break;
                       }
       
-                      default: console.log(JSON.stringify(this.environmentMap, null, 2));
+                      default: console.log("something went wrong" + JSON.stringify(this.environmentMap, null, 2));
                     }
                   }
                 }
@@ -189,27 +189,47 @@ export class TypeConstructionKitComponent implements OnInit {
         dimension = dimension + 1
       }
     }
-    let arrayBaseType : string = arrayDefinition["base"][0];
-    //console.log(this.evalBaseType("",arrayDefinition["base"][0]));
-    let constructedBaseType : AbstractType;
-      switch (arrayBaseType) {
-        case "int":
-          constructedBaseType = new IntType
-          break;
-        case "float": 
-          constructedBaseType = new FloatType
-          break;
-        case "char":
-          constructedBaseType = new CharType
-          break;
-        default: 
-          constructedBaseType = new VoidType
-      }
+  
+    let constructedBaseType : AbstractType = this.evalBaseType(arrayDefinition);
+
     let constructed = new ArrayType(constructedBaseType, dimension)
     console.log("Array of dimension: " + dimension + " and base " + (arrayDefinition["base"][0]) + " and name " + arrName);
-    this.addDelaration(arrName, constructed)
-    console.log("Added ArrayType to declarations")
-    console.log(config)
+    this.addDelaration(arrName, constructed);
+    this.onApplyCreation(constructed);
+  }
+
+  evalArrayNameForStruct(arrayDefinition: any) : string {
+    let lookingForBase = true
+    let temp = arrayDefinition["declarator"][0]["base"];
+    let arrName = ""
+    while (lookingForBase) {
+      if (temp["type"] == "identifier") {
+        lookingForBase = false;
+        arrName = temp["name"]
+      } else {
+        temp = temp["base"]
+      }
+    }
+    return arrName;
+  }
+  
+  evalArrayTypeForStruct(arrayDefinition:any) : ArrayType {
+    let lookingForBase = true
+    let dimension = 1
+    let temp = arrayDefinition["declarator"][0]["base"];
+    while (lookingForBase) {
+      if (temp["type"] == "identifier") {
+        lookingForBase = false;
+      } else {
+        temp = temp["base"]
+        dimension = dimension + 1
+      }
+    }
+  
+    let constructedBaseType : AbstractType = this.evalBaseType(arrayDefinition);
+
+    return new ArrayType(constructedBaseType, dimension);
+
   }
 
   evalStruct(structDefinition: any){
@@ -221,24 +241,29 @@ export class TypeConstructionKitComponent implements OnInit {
     console.log(structName)
     // find all members
     for (let memberIndex = 0; memberIndex < structDefinition["base"][0]["body"].length; memberIndex++){
+      console.log("index: " + memberIndex)
       // eval member
       console.log(structDefinition["base"][0]["body"][memberIndex]);
       switch (structDefinition["base"][0]["body"][memberIndex]["declarator"][0]["type"]) {
       
         // POINTER!!!
         case "identifier": {
-          console.log("reache this ")
+          console.log("base type within the struct")
           let varName = structDefinition["base"][0]["body"][memberIndex]["declarator"][0]["name"];
-          console.log(varName)
           let type = this.evalBaseType(structDefinition["base"][0]["body"][memberIndex]);
-          console.log(type)
           let definition : Definition = new Definition(varName, type);
           members.push(definition);
-          console.log(members)
           break;
         }
         case "array": {
-          // TODO
+          console.log("array within the struct")
+          console.log(structDefinition["base"][0]["body"][memberIndex])
+          let arrName = this.evalArrayNameForStruct(structDefinition["base"][0]["body"][memberIndex]);
+          console.log(1)
+          let arrType = this.evalArrayTypeForStruct(structDefinition["base"][0]["body"][memberIndex]);
+          console.log(2)
+          members.push(new Definition(arrName, arrType));
+          console.log(3)
           break;
         }
       }

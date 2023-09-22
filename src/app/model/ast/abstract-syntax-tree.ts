@@ -43,7 +43,6 @@ export class AbstractSyntaxTree implements TypeCheckable {
      * @returns typing tree of first element of roots
      */
     public getTypingTree(): TypingTree {
-        console.log(this.getRoots()[0])
         return this.getRoots()[0].getTypingTree();
         //throw new Error("Method getTypingTree() of AbstractSyntaxTree object has been called, what is not expected. Call the method on an AstNode instance instead.");
     }
