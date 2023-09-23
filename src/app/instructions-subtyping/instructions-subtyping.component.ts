@@ -14,15 +14,15 @@ export class InstructionsSubtypingComponent implements OnInit {
 
   instr = [{
     summary: "Define Environment",
-    details: "Define your environment in the code box"
+    details: "Define your environment in the code box and click 'Ready!'" 
   },
   {
-    summary: "State Expressions",
-    details: "put bot or your expressions in the respective boxes"
+    summary: "Select Types",
+    details: "Select from the dropdown the supertype and the subtype"
   },
   {
-    summary: "check types",
-    details: "Check the types of both the expressions"
+    summary: "Subtyping Relation",
+    details: "You will find the solution beneath the two types you have selected. Try and comprehend the subtypingtree on the right!"
   }]
 
 }

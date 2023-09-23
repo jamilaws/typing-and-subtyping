@@ -19,7 +19,7 @@ export class InstructionListComponent implements OnInit {
     details: "Define your environment in the code box and click 'Ready!'"
   },
   {
-    summary: "Type in Expresseion",
+    summary: "Type in Expression",
     details: "State the expression that you want to type check into the box under your environment"
   },
   {
