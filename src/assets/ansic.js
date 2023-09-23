@@ -520,8 +520,8 @@ parse: function parse(input) {
 	}
 	function refreshTypenames(b,declarations){
 		if (b.includes("typedef")) {
-			for (declaration of declarations){
-				t=declaration.declarator
+			for (var declaration of declarations){
+				let t=declaration.declarator
 				while(t.type!="identifier"){
 					t=t.base
 				}
