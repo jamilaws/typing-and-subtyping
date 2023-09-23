@@ -7,18 +7,16 @@
         </div>
         <div class="modal-body">
             <p><b>Go right if you can; go left if you must</b></p>
-            <li><b>Ref</b> The expression &e has type t* if e has type t</li>
-            <li><b>Deref</b> The expression *e has type t if e has type t*</li>
-            <li><b>Array</b> The expression e1[e2] has type t if e1 has type t* or type t[] and e2 has type int</li>
-            <li><b>Struct</b> The expression e.ai has type ti if e has type struct&#123;t1 a1;...; tm am;&#125;</li>
-            <li><b>App</b> The expression e(e1,..., em) has type t if the return type of e is t and e1,..., em
+            <li><b>CONST</b> e has type t if e is a constant with type t</li>
+            <li><b>VAR</b> e has type t if e is a variable with type t</li>
+            <li><b>REF</b> &e has type t* if e has type t</li>
+            <li><b>DEREF</b> *e has type t if e has type t*</li>
+            <li><b>ARRAY</b> e1[e2] has type t if e1 has type t* or type t[] and e2 has type int</li>
+            <li><b>STRUCT</b> e.ai has type ti if e has type struct&#123;t1 a1;...; tm am;&#125;</li>
+            <li><b>APP</b> e(e1,..., em) has type t if the return type of e is t and e1,..., em
               are subtypes of the types of the parameters in the function definition in the
               environment</li>
-            <li><b>Op &#x25FB;</b> The expression e1 &#x25FB; e1 has type t if e1 and e2 have type t</li>
-            <li><b>Op =</b> The expression e1 = e2 has type t1 if e1 has type t1 and a2 has type t2 and t2 is a
-              subtype of t1</li>
-            <li><b>Explicit Cast</b> The expression (t1)e has type t1 if e has type t2 and t2 is a subtype of t1
-              </li>
+            <li><b>OP</b> e1 &#x25FB; e1 has type t if e1 and e2 have type t</li>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="showModal=false" data-dismiss="modal">Close</button>

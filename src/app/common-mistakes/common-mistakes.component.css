@@ -12,3 +12,7 @@
     color: white;
     background-color: #2469B3;
 }
+
+.modal-content{
+    width: 150%;
+}

@@ -20,8 +20,6 @@ import { CreateDeclarationDialogComponent } from './dialogs/create-declaration-d
 import { CreateTypedefDialogComponent } from './dialogs/create-typedef-dialog/create-typedef-dialog.component';
 import { EnvironmentDataService } from 'src/app/environment-data.service';
 import { PopUpErrorMessageComponent } from 'src/app/pop-up-error-message/pop-up-error-message.component';
-import { VoidType } from 'src/app/model/typing/types/base-types/void-type';
-import { config } from 'rxjs';
 import { Definition } from 'src/app/model/typing/types/common/definition';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
 
@@ -285,7 +283,7 @@ export class TypeConstructionKitComponent implements OnInit {
   }
 
   evalPointer() {
-
+    
   }
 
   /*
