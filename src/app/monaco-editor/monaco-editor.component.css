@@ -7,6 +7,8 @@
 
 .coder{
     height: 80%;
+    width: 100%;
+    margin: 0px;
 }
 
 button{
@@ -15,4 +17,12 @@ button{
     border-radius: 5px;
     border: none;
     padding: 6px;
+    margin-left: 5px;
+}
+
+.successMessage{
+    float: right;
+    margin-right: 50px;
+    margin-top: 5px;
+    color: green;
 }

@@ -4,8 +4,8 @@
     [options]="editorOptions"
     ></ngx-monaco-editor-->
     <textarea class="coder" id="story" name="story"
-          rows="5" cols="40" [(ngModel)] = "code">
+          [(ngModel)] = "code">
     </textarea>
     <button (click)="parseInput()">Ready!</button>
-    <!--div class = "testAusgabe">{{code}}</div-->
+    <div *ngIf = "showSuccess" class = "successMessage">Environment set up successfully!</div>
 </div>

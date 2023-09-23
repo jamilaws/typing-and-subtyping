@@ -21,8 +21,6 @@
     
 }
 
-.typedef-wrapper {}
-
 .type-env-data-wrapper{
     margin-top: 10px;
     margin-bottom: 10px;
@@ -47,19 +45,12 @@
     width: 100%;
 }
 
-.ast-wrapper {
-
-}
-
 .typing-tree-wrapper {
     margin-top: 200px;
 }
 
 .subtyping-symbol {
     text-align: center;
-}
-
-.type-dropdown {
 }
 
 .check-button {
@@ -74,6 +65,7 @@
 
 .tabs-wrapper {
     border-top: solid 1px darkgrey;
+    margin-top: 6px;
 }
 
 .subtyping-feedback-font {

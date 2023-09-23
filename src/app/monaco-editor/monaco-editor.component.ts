@@ -30,6 +30,8 @@ export class MonacoEditorComponent implements OnInit {
       enabled: false
     }
   };
+
+  showSuccess = false;
   
   constructor(private dialogRef: MatDialog, private mapService: EnvironmentDataService) {
   }
@@ -41,11 +43,13 @@ export class MonacoEditorComponent implements OnInit {
   parseInput() {
     // TODO: Falsche Ausgabe --> pointer
     try {
-      
+    
     let environmentMap = parser.parse(this.code);
-    
+    this.showSuccess = true;
     this.updateMap(environmentMap)
-    
+    setTimeout(() => {
+      this.showSuccess = false;
+    }, 3000);
   } catch (err) {
     this.popUpError();
     console.log("Error gefangen")
