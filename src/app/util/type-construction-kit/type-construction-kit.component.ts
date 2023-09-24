@@ -22,6 +22,7 @@ import { EnvironmentDataService } from 'src/app/environment-data.service';
 import { PopUpErrorMessageComponent } from 'src/app/pop-up-error-message/pop-up-error-message.component';
 import { Definition } from 'src/app/model/typing/types/common/definition';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
+import { throwError } from 'rxjs';
 
 
 @Component({
@@ -81,108 +82,217 @@ export class TypeConstructionKitComponent implements OnInit {
 
   useMap(map: any){
     this.environmentMap = map
-    this.mapToTypes();
+    //this.mapToTypes();
+    for (var i = 0; i < this.environmentMap.length; i++){
+      let line = this.storeLineOfCode(this.environmentMap[i], false);
+      switch (line.storeAs){
+        case "decl" : {
+          this.addDelaration(line.name, line.type);
+          break;
+        }
+        case "struct" : {
+          this.onApplyCreation(line.type);
+          this.addDelaration(line.name, line.type);
+          break;
+        }
+        case "typedef": {
+          this.addTypedef(line.name, line.type);
+          this.addDelaration(line.name, line.type);
+          break;
+        }
+        default: {
+          console.log("falscher storeAs: " + line.storeAs);
+        }
+      }
+    }
   }
 
-  mapToTypes() {
+  // storeAs can be "struct", "decl", "typedef", "error"
+  storeLineOfCode(mapEntry : any, forStruct : boolean): {name : string, type: AbstractType, storeAs: string} {
+    console.log("line of code: ")
+    console.log(mapEntry)
     try {
-      
-      for (let i = 0; i < this.environmentMap.length; i++) {
-        if (this.environmentMap == null) {
-          this.popUpError;
-        }
-        // parse individual statement
-        switch (this.environmentMap[i]["kind"]) {
-          case "type": {
-            switch (this.environmentMap[i]["type"]) {
-              case "declaration": {
-                switch (this.environmentMap[i]["base"][0]["type"]){
-                  case "struct": {
-                    // struct
-                    this.evalStruct(this.environmentMap[i])
-                    break;
+
+      switch (mapEntry["kind"]) {
+        case "type": {
+          switch (mapEntry["type"]) {
+            case "declaration": {
+              switch (mapEntry["base"][0]["type"]){
+                case "struct": {
+                  // struct
+                  let name = mapEntry["declarator"]["name"];
+                  let members = Array<Definition>();
+                  for (var i = 0; i < mapEntry["base"][0]["body"].length; i++){
+                    let member = this.storeLineOfCode(mapEntry["base"][0]["body"][i], true);
+                    members.push(new Definition(member.name, member.type));
                   }
-                  default: { // wenn base nicht ein struct ist dann ist alles andere mit base ein base type 
-                    switch (this.environmentMap[i]["declarator"]["type"]) {
-                      case "identifier": {
-                        // base type
-                        let varName = this.environmentMap[i]["declarator"]["name"];
-                        let type = this.evalBaseType(this.environmentMap[i]);
-                        this.addDelaration(varName, type);
-                        break;
+                  return {
+                    name: name,
+                    type: new StructType(name, members),
+                    storeAs: "struct"
+                  }
+                }
+                default: { // NULL 
+                  switch (mapEntry["declarator"]["type"]) {
+                    case "identifier": {
+                      // base type not in struct
+                      let name = mapEntry["declarator"]["name"];
+                      let type = this.identifierBase(mapEntry["base"][0]);
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "decl"
                       }
-                      case "array": {
-                        // array (
-                        this.evalArray(this.environmentMap[i])
-                        break;
+                    }
+                    case "array": {
+                      // array not in struct 
+                      let name : string;
+                      let type : AbstractType;
+
+                      let arrEval = this.evalArray(mapEntry)
+                      name = arrEval.arrName
+                      type = arrEval.constructed
+                      
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "decl"
                       }
-                      case "pointer": {
-                        // pointer
-                        let type = new PointerType(this.evalBaseType(this.environmentMap[i]));
-                        console.log("type " + type)
-                        let pointerName = this.environmentMap[i]["declarator"]["base"]["name"];
-                        console.log("pointer name: " + pointerName)
-                        this.addDelaration(pointerName, type);
-                        this.onApplyCreation(type);
-                        break;
+                    }
+                    case "pointer": {
+                      // pointer not in struct
+                      let basetype = this.identifierBase(mapEntry["base"][0])
+                      let type = new PointerType(this.evalPointer(basetype, mapEntry["declarator"]["base"]));
+                      console.log("pointer type:")
+                      console.log(type)
+                      let name = this.evalPointerName(mapEntry["declarator"]["base"])
+                      
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "decl"
                       }
-                      default: console.log("parsable but not considered: " + JSON.stringify(this.environmentMap, null, 2));
+                    }
+                    default: {
+                      if (forStruct){
+                        switch (mapEntry["declarator"][0]["type"]){
+                          case "identifier": {
+                            // base type in struct
+                            let name = mapEntry["declarator"][0]["name"];
+                            let type = this.identifierBase(mapEntry["base"][0]);
+                            return {
+                              name: name,
+                              type: type,
+                              storeAs: "decl"
+                            }
+                          }
+                          case "array": {
+                            // array in struct
+                            let name = this.evalArrayForStruct(mapEntry).name
+                            let type = this.evalArrayForStruct(mapEntry).basetype
+                            
+                            return {
+                              name: name,
+                              type: type,
+                              storeAs: "decl"
+                            }
+                          }
+                          case "pointer": {
+                            // pointer in struct
+                            return {
+                              name:"pointer in struct",
+                              type: new PointerType(new IntType()),
+                              storeAs: "error"
+                            }
+                          }
+                        }
+                      }
+                      return {
+                        name:"id, poi, arr",
+                        type: new PointerType(new IntType()),
+                        storeAs: "error"
+                      }
                     }
                   }
                 }
-                break;
+              }
+              
+            }
+            case "typedef": {
+              // typedef
+              let alias = mapEntry["declarator"]["name"];
+              mapEntry["type"] = "declaration";
+              let type = this.storeLineOfCode(mapEntry, false).type
+              return {
+                name: alias,
+                type: type,
+                storeAs: "typedef"
               }
             }
-            break;
           }
-          case "expr": {
-            // Can't happen here
-            console.log("This is an expression, but we need type definitions here");
-            this.popUpError();
-            break;
+          return {
+            name:"temp",
+            type: new PointerType(new IntType()),
+            storeAs: "error"
           }
-          default: this.popUpError();
-  
         }
+        case "expr": {
+          // expression
+          console.log("This is an expression, but we need type definitions here");
+          this.popUpError();
+          return {
+            name:"expr",
+            type: new PointerType(new IntType()),
+            storeAs: "error"
+          }
+        }
+        default: {
+          // lands here when typedef of basetype
+          console.log("typedef of basetype")
+          return {
+            name:"none",
+            type: this.identifierBase(mapEntry),
+            storeAs: "typedefBaseType"
+          }
+        }
+
       }
+
     } catch (err) {
       this.popUpError();
       console.log("Error gefangen")
       console.error(err)
+      return {
+        name:"err",
+        type: new PointerType(new IntType()),
+        storeAs: "error"
+      }
+    }
+
+  }
+
+  identifierBase(base : string) {
+    switch (base) {
+      case "int" : return new IntType();
+      case "float" : return new FloatType();
+      case "char" : return new CharType();
+      default: {
+        // alias belongs to a type
+        // it does not parse if the type is not a "real" type or typedef -> no need to check for existence 
+        return this.typeDefinitions.get(base) 
+      }
     }
   }
+
+  
 
   popUpError() {
     this.dialogRef.open(PopUpErrorMessageComponent);
   }
 
-  evalBaseType(typeDefinition: any) : AbstractType {
-    let constructedBaseType: AbstractType = new IntType();
-    switch (typeDefinition["base"][0]) {
-      case "int": {
-        // base type int 
-        constructedBaseType = new IntType();
-        console.log("\nyou entered a base type int");
-        break;
-      }
-      case "float": {
-        // base type float
-        constructedBaseType = new FloatType();
-        console.log("\nyou entered a base type float");
-        break;
-      }
-      case "char": {
-        // base type char
-        constructedBaseType = new CharType();
-        console.log("\nyou entered a base type char");
-        break;
-      }
-
-    }
-    return constructedBaseType;
-  }
-
   evalArray(arrayDefinition: any) {
+    console.log("normal:")
+    console.log(arrayDefinition);
     let lookingForBase = true
     let dimension = 1
     let temp = arrayDefinition["declarator"]["base"];
@@ -197,16 +307,35 @@ export class TypeConstructionKitComponent implements OnInit {
       }
     }
   
-    let constructedBaseType : AbstractType = this.evalBaseType(arrayDefinition);
+    let constructedBaseType : AbstractType = this.identifierBase(arrayDefinition["base"][0]);
 
     let constructed = new ArrayType(constructedBaseType, dimension)
-    console.log("Array of dimension: " + dimension + " and base " + (arrayDefinition["base"][0]) + " and name " + arrName);
-    this.addDelaration(arrName, constructed);
-    this.onApplyCreation(constructed);
+
+    return {arrName, constructed};
   }
 
-  evalArrayNameForStruct(arrayDefinition: any) : string {
+  evalArrayForPointer(basetype : AbstractType, arrayBase : any) {
+    let dim = 1
+    while(arrayBase["type"] == "array"){
+      dim = dim + 1
+      arrayBase = arrayBase["base"]
+    }
+    return new ArrayType(basetype, dim);
+      
+  }
+
+  evalPointerName(pointerBase : any) {
+    while(pointerBase["type"] != "identifier"){
+      pointerBase= pointerBase["base"]
+    }
+    return pointerBase["name"];
+
+  }
+  
+
+  evalArrayForStruct(arrayDefinition:any) {
     let lookingForBase = true
+    let dimension = 1
     let temp = arrayDefinition["declarator"][0]["base"];
     let arrName = ""
     while (lookingForBase) {
@@ -215,75 +344,26 @@ export class TypeConstructionKitComponent implements OnInit {
         arrName = temp["name"]
       } else {
         temp = temp["base"]
-      }
-    }
-    return arrName;
-  }
-  
-  evalArrayTypeForStruct(arrayDefinition:any) : ArrayType {
-    let lookingForBase = true
-    let dimension = 1
-    let temp = arrayDefinition["declarator"][0]["base"];
-    while (lookingForBase) {
-      if (temp["type"] == "identifier") {
-        lookingForBase = false;
-      } else {
-        temp = temp["base"]
         dimension = dimension + 1
       }
     }
   
-    let constructedBaseType : AbstractType = this.evalBaseType(arrayDefinition);
+    let constructedBaseType : AbstractType = this.identifierBase(arrayDefinition["base"][0]);
+    let type = new ArrayType(constructedBaseType, dimension);
 
-    return new ArrayType(constructedBaseType, dimension);
+    return {name: arrName, basetype: type};
 
   }
 
-  evalStruct(structDefinition: any){
-    console.log("you have entered a struct");
-    console.log(structDefinition);
-    let members = new Array<Definition>();
-    // find name 
-    let structName = structDefinition["declarator"]["name"];
-    console.log(structName)
-    // find all members
-    for (let memberIndex = 0; memberIndex < structDefinition["base"][0]["body"].length; memberIndex++){
-      console.log("index: " + memberIndex)
-      // eval member
-      console.log(structDefinition["base"][0]["body"][memberIndex]);
-      switch (structDefinition["base"][0]["body"][memberIndex]["declarator"][0]["type"]) {
-      
-        // POINTER!!!
-        case "identifier": {
-          console.log("base type within the struct")
-          let varName = structDefinition["base"][0]["body"][memberIndex]["declarator"][0]["name"];
-          let type = this.evalBaseType(structDefinition["base"][0]["body"][memberIndex]);
-          let definition : Definition = new Definition(varName, type);
-          members.push(definition);
-          break;
-        }
-        case "array": {
-          console.log("array within the struct")
-          console.log(structDefinition["base"][0]["body"][memberIndex])
-          let arrName = this.evalArrayNameForStruct(structDefinition["base"][0]["body"][memberIndex]);
-          console.log(1)
-          let arrType = this.evalArrayTypeForStruct(structDefinition["base"][0]["body"][memberIndex]);
-          console.log(2)
-          members.push(new Definition(arrName, arrType));
-          console.log(3)
-          break;
-        }
-      }
-    }
-    // build structType
-    let newStruct = new StructType(structName, members);
-    // add to declarations and constructedTypes
-    this.onApplyCreation(newStruct);
-    this.addDelaration(structName, newStruct);
-  }
-
-  evalPointer() {
-    
+  evalPointer(basetype : AbstractType , pointerSpec: any) : AbstractType {
+   if (pointerSpec["type"] == "pointer") {
+    return new PointerType(this.evalPointer(basetype, pointerSpec["base"]));
+   } else if (pointerSpec["type"] == "array") {
+    // array?
+    return this.evalArrayForPointer(basetype, pointerSpec["base"]);
+   } else {
+    return basetype;
+   }
   }
 
   /*

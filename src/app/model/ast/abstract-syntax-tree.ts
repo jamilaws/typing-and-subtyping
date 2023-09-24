@@ -17,7 +17,6 @@ export class AbstractSyntaxTree implements TypeCheckable {
     }
 
     public getRoots(): AstNode[] {
-        console.log(this.roots)
         return this.roots;
     }
 
