@@ -22,7 +22,8 @@ import { EnvironmentDataService } from 'src/app/environment-data.service';
 import { PopUpErrorMessageComponent } from 'src/app/pop-up-error-message/pop-up-error-message.component';
 import { Definition } from 'src/app/model/typing/types/common/definition';
 import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
-import { throwError } from 'rxjs';
+import { FunctionType } from 'src/app/model/typing/types/type-constructors/function-type';
+import { VoidType } from 'src/app/model/typing/types/base-types/void-type';
 
 
 @Component({
@@ -90,7 +91,7 @@ export class TypeConstructionKitComponent implements OnInit {
           this.addDelaration(line.name, line.type);
           break;
         }
-        case "struct" : {
+        case "construct" : {
           this.onApplyCreation(line.type);
           this.addDelaration(line.name, line.type);
           break;
@@ -129,7 +130,7 @@ export class TypeConstructionKitComponent implements OnInit {
                   return {
                     name: name,
                     type: new StructType(name, members),
-                    storeAs: "struct"
+                    storeAs: "construct"
                   }
                 }
                 default: { // NULL 
@@ -156,7 +157,7 @@ export class TypeConstructionKitComponent implements OnInit {
                       return {
                         name: name,
                         type: type,
-                        storeAs: "decl"
+                        storeAs: "construct"
                       }
                     }
                     case "pointer": {
@@ -170,7 +171,21 @@ export class TypeConstructionKitComponent implements OnInit {
                       return {
                         name: name,
                         type: type,
-                        storeAs: "decl"
+                        storeAs: "construct"
+                      }
+                    }
+                    case "function": {
+                      let parameter = new Array<AbstractType>();
+                      let returntype : AbstractType = this.identifierBase(mapEntry["base"][0]);
+                      let name : string = mapEntry["declarator"]["base"]["name"]
+                      for (var i = 0; i < mapEntry["declarator"]["params"].length; i++){
+                        let para = this.storeLineOfCode(mapEntry["declarator"]["params"][i], false);
+                        parameter.push(para.type);
+                      }
+                      return {
+                        name: name,
+                        type: new FunctionType(parameter, returntype),
+                        storeAs: "construct" 
                       }
                     }
                     default: {
@@ -194,7 +209,7 @@ export class TypeConstructionKitComponent implements OnInit {
                             return {
                               name: name,
                               type: type,
-                              storeAs: "decl"
+                              storeAs: "construct"
                             }
                           }
                           case "pointer": {
@@ -203,11 +218,11 @@ export class TypeConstructionKitComponent implements OnInit {
                             let type = new PointerType(this.evalPointer(basetype, mapEntry["declarator"][0]["base"]));
                             let name = this.evalPointerName(mapEntry["declarator"][0]["base"])
                       
-                      return {
-                        name: name,
-                        type: type,
-                        storeAs: "decl"
-                      }
+                            return {
+                              name: name,
+                              type: type,
+                              storeAs: "construct"
+                            }
                           }
                         }
                       }
@@ -280,6 +295,7 @@ export class TypeConstructionKitComponent implements OnInit {
       case "int" : return new IntType();
       case "float" : return new FloatType();
       case "char" : return new CharType();
+      case "void" : return new VoidType();
       default: {
         // alias belongs to a type
         // it does not parse if the type is not a "real" type or typedef -> no need to check for existence 
