@@ -199,11 +199,15 @@ export class TypeConstructionKitComponent implements OnInit {
                           }
                           case "pointer": {
                             // pointer in struct
-                            return {
-                              name:"pointer in struct",
-                              type: new PointerType(new IntType()),
-                              storeAs: "error"
-                            }
+                            let basetype = this.identifierBase(mapEntry["base"][0])
+                            let type = new PointerType(this.evalPointer(basetype, mapEntry["declarator"][0]["base"]));
+                            let name = this.evalPointerName(mapEntry["declarator"][0]["base"])
+                      
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "decl"
+                      }
                           }
                         }
                       }
