@@ -13,6 +13,10 @@
     color: green;
 }
 
+.wrongLabelMessage {
+    color: red; 
+}
+
 .bodyWrapper {
     margin-left: 5px;
     margin-top: auto;

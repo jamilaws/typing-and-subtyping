@@ -3,6 +3,7 @@
     <div class="wrapper">
         <div class="labelWrapper" [ngStyle]="{'color': _getColor()}">
             <div class="actualLabel" *ngIf = "selectedLabel == typingTree.label">{{typingTree.label}}</div>
+            <div class="wrongLabelMessage" *ngIf = "selectedLabel != startingPoint && selectedLabel != typingTree.label">Try again!</div>
             <select [(ngModel)]="selectedLabel" *ngIf = "selectedLabel != typingTree.label">
                 <option *ngFor = "let l of labels" value="{{l.valueLabel}}">{{l.name}}</option>
             </select>

@@ -24,7 +24,7 @@ export class InstructionListComponent implements OnInit {
   },
   {
     summary: "Select Rule",
-    details: "Choose the correct rule for each leaf of the tree. It will"
+    details: "Choose the correct rule for each leaf of the tree. If you don't know what rule to apply, click 'Remind me of the rules!'"
   },
   {
     summary: "Well done!",

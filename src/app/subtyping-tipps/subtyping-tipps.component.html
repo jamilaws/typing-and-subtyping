@@ -9,9 +9,98 @@
           </button-->
         </div>
         <div class="modal-body">
-            <li>This is a tipp for you</li>
-            <li>Keep your head up</li>
+          <!--end of algorithm-->
+          <!--table>
+            <tr>
+              <td style="border-bottom: solid;">
+                t ≤ t'
+              </td>
+            </tr>
+            <tr>
+              <td>
+                t ≤ t'
+              </td>
+            </tr>
+          </table-->
+
+          <!--pointer-->
+          <table>
+            <tr>
+              <th>
+                Pointer
+              </th>
+            </tr>
+            <tr>
+              <td style="border-bottom: solid;">
+                &Gamma; &vdash; s ≤ t
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &Gamma; &vdash; s* ≤ t*
+              </td>
+            </tr>
+          </table>
+
+          <!--Typedef-->
+          <table>
+            <tr>
+              <th>
+                Typedef
+              </th>
+            </tr>
+            <tr>
+              <td style="border-bottom: solid;">
+                &Gamma; &vdash; s ≤ t <i>if typedef s A</i>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &Gamma; &vdash; A ≤ t
+              </td>
+            </tr>
+          </table>
+
+          <!--Struct-->
+          <table>
+            <tr>
+              <th>
+                Struct
+              </th>
+            </tr>
+            <tr>
+              <td style="border-bottom: solid;">
+                &Gamma; &vdash; s<sub>k</sub> ≤ t<sub>k</sub> &forall; 1 ≤ k ≤ j
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &Gamma; &vdash; struct &lbrace; s<sub>1</sub> a<sub>1</sub>&semi;...&semi; s<sub>j</sub> a<sub>j</sub>&semi; &rbrace; ≤ struct &lbrace; t<sub>1</sub> a<sub>1</sub>&semi;...&semi; t<sub>j</sub> a<sub>j</sub>&semi; &rbrace;
+              </td>
+            </tr>
+          </table>
+          
+          <!--Funktion-->
+          <table>
+            <tr>
+              <th>
+                Function
+              </th>
+            </tr>
+            <tr>
+              <td style="border-bottom: solid;">
+                &Gamma; &vdash; s<sub>0</sub> ≤ t<sub>0</sub> &Gamma; &vdash; t<sub>1</sub> ≤ s<sub>1</sub> ... t<sub>m</sub> ≤ s<sub>m</sub>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &Gamma; &vdash; s<sub>0</sub> ( s<sub>1</sub>, ..., s<sub>m</sub>) ≤ t<sub>0</sub> ( t<sub>1</sub>, ..., t<sub>m</sub>)
+              </td>
+            </tr>
+          </table>
+
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="showModal=false" data-dismiss="modal">Close</button>
         </div>
@@ -21,5 +110,5 @@
 
   <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" (click)="showModal=true" data-toggle="modal" data-target="#commonMistakesModal">
-    Click here for tipps!
+    Remind me of the rules!
   </button>

@@ -29,7 +29,8 @@ export class TypingTreeComponent implements OnInit {
     {valueLabel: TypingTreeNodeLabel.OP, name: "OP"},
     //{valueLabel: TypingTreeNodeLabel.OP_ASSIGN, name: "OP ="} -> not in use
   ]
-  public selectedLabel : TypingTreeNodeLabel;
+  public selectedLabel : TypingTreeNodeLabel = TypingTreeNodeLabel.TEMP;
+  public startingPoint : TypingTreeNodeLabel = TypingTreeNodeLabel.TEMP 
 
   constructor(private componentInterconnectionService: ComponentInterconnectionService) { }
 
