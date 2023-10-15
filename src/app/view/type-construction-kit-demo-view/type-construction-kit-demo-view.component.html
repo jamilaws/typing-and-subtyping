@@ -1,18 +1,20 @@
-<!--div class="type-construction-kit-wrapper">
+<div class="type-construction-kit-wrapper">
     <app-type-construction-kit (onTypesChange)="onTypesChange($event)" (onTypedefsChange)="onTypedefsChange($event)"
         (onDeclarationsChange)="onDeclarationsChange($event)"></app-type-construction-kit>
-</div-->
+</div>
 <div class="content-wrapper">
     <div class="row">
         <div class="col-sm-2">
             <div class="instructions-wrapper">
-                <app-instruction-list style="height: 100%"></app-instruction-list>
+                <app-instruction-list *ngIf="typingTab.isActive" style="height: 100%"></app-instruction-list>
+                <app-instructions-subtyping *ngIf="subtypingTab.isActive"></app-instructions-subtyping>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="left-panel-wrapper">
                 <div class="code-editor-wrapper">
                     <app-monaco-editor></app-monaco-editor>
+                    <!--app-mirror-editor></app-mirror-editor-->
                 </div>
                 <div class="tabs-wrapper">
                     <mat-tab-group #matTabGroup mat-align-tabs="center" animationDuration="0ms">
@@ -52,19 +54,29 @@
                                     [options]="availableTypes" [optionToName]="typeToName"
                                     (onSelectEvent)="onClickCheckSubtyping()"></app-singleselect-dropdown>
                                 <br>
+                                <!--div class="subtyping-input-wrapper">
+                                    <input #inputExpression class="subtyping-input" type="text"
+                                        placeholder="Enter the potential supertype"
+                                        (keyup)="onChangeExpression()">
+                                </div>
+                                <div class="expression-input-wrapper">
+                                    <input #inputExpression class="subtyping-input" type="text"
+                                        placeholder="Enter the potential subtype"
+                                        (keyup)="onChangeExpression()">
+                                </div-->
                                 <div *ngIf="structuralSubtypingQueryResult">
                                     <div
                                         *ngIf="structuralSubtypingQueryResult.value; then subtypingResultMsgTrue else subtypingResultMsgFalse">
                                     </div>
                                     <ng-template #subtypingResultMsgTrue>
                                         <div class="subtyping-feedback-yes">
-                                            <mat-icon class="subtyping-feedback-font">check_circle</mat-icon>
+                                            <!--mat-icon class="subtyping-feedback-font">check_circle</mat-icon-->
                                             <span class="subtyping-feedback-font">Subtypes</span>
                                         </div>
                                     </ng-template>
                                     <ng-template #subtypingResultMsgFalse>
                                         <div class="subtyping-feedback-no">
-                                            <mat-icon class="subtyping-feedback-font">cancel</mat-icon>
+                                            <!--mat-icon class="subtyping-feedback-font">cancel</mat-icon-->
                                             <span class="subtyping-feedback-font">No subtypes</span>
                                         </div>
                                     </ng-template>
@@ -79,7 +91,9 @@
             
             <div class="right-panel-wrapper" *ngIf="typingTab.isActive">
                 <div class="common-mistake-wrapper">
+
                     <app-common-mistakes></app-common-mistakes>
+                    
                 </div>
                 <div class="typing-tree-wrapper" *ngIf="isAstValid && !typingErrorMessage">
                     
@@ -92,6 +106,7 @@
                 
             </div>
             <div class="right-panel-wrapper" *ngIf="subtypingTab.isActive">
+                <app-subtyping-tipps></app-subtyping-tipps>
                 <app-dummy-subtyping-test [structuralSubtypingQueryResult]="structuralSubtypingQueryResult">
                 </app-dummy-subtyping-test>
             </div>

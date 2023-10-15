@@ -365,7 +365,7 @@ parse: function parse(input) {
         vstack.length = vstack.length - n;
         lstack.length = lstack.length - n;
     }
-    _token_stack:
+    //_token_stack:
         var lex = function () {
             var token;
             token = lexer.lex() || EOF;
@@ -492,7 +492,7 @@ parse: function parse(input) {
 		return { type:"identifier", name:name }
 	}
 	function pointerto(n,t){
-		ret = t
+		let ret = t
 		for (let i = 1; i <= n; i++) {
   			ret = { type: "pointer", base: ret}
 		} 
@@ -520,8 +520,8 @@ parse: function parse(input) {
 	}
 	function refreshTypenames(b,declarations){
 		if (b.includes("typedef")) {
-			for (declaration of declarations){
-				t=declaration.declarator
+			for (var declaration of declarations){
+				let t=declaration.declarator
 				while(t.type!="identifier"){
 					t=t.base
 				}

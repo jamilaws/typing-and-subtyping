@@ -22,6 +22,11 @@
     ],
     "strictNullChecks": false,
     "noImplicitOverride": true,
+
+    "typeRoots": [
+      "typings" // Deklarationsdatei einbinden
+    ],
+    "allowJs": true,
     //"emitDecoratorMetadata": false,
   },
   "angularCompilerOptions": {

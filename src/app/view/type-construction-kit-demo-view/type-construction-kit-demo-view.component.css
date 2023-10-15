@@ -21,8 +21,6 @@
     
 }
 
-.typedef-wrapper {}
-
 .type-env-data-wrapper{
     margin-top: 10px;
     margin-bottom: 10px;
@@ -33,12 +31,18 @@
     padding-right: 15px;
 }
 
-.expression-input {
+.subtyping-input-wrapper{
     width: 100%;
+    padding-right: 15px;
 }
 
-.ast-wrapper {
+.subtyping-input{
+    width: 100%;
+    margin-top: 10px;
+}
 
+.expression-input {
+    width: 100%;
 }
 
 .typing-tree-wrapper {
@@ -49,21 +53,19 @@
     text-align: center;
 }
 
-.type-dropdown {
-}
-
 .check-button {
     background-color: #2469B3;
     color: white;
 }
 
 .code-editor-wrapper {
-    height: 120px;
+    height: 200px;
     margin-top: 10px;
 }
 
 .tabs-wrapper {
     border-top: solid 1px darkgrey;
+    margin-top: 6px;
 }
 
 .subtyping-feedback-font {

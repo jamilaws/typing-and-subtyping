@@ -1,9 +1,31 @@
-<div>
-    <details>
-    <summary>
-        Click here for tipps!
-    </summary>
-        <li>Go right if you can; go left if you must</li>
-        <li>Keep your head up</li>
-    </details>
-</div>
+ <!-- Modal -->
+  <div class="modal fade" id="commonMistakesModal" [ngClass]="{'show' : showModal}" tabindex="-1" role="dialog" aria-labelledby="commonMistakesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel">Keep in mind...</h5>
+        </div>
+        <div class="modal-body">
+            <p><b>Go right if you can; go left if you must</b></p>
+            <li><b>CONST</b> e has type t if e is a constant with type t</li>
+            <li><b>VAR</b> e has type t if e is a variable with type t</li>
+            <li><b>REF</b> &e has type t* if e has type t</li>
+            <li><b>DEREF</b> *e has type t if e has type t*</li>
+            <li><b>ARRAY</b> e1[e2] has type t if e1 has type t* or type t[] and e2 has type int</li>
+            <li><b>STRUCT</b> e.ai has type ti if e has type struct&#123;t1 a1;...; tm am;&#125;</li>
+            <li><b>APP</b> e(e1,..., em) has type t if the return type of e is t and e1,..., em
+              are subtypes of the types of the parameters in the function definition in the
+              environment</li>
+            <li><b>OP</b> e1 &#x25FB; e1 has type t if e1 and e2 have type t</li>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="showModal=false" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" (click)="showModal=true" data-toggle="modal" data-target="#commonMistakesModal">
+    Remind me of the rules!
+  </button>

@@ -1,0 +1,23 @@
+.instructions.wrapper{
+    box-sizing: border-box;
+    border-right: solid 5px lightgrey;
+    margin: 0%;
+}
+
+.title{
+    border-bottom: solid 1px #2469B3;
+    font-size: 20px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-weight: bold;
+    color: darkslategrey;
+    
+}
+
+
+@keyframes open {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+    

@@ -7,5 +7,6 @@ export enum TypingTreeNodeLabel {
     STRUCT = "STRUCT",
     APP = "APP",
     OP = "OP",
-    OP_ASSIGN = "OP ="
+    OP_ASSIGN = "OP =",
+    TEMP = "TEMP"
 }

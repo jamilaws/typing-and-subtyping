@@ -12,4 +12,17 @@ export class InstructionsSubtypingComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  instr = [{
+    summary: "Define Environment",
+    details: "Define your environment in the code box and click 'Ready!'" 
+  },
+  {
+    summary: "Select Types",
+    details: "Select from the dropdown the supertype and the subtype"
+  },
+  {
+    summary: "Subtyping Relation",
+    details: "You will find the solution beneath the two types you have selected. Try and comprehend the subtypingtree on the right!"
+  }]
+
 }

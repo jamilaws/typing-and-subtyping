@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { RouterModule, Routes } from '@angular/router';
 
-import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
+import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -41,7 +41,11 @@ import { InstructionsComponent } from './instructions/instructions.component';
 import { CommonMistakesComponent } from './common-mistakes/common-mistakes.component';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 import { InstructionListComponent } from './instruction-list/instruction-list.component';
-import { InstructionsSubtypingComponent } from './instructions-kit/instructions-subtyping/instructions-subtyping.component';
+import { InstructionsSubtypingComponent } from './instructions-subtyping/instructions-subtyping.component';
+import { SubtypingTippsComponent } from './subtyping-tipps/subtyping-tipps.component';
+import { MirrorEditorComponent } from './mirror-editor/mirror-editor.component';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { PopUpErrorMessageComponent } from './pop-up-error-message/pop-up-error-message.component';
 
 
 
@@ -88,13 +92,16 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MonacoEditorComponent,
     InstructionListComponent,
     InstructionsSubtypingComponent,
+    SubtypingTippsComponent,
+    MirrorEditorComponent,
+    PopUpErrorMessageComponent,
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
     HttpClientModule,
     FormsModule,
-    MonacoEditorModule.forRoot(),
+    MonacoEditorModule.forRoot(monacoConfig),
     BrowserAnimationsModule,
     MatToolbarModule,
     NgxEchartsModule.forRoot({
@@ -107,9 +114,10 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatDialogModule,
     MatTabsModule,
     MatTooltipModule,
+    CodemirrorModule
   ],
   providers: [MonacoEditorComponent],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { 
   

@@ -12,4 +12,5 @@ export class CommonMistakesComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  showModal = false; 
 }

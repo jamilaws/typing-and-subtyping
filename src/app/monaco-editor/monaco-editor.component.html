@@ -1,8 +1,11 @@
 <div class="wrapper">
-    <ngx-monaco-editor class="coder" style="height: 100%;" 
+    <!--ngx-monaco-editor class="coder" style="height: 100%;" 
     [(ngModel)]="code"
     [options]="editorOptions"
-    ></ngx-monaco-editor>
-    <div class = "testAusgabe">{{code}}</div>
+    ></ngx-monaco-editor-->
+    <textarea class="coder" id="story" name="story"
+          [(ngModel)] = "code">
+    </textarea>
+    <button (click)="parseInput()">Ready!</button>
+    <div *ngIf = "showSuccess" class = "successMessage">Environment set up successfully!</div>
 </div>
- 

@@ -112,7 +112,7 @@ export abstract class AbstractType {
      * @returns 
      */
     public isStrutcturalSubtypeOf(other: AbstractType, typeDefs: Map<string, AbstractType>): StructuralSubtypingQueryResult {
-
+        // logic of subtyping
         const context: StructuralSubtypingQueryContext = {
             typeDefinitions: typeDefs,
             queryHistory: new Array()

@@ -18,6 +18,12 @@ import { CreatePointerTypeBubbleComponent } from './create-type-bubbles/create-p
 import { StructTypeConstructionBubbleComponent } from './create-type-bubbles/create-struct-type-bubble/create-struct-type-bubble.component';
 import { CreateDeclarationDialogComponent } from './dialogs/create-declaration-dialog/create-declaration-dialog.component';
 import { CreateTypedefDialogComponent } from './dialogs/create-typedef-dialog/create-typedef-dialog.component';
+import { EnvironmentDataService } from 'src/app/environment-data.service';
+import { PopUpErrorMessageComponent } from 'src/app/pop-up-error-message/pop-up-error-message.component';
+import { Definition } from 'src/app/model/typing/types/common/definition';
+import { StructType } from 'src/app/model/typing/types/type-constructors/struct-type';
+import { FunctionType } from 'src/app/model/typing/types/type-constructors/function-type';
+import { VoidType } from 'src/app/model/typing/types/base-types/void-type';
 
 
 @Component({
@@ -36,10 +42,17 @@ export class TypeConstructionKitComponent implements OnInit {
   @Output('onTypedefsChange') typeDefs_extern = new EventEmitter<TypeDefinitionTable>();
   @Output('onDeclarationsChange') declarations_extern = new EventEmitter<Declaration[]>();
 
+
+  /*
+  MapService
+  */
+
+  environmentMap: any;
+
   /*
   Type bubbles
   */
-
+ 
   baseTypes: BaseType[];
   constructedTypes: AbstractType[];
   aliasTypes: AliasPlaceholderType[] = new Array();
@@ -60,11 +73,322 @@ export class TypeConstructionKitComponent implements OnInit {
   */
   private declarations: Declaration[] = new Array();
 
-  constructor(public dialog: MatDialog, private configurationStoreService: ConfigurationStoreService) { }
+  constructor(public dialog: MatDialog, private configurationStoreService: ConfigurationStoreService, 
+    private mapService: EnvironmentDataService, private dialogRef: MatDialog) { }
 
   ngOnInit(): void {
     this.initConfiguration();
+    this.mapService.sharedMap.subscribe(m => this.useMap(m));
   }
+
+  useMap(map: any){
+    this.environmentMap = map
+    //this.mapToTypes();
+    for (var i = 0; i < this.environmentMap.length; i++){
+      let line = this.storeLineOfCode(this.environmentMap[i], false);
+      switch (line.storeAs){
+        case "decl" : {
+          this.addDelaration(line.name, line.type);
+          break;
+        }
+        case "construct" : {
+          this.onApplyCreation(line.type);
+          this.addDelaration(line.name, line.type);
+          break;
+        }
+        case "typedef": {
+          this.addTypedef(line.name, line.type);
+          this.addDelaration(line.name, line.type);
+          break;
+        }
+        default: {
+          console.log("falscher storeAs: " + line.storeAs);
+        }
+      }
+    }
+  }
+
+  // storeAs can be "struct", "decl", "typedef", "error"
+  storeLineOfCode(mapEntry : any, forStruct : boolean): {name : string, type: AbstractType, storeAs: string} {
+    console.log("line of code: ")
+    console.log(mapEntry)
+    try {
+
+      switch (mapEntry["kind"]) {
+        case "type": {
+          switch (mapEntry["type"]) {
+            case "declaration": {
+              switch (mapEntry["base"][0]["type"]){
+                case "struct": {
+                  // struct
+                  let name = mapEntry["declarator"]["name"];
+                  let members = Array<Definition>();
+                  for (var i = 0; i < mapEntry["base"][0]["body"].length; i++){
+                    let member = this.storeLineOfCode(mapEntry["base"][0]["body"][i], true);
+                    members.push(new Definition(member.name, member.type));
+                  }
+                  return {
+                    name: name,
+                    type: new StructType(name, members),
+                    storeAs: "construct"
+                  }
+                }
+                default: { // NULL 
+                  switch (mapEntry["declarator"]["type"]) {
+                    case "identifier": {
+                      // base type not in struct
+                      let name = mapEntry["declarator"]["name"];
+                      let type = this.identifierBase(mapEntry["base"][0]);
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "decl"
+                      }
+                    }
+                    case "array": {
+                      // array not in struct 
+                      let name : string;
+                      let type : AbstractType;
+
+                      let arrEval = this.evalArray(mapEntry)
+                      name = arrEval.arrName
+                      type = arrEval.constructed
+                      
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "construct"
+                      }
+                    }
+                    case "pointer": {
+                      // pointer not in struct
+                      let basetype = this.identifierBase(mapEntry["base"][0])
+                      let type = new PointerType(this.evalPointer(basetype, mapEntry["declarator"]["base"]));
+                      console.log("pointer type:")
+                      console.log(type)
+                      let name = this.evalPointerName(mapEntry["declarator"]["base"])
+                      
+                      return {
+                        name: name,
+                        type: type,
+                        storeAs: "construct"
+                      }
+                    }
+                    case "function": {
+                      let parameter = new Array<AbstractType>();
+                      let returntype : AbstractType = this.identifierBase(mapEntry["base"][0]);
+                      let name : string = mapEntry["declarator"]["base"]["name"]
+                      for (var i = 0; i < mapEntry["declarator"]["params"].length; i++){
+                        let para = this.storeLineOfCode(mapEntry["declarator"]["params"][i], false);
+                        parameter.push(para.type);
+                      }
+                      return {
+                        name: name,
+                        type: new FunctionType(parameter, returntype),
+                        storeAs: "construct" 
+                      }
+                    }
+                    default: {
+                      if (forStruct){
+                        switch (mapEntry["declarator"][0]["type"]){
+                          case "identifier": {
+                            // base type in struct
+                            let name = mapEntry["declarator"][0]["name"];
+                            let type = this.identifierBase(mapEntry["base"][0]);
+                            return {
+                              name: name,
+                              type: type,
+                              storeAs: "decl"
+                            }
+                          }
+                          case "array": {
+                            // array in struct
+                            let name = this.evalArrayForStruct(mapEntry).name
+                            let type = this.evalArrayForStruct(mapEntry).basetype
+                            
+                            return {
+                              name: name,
+                              type: type,
+                              storeAs: "construct"
+                            }
+                          }
+                          case "pointer": {
+                            // pointer in struct
+                            let basetype = this.identifierBase(mapEntry["base"][0])
+                            let type = new PointerType(this.evalPointer(basetype, mapEntry["declarator"][0]["base"]));
+                            let name = this.evalPointerName(mapEntry["declarator"][0]["base"])
+                      
+                            return {
+                              name: name,
+                              type: type,
+                              storeAs: "construct"
+                            }
+                          }
+                        }
+                      }
+                      return {
+                        name:"id, poi, arr",
+                        type: new PointerType(new IntType()),
+                        storeAs: "error"
+                      }
+                    }
+                  }
+                }
+              }
+              
+            }
+            case "typedef": {
+              // typedef
+              let alias = mapEntry["declarator"]["name"];
+              mapEntry["type"] = "declaration";
+              let type = this.storeLineOfCode(mapEntry, false).type
+              return {
+                name: alias,
+                type: type,
+                storeAs: "typedef"
+              }
+            }
+          }
+          return {
+            name:"temp",
+            type: new PointerType(new IntType()),
+            storeAs: "error"
+          }
+        }
+        case "expr": {
+          // expression
+          console.log("This is an expression, but we need type definitions here");
+          this.popUpError();
+          return {
+            name:"expr",
+            type: new PointerType(new IntType()),
+            storeAs: "error"
+          }
+        }
+        default: {
+          // lands here when typedef of basetype
+          console.log("typedef of basetype")
+          return {
+            name:"none",
+            type: this.identifierBase(mapEntry),
+            storeAs: "typedefBaseType"
+          }
+        }
+
+      }
+
+    } catch (err) {
+      this.popUpError();
+      console.log("Error gefangen")
+      console.error(err)
+      return {
+        name:"err",
+        type: new PointerType(new IntType()),
+        storeAs: "error"
+      }
+    }
+
+  }
+
+  identifierBase(base : string) {
+    switch (base) {
+      case "int" : return new IntType();
+      case "float" : return new FloatType();
+      case "char" : return new CharType();
+      case "void" : return new VoidType();
+      default: {
+        // alias belongs to a type
+        // it does not parse if the type is not a "real" type or typedef -> no need to check for existence 
+        return this.typeDefinitions.get(base) 
+      }
+    }
+  }
+
+  
+
+  popUpError() {
+    this.dialogRef.open(PopUpErrorMessageComponent);
+  }
+
+  evalArray(arrayDefinition: any) {
+    console.log("normal:")
+    console.log(arrayDefinition);
+    let lookingForBase = true
+    let dimension = 1
+    let temp = arrayDefinition["declarator"]["base"];
+    let arrName = ""
+    while (lookingForBase) {
+      if (temp["type"] == "identifier") {
+        lookingForBase = false;
+        arrName = temp["name"]
+      } else {
+        temp = temp["base"]
+        dimension = dimension + 1
+      }
+    }
+  
+    let constructedBaseType : AbstractType = this.identifierBase(arrayDefinition["base"][0]);
+
+    let constructed = new ArrayType(constructedBaseType, dimension)
+
+    return {arrName, constructed};
+  }
+
+  evalArrayForPointer(basetype : AbstractType, arrayBase : any) {
+    let dim = 1
+    while(arrayBase["type"] == "array"){
+      dim = dim + 1
+      arrayBase = arrayBase["base"]
+    }
+    return new ArrayType(basetype, dim);
+      
+  }
+
+  evalPointerName(pointerBase : any) {
+    while(pointerBase["type"] != "identifier"){
+      pointerBase= pointerBase["base"]
+    }
+    return pointerBase["name"];
+
+  }
+  
+
+  evalArrayForStruct(arrayDefinition:any) {
+    let lookingForBase = true
+    let dimension = 1
+    let temp = arrayDefinition["declarator"][0]["base"];
+    let arrName = ""
+    while (lookingForBase) {
+      if (temp["type"] == "identifier") {
+        lookingForBase = false;
+        arrName = temp["name"]
+      } else {
+        temp = temp["base"]
+        dimension = dimension + 1
+      }
+    }
+  
+    let constructedBaseType : AbstractType = this.identifierBase(arrayDefinition["base"][0]);
+    let type = new ArrayType(constructedBaseType, dimension);
+
+    return {name: arrName, basetype: type};
+
+  }
+
+  evalPointer(basetype : AbstractType , pointerSpec: any) : AbstractType {
+   if (pointerSpec["type"] == "pointer") {
+    return new PointerType(this.evalPointer(basetype, pointerSpec["base"]));
+   } else if (pointerSpec["type"] == "array") {
+    // array?
+    return this.evalArrayForPointer(basetype, pointerSpec["base"]);
+   } else {
+    return basetype;
+   }
+  }
+
+  /*
+    Davids code
+  */
 
   private initConfiguration() {
     const config = this.configurationStoreService.getDefaultConfiguration();

@@ -2,7 +2,11 @@
 <ng-template #showBlock>
     <div class="wrapper">
         <div class="labelWrapper" [ngStyle]="{'color': _getColor()}">
-            {{typingTree.label}}
+            <div class="actualLabel" *ngIf = "selectedLabel == typingTree.label">{{typingTree.label}}</div>
+            <div class="wrongLabelMessage" *ngIf = "selectedLabel != startingPoint && selectedLabel != typingTree.label">Try again!</div>
+            <select [(ngModel)]="selectedLabel" *ngIf = "selectedLabel != typingTree.label">
+                <option *ngFor = "let l of labels" value="{{l.valueLabel}}">{{l.name}}</option>
+            </select>
         </div>
         <div class="bodyWrapper">
             <!-- Recursive rendering of children until leafs -->

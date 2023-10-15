@@ -1,0 +1,9 @@
+.mirror-editor-wrapper{
+    min-height: 15vh;
+    height: 100%;
+    width: 100%;
+}
+
+ngx-codemirror{
+    max-height: 60 px;
+}

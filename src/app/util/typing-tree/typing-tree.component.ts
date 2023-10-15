@@ -2,7 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { StructuralSubtypingQuery } from 'src/app/model/typing/types/common/structural-subtyping/structural-subtyping-query';
 import { TypeErrorPlaceholderType } from 'src/app/model/typing/types/placeholder-types/type-error-placeholder-type';
 import { TypingTree } from 'src/app/model/typing/typing-tree/typing-tree';
+import { TypingTreeNodeLabel } from 'src/app/model/typing/typing-tree/typing-tree-node-label';
 import { ComponentInterconnectionService } from 'src/app/service/component-interconnection.service';
+import { Labels } from './selectableLabels.interface';
 
 @Component({
   selector: 'app-typing-tree',
@@ -15,6 +17,20 @@ export class TypingTreeComponent implements OnInit {
 
   //public _color: string;
   public _subtypingInfoTooltip: string = "Click to view structural subtype queries"
+
+  public labels : Array<Labels> = [
+    {valueLabel: TypingTreeNodeLabel.CONST, name: "CONST"},
+    {valueLabel: TypingTreeNodeLabel.VAR, name: "VAR"},
+    {valueLabel: TypingTreeNodeLabel.REF, name: "REF"},
+    {valueLabel: TypingTreeNodeLabel.DEREF, name: "DEREF"},
+    {valueLabel: TypingTreeNodeLabel.ARRAY, name: "ARRAY"},
+    {valueLabel: TypingTreeNodeLabel.STRUCT, name: "STRUCT"},
+    {valueLabel: TypingTreeNodeLabel.APP, name: "APP"},
+    {valueLabel: TypingTreeNodeLabel.OP, name: "OP"},
+    //{valueLabel: TypingTreeNodeLabel.OP_ASSIGN, name: "OP ="} -> not in use
+  ]
+  public selectedLabel : TypingTreeNodeLabel = TypingTreeNodeLabel.TEMP;
+  public startingPoint : TypingTreeNodeLabel = TypingTreeNodeLabel.TEMP 
 
   constructor(private componentInterconnectionService: ComponentInterconnectionService) { }
 

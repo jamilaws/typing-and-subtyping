@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-instruction-list',
@@ -12,21 +12,25 @@ export class InstructionListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+
+
   instr = [{
     summary :"Define Environment",
-    details: "Define your environment in the code box"
+    details: "Define your environment in the code box and click 'Ready!'"
   },
   {
-    summary: "Type in Expresseion",
-    details: "State the expression that you want to type check into the box on the right"
+    summary: "Type in Expression",
+    details: "State the expression that you want to type check into the box under your environment"
   },
   {
-    summary: "Select devider",
-    details: "Choose the correct devider for each leaf of the tree"
+    summary: "Select Rule",
+    details: "Choose the correct rule for each leaf of the tree. If you don't know what rule to apply, click 'Remind me of the rules!'"
   },
   {
-    summary: "Check type",
-    details: "Start from the top to get the correct type for each step of the tree"
+    summary: "Well done!",
+    details: "You have applied the algorithm correctly when there is nothing to select left."
   }]
+
+  
 
 }
